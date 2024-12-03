@@ -42,11 +42,18 @@ const initialFormData: FormData = {
 
 export default function StyleAdvisorForm() {
   const [formData, setFormData] = useState<FormData>(initialFormData);
-  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [showChat, setShowChat] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsChatOpen(true);
+    setShowChat(true);
+    // Scroll to chat section smoothly
+    setTimeout(() => {
+      window.scrollTo({
+        top: window.scrollY + 400,
+        behavior: 'smooth'
+      });
+    }, 100);
   };
 
   return (
@@ -350,25 +357,20 @@ export default function StyleAdvisorForm() {
                 </div>
               </div>
 
-              <div className="pt-6">
+              <div className="mt-8 flex justify-center">
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold text-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
+                  className="bg-blue-600 text-white px-8 py-4 rounded-full text-lg font-bold hover:bg-blue-700 transform hover:scale-105 transition-all duration-200"
                 >
                   Szukaj obuwia dla mnie!
                 </button>
               </div>
+
+              <StyleChat preferences={formData} isVisible={showChat} />
             </div>
           </form>
         </div>
       </div>
-
-      {isChatOpen && (
-        <StyleChat
-          preferences={formData}
-          onClose={() => setIsChatOpen(false)}
-        />
-      )}
     </>
   );
 }

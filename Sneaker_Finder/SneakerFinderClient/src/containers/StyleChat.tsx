@@ -1,4 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+
+interface Message {
+  text: string;
+  isUser: boolean;
+}
 
 interface StyleChatProps {
   preferences: {
@@ -18,12 +23,22 @@ interface StyleChatProps {
     brands: string;
     ecological: string[];
   };
-  onClose: () => void;
+  isVisible: boolean;
 }
 
-export default function StyleChat({ preferences, onClose }: StyleChatProps) {
-  const [chatMessages, setChatMessages] = useState<string[]>([]);
+export default function StyleChat({ preferences, isVisible }: StyleChatProps) {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const generateRecommendation = (preferences: StyleChatProps['preferences']) => {
     const recommendations = [];
@@ -68,9 +83,33 @@ ${recommendations.join('\n\n')}
 🏷️ Gdzie kupić:
 - Sklepy sportowe: Nike.com, Adidas.pl, SportsDirect
 - Platformy e-commerce: eobuwie.pl, Zalando
+
+💬 Możesz zadać mi dodatkowe pytania dotyczące rekomendacji!
     `;
 
     return finalRecommendation;
+  };
+
+  const generateResponse = (userMessage: string) => {
+    const messageLower = userMessage.toLowerCase();
+    
+    if (messageLower.includes('cena') || messageLower.includes('kosztuje')) {
+      return "Ceny mogą się różnić w zależności od sklepu i dostępnych promocji. Polecam sprawdzić aktualne ceny na stronach sklepów, które wymieniłem powyżej.";
+    }
+    
+    if (messageLower.includes('rozmiar') || messageLower.includes('size')) {
+      return "Każdy producent może mieć nieco inną tabelę rozmiarów. Najlepiej zmierzyć długość stopy w centymetrach i porównać z tabelą rozmiarów na stronie producenta. Zawsze możesz też zapytać o konkretny model!";
+    }
+    
+    if (messageLower.includes('dostępn') || messageLower.includes('gdzie')) {
+      return "Najlepiej sprawdzić dostępność na oficjalnych stronach producentów lub w dużych sklepach online jak eobuwie.pl czy Zalando. Możesz też odwiedzić sklepy stacjonarne w swojej okolicy.";
+    }
+
+    if (messageLower.includes('kolor') || messageLower.includes('kolory')) {
+      return `Wybrałeś następujące kolory: ${preferences.colors.join(', ')}. Wszystkie rekomendowane modele są dostępne w tych kolorach. Jeśli chcesz zobaczyć inne opcje kolorystyczne, daj znać!`;
+    }
+
+    return "Przepraszam, nie do końca rozumiem pytanie. Możesz zapytać mnie o cenę, rozmiary, dostępność lub kolory konkretnych modeli butów.";
   };
 
   const sendPreferencesToAI = async () => {
@@ -78,55 +117,93 @@ ${recommendations.join('\n\n')}
     
     try {
       const recommendation = generateRecommendation(preferences);
-      
-      setChatMessages(prev => [...prev, recommendation]);
-      
+      setMessages([{ text: recommendation, isUser: false }]);
     } catch (error) {
       console.error("Błąd podczas generowania rekomendacji:", error);
-      setChatMessages(prev => [...prev, 
-        "❌ Przepraszamy, wystąpił błąd podczas generowania rekomendacji. Spróbuj ponownie później."
-      ]);
+      setMessages([{ 
+        text: "❌ Przepraszamy, wystąpił błąd podczas generowania rekomendacji. Spróbuj ponownie później.",
+        isUser: false 
+      }]);
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleSendMessage = () => {
+    if (!inputMessage.trim()) return;
+
+    setMessages(prev => [...prev, { text: inputMessage, isUser: true }]);
+    
+    const response = generateResponse(inputMessage);
+    setTimeout(() => {
+      setMessages(prev => [...prev, { text: response, isUser: false }]);
+    }, 500);
+
+    setInputMessage("");
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  useEffect(() => {
+    if (isVisible && messages.length === 0) {
+      sendPreferencesToAI();
+    }
+  }, [isVisible]);
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white w-full max-w-3xl rounded-lg shadow-lg p-6 relative">
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 bg-gray-200 rounded-full px-4 py-2 text-sm font-bold hover:bg-gray-300"
-        >
-          Zamknij
-        </button>
+    <div className={`mt-8 transition-all duration-300 ease-in-out ${isVisible ? 'opacity-100 max-h-[1000px]' : 'opacity-0 max-h-0 overflow-hidden'}`}>
+      <div className="bg-white w-full max-w-3xl mx-auto rounded-lg shadow-lg border border-gray-200">
+        <div className="p-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+            Twoje Rekomendacje
+          </h2>
 
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">
-          Twoje wyniki:
-        </h2>
-
-        {isLoading ? (
-          <p className="text-center text-gray-600">Ładowanie...</p>
-        ) : (
-          <div className="space-y-4">
-            {chatMessages.map((message, index) => (
-              <div
-                key={index}
-                className="bg-gray-100 p-4 rounded-lg shadow-inner text-gray-800"
-              >
-                {message}
-              </div>
-            ))}
+          {isLoading ? (
+            <div className="flex justify-center items-center py-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+            </div>
+          ) : (
+            <div className="space-y-6 max-h-[600px] overflow-y-auto px-2">
+              {messages.map((message, index) => (
+                <div
+                  key={index}
+                  className={`${
+                    message.isUser
+                      ? 'bg-blue-50 ml-12'
+                      : 'bg-gray-50 mr-12'
+                  } p-6 rounded-xl shadow-sm border border-gray-100 text-gray-800 leading-relaxed`}
+                  style={{ whiteSpace: 'pre-wrap' }}
+                >
+                  {message.text}
+                </div>
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
+          )}
+        </div>
+        <div className="border-t border-gray-200 p-4">
+          <div className="flex space-x-4">
+            <textarea
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Zadaj pytanie dotyczące rekomendacji..."
+              className="flex-1 min-h-[50px] max-h-[100px] p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            />
+            <button
+              onClick={handleSendMessage}
+              disabled={!inputMessage.trim()}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Wyślij
+            </button>
           </div>
-        )}
-
-        <button
-          onClick={sendPreferencesToAI}
-          disabled={isLoading}
-          className="w-full mt-6 bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-700"
-        >
-          {isLoading ? "Analizuję..." : "Wyślij preferencje"}
-        </button>
+        </div>
       </div>
     </div>
   );
