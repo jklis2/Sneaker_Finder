@@ -1,5 +1,7 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import dotenv from "dotenv";
+import connectDB from "./db";
+import userRoutes from "./routes/userRoutes";
 
 dotenv.config();
 
@@ -8,10 +10,10 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Welcome to Sneaker Finder Backend!");
-});
+connectDB();
+
+app.use("/api/users", userRoutes);
 
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
