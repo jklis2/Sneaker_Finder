@@ -25,53 +25,71 @@ export default function StyleChat({ preferences, onClose }: StyleChatProps) {
   const [chatMessages, setChatMessages] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  const generateRecommendation = (preferences: StyleChatProps['preferences']) => {
+    const recommendations = [];
+    
+    if (preferences.shoeTypes.includes('Sportowe') && preferences.clothingStyle === 'Sportowy') {
+      if (preferences.budget === '100-300 zł') {
+        recommendations.push(
+          "👟 Nike Revolution 6 - klasyczne buty do biegania w przystępnej cenie",
+          "👟 Adidas Runfalcon 2.0 - wszechstronne buty treningowe",
+          "👟 Puma Resolve - lekkie i przewiewne buty sportowe"
+        );
+      } else if (preferences.budget === '300-500 zł') {
+        recommendations.push(
+          "👟 Nike Air Zoom Pegasus - profesjonalne buty do biegania",
+          "👟 Adidas UltraBoost - premium buty sportowe z zaawansowaną amortyzacją",
+          "👟 New Balance Fresh Foam - komfortowe buty do codziennego użytku"
+        );
+      }
+    }
+
+    if (preferences.season === 'Letnia') {
+      recommendations.push(
+        "🌞 Polecamy modele z przewiewną siateczką dla lepszej wentylacji",
+        "🌞 Wybierz jasną kolorystykę dla lepszego odbijania promieni słonecznych"
+      );
+    }
+
+    if (preferences.materialType.includes('Tkanina')) {
+      recommendations.push("🧶 Modele z oddychającej tkaniny zapewnią komfort w ciepłe dni");
+    }
+
+    const finalRecommendation = `
+🎯 Rekomendacje butów dopasowane do Twoich preferencji:
+
+${recommendations.join('\n\n')}
+
+💡 Dodatkowe wskazówki:
+- Wybrane modele są dostępne w kolorze ${preferences.colors.join(', ')}
+- Wszystkie propozycje mieszczą się w budżecie: ${preferences.budget}
+- Przeznaczenie: ${preferences.occasions.join(', ')}
+
+🏷️ Gdzie kupić:
+- Sklepy sportowe: Nike.com, Adidas.pl, SportsDirect
+- Platformy e-commerce: eobuwie.pl, Zalando
+    `;
+
+    return finalRecommendation;
+  };
+
   const sendPreferencesToAI = async () => {
     setIsLoading(true);
-  
+    
     try {
-      const minimalPreferences = {
-        shoeTypes: preferences.shoeTypes,
-        colors: preferences.colors,
-        clothingStyle: preferences.clothingStyle,
-        season: preferences.season,
-      };
-  
-      const response = await fetch(
-        "https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
-          },
-          body: JSON.stringify({
-            inputs: `Oto moje preferencje: ${JSON.stringify(minimalPreferences)}`,
-          }),
-        }
-      );
-  
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Szczegóły błędu:", errorData);
-        throw new Error(`Błąd: ${response.status} ${response.statusText}`);
-      }
-  
-      const data = await response.json();
-      console.log("Dane z API:", data);
-  
-      const aiResponse = data.generated_text || "Nie otrzymano odpowiedzi od AI.";
-      setChatMessages((prev) => [...prev, aiResponse]);
+      const recommendation = generateRecommendation(preferences);
+      
+      setChatMessages(prev => [...prev, recommendation]);
+      
     } catch (error) {
-      console.error("Błąd podczas komunikacji z AI:", error);
-      setChatMessages((prev) => [
-        ...prev,
-        "Wystąpił błąd podczas komunikacji z AI.",
+      console.error("Błąd podczas generowania rekomendacji:", error);
+      setChatMessages(prev => [...prev, 
+        "❌ Przepraszamy, wystąpił błąd podczas generowania rekomendacji. Spróbuj ponownie później."
       ]);
     } finally {
       setIsLoading(false);
     }
   };
-  
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
