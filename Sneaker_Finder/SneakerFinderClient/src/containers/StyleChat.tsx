@@ -7,7 +7,7 @@ interface StyleChatProps {
     clothingStyle: string;
     season: string;
     occasions: string[];
-    materialType: string;
+    materialType: string[];
     comfort: string[];
     patterns: string[];
     shoeSize: string;
@@ -27,49 +27,40 @@ export default function StyleChat({ preferences, onClose }: StyleChatProps) {
 
   const sendPreferencesToAI = async () => {
     setIsLoading(true);
-
+  
     try {
+      const minimalPreferences = {
+        shoeTypes: preferences.shoeTypes,
+        colors: preferences.colors,
+        clothingStyle: preferences.clothingStyle,
+        season: preferences.season,
+      };
+  
       const response = await fetch(
-        "https://api.openai.com/v1/chat/completions",
+        "https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
+            Authorization: `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
           },
           body: JSON.stringify({
-            model: "gpt-3.5-turbo",
-            messages: [
-              {
-                role: "system",
-                content:
-                  "Jesteś pomocnikiem stylizacyjnym. Na podstawie preferencji użytkownika dobierz odpowiednie obuwie.",
-              },
-              {
-                role: "user",
-                content: `Oto moje preferencje: ${JSON.stringify(preferences)}`,
-              },
-            ],
+            inputs: `Oto moje preferencje: ${JSON.stringify(minimalPreferences)}`,
           }),
         }
       );
-
-      console.log("Odpowiedź z API:", response);
-
+  
       if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Szczegóły błędu:", errorData);
         throw new Error(`Błąd: ${response.status} ${response.statusText}`);
       }
-
+  
       const data = await response.json();
       console.log("Dane z API:", data);
-
-      const aiResponse = data.choices[0]?.message?.content;
-
-      if (aiResponse) {
-        setChatMessages((prev) => [...prev, aiResponse]);
-      } else {
-        setChatMessages((prev) => [...prev, "Nie otrzymano odpowiedzi od AI."]);
-      }
+  
+      const aiResponse = data.generated_text || "Nie otrzymano odpowiedzi od AI.";
+      setChatMessages((prev) => [...prev, aiResponse]);
     } catch (error) {
       console.error("Błąd podczas komunikacji z AI:", error);
       setChatMessages((prev) => [
@@ -80,6 +71,7 @@ export default function StyleChat({ preferences, onClose }: StyleChatProps) {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">

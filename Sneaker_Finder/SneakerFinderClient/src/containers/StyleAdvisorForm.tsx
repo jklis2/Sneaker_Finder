@@ -10,7 +10,7 @@ interface FormData {
   clothingStyle: string;
   season: string;
   occasions: string[];
-  materialType: string;
+  materialType: string[];
   comfort: string[];
   patterns: string[];
   shoeSize: string;
@@ -28,7 +28,7 @@ const initialFormData: FormData = {
   clothingStyle: "",
   season: "",
   occasions: [],
-  materialType: "",
+  materialType: [],
   comfort: [],
   patterns: [],
   shoeSize: "",
@@ -194,7 +194,7 @@ export default function StyleAdvisorForm() {
                   Materiały i komfort
                 </h3>
                 <div className="space-y-6">
-                  <SingleSelectField
+                  <MultiSelectField
                     label="Rodzaj materiału"
                     name="materialType"
                     options={[
