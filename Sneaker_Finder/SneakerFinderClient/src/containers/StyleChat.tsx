@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function StyleChat() {
   const [messages, setMessages] = useState<{ role: string; content: string }[]>(
     []
@@ -19,7 +21,7 @@ export default function StyleChat() {
         reply: string;
         error?: string;
         estimated_time?: number;
-      }>("http://localhost:5000/api/chat", { message: userInput });
+      }>(`${API_URL}/api/chat`, { message: userInput });
 
       if (response.data.error && response.data.estimated_time) {
         const estimatedTime = Math.ceil(response.data.estimated_time);
