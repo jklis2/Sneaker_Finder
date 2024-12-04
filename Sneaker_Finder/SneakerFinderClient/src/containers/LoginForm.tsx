@@ -147,7 +147,7 @@ export default function LoginForm() {
 
           <div className="mt-6 text-center">
             <a 
-              onClick={() => navigate("/register")}
+              onClick={() => navigate("/auth/register")}
               className="font-medium text-indigo-600 hover:text-indigo-500 cursor-pointer"
             >
               Nie posiadasz jeszcze konta? Zarejestruj się!
