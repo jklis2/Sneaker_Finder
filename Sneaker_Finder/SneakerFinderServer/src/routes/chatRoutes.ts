@@ -28,11 +28,26 @@ router.post("/", async (req: Request, res: Response): Promise<void> => {
       }
     );
 
-    const generatedText = response.data[0]?.generated_text || "No response generated.";
+    if (
+      response.data?.error ===
+      "Model openai-community/gpt2 is currently loading"
+    ) {
+      res.status(503).json({
+        error:
+          "The model is currently loading. Please try again in a few seconds.",
+        estimated_time: response.data.estimated_time,
+      });
+      return;
+    }
 
+    const generatedText =
+      response.data[0]?.generated_text || "No response generated.";
     res.json({ reply: generatedText });
   } catch (err: any) {
-    console.error("Error communicating with Hugging Face API:", err.response?.data || err.message || err);
+    console.error(
+      "Error communicating with Hugging Face API:",
+      err.response?.data || err.message || err
+    );
     res.status(500).json({
       error: "Error communicating with Hugging Face API.",
     });
