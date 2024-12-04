@@ -35,7 +35,7 @@ export default function Navbar() {
       >
         <div className="flex items-center justify-center space-x-8">
           <Link to="/">
-            <img src={logo} alt="Sneaker Finder Logo" className="w-[200px] h-auto" />
+            <img src={logo} alt="Sneaker Finder Logo" className="w-32 h-18" />
           </Link>
 
           <Link to="/" className="text-gray-600 hover:text-gray-800 pl-16 ">

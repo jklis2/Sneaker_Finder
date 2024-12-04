@@ -48,7 +48,7 @@ export default function HeroCarousel() {
   }, [changeImage]);
 
   return (
-    <div className="relative w-full h-[600px] overflow-hidden">
+    <div className="relative w-full h-screen overflow-hidden">
       <div className="absolute inset-0">
         {images.map((img, idx) => (
           <div
