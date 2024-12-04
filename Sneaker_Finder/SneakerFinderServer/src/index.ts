@@ -4,6 +4,7 @@ import cors from "cors";
 import connectDB from "./db";
 import userRoutes from "./routes/userRoutes";
 import chatRoutes from "./routes/chatRoutes";
+import cartRoutes from "./routes/cartRoutes";
 import { scrape, saveData } from "./services/scrape";
 
 dotenv.config();
@@ -29,6 +30,7 @@ scrape(URL, saveData).catch(console.error);
 
 app.use("/api/users", userRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/cart", cartRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
