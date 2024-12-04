@@ -1,4 +1,4 @@
-import StyleAdvisorForm from "../containers/StyleAdvisorForm";
+import StyleChat from "../containers/StyleChat";
 import Footer from "../layouts/Footer";
 import Navbar from "../layouts/Navbar";
 
@@ -7,7 +7,7 @@ export default function StyleAdvisor() {
     <main>
       <Navbar />
       <div>
-        <StyleAdvisorForm />
+        <StyleChat />
       </div>
       <Footer />
     </main>
