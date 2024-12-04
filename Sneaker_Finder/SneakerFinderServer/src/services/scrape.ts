@@ -1,9 +1,23 @@
 import puppeteer from "puppeteer";
 import { selectors } from "./selectors";
+import StockX from "../models/StockX";
 
 interface ScrapeData {
   name: string;
   price: number;
+}
+
+export async function saveData({ name, price }: ScrapeData): Promise<void> {
+  const newStockx = new StockX({
+    name: name,
+    price: price,
+  });
+  try {
+    await newStockx.save();
+    console.log("Data saved to MongoDB!");
+  } catch (err) {
+    console.error("Error saving data to MongoDB:", err);
+  }
 }
 
 type WriteDataFunction = (data: ScrapeData) => void;
