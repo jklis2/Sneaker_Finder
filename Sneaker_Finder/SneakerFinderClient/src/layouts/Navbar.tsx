@@ -10,6 +10,7 @@ interface UserData {
 
 export default function Navbar() {
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,6 +28,10 @@ export default function Navbar() {
     navigate("/");
   };
 
+  const toggleDropdown = () => {
+    setIsDropdownOpen((prev) => !prev);
+  };
+
   return (
     <header>
       <nav
@@ -38,7 +43,7 @@ export default function Navbar() {
             <img src={logo} alt="Sneaker Finder Logo" className="w-32 h-18" />
           </Link>
 
-          <Link to="/" className="text-gray-600 hover:text-gray-800 pl-16 ">
+          <Link to="/" className="text-gray-600 hover:text-gray-800 pl-16">
             Nowości
           </Link>
           <Link to="/" className="text-gray-600 hover:text-gray-800">
@@ -58,16 +63,54 @@ export default function Navbar() {
           </Link>
 
           {userData ? (
-            <div className="flex items-center space-x-4">
+            <div className="relative flex items-center space-x-4">
               <span className="text-gray-700">
                 {userData.firstName} {userData.lastName}
               </span>
-              <button
-                onClick={handleLogout}
-                className="text-sm bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition-colors"
-              >
-                Wyloguj
-              </button>
+              <div className="relative">
+                <div
+                  className="w-8 h-8 bg-green-500 rounded-full cursor-pointer"
+                  onClick={toggleDropdown}
+                ></div>
+                {isDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50">
+                    <ul className="py-2 text-gray-700">
+                      <li>
+                        <Link
+                          to="/cart"
+                          className="block px-4 py-2 hover:bg-gray-100"
+                        >
+                          Koszyk
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          to="/orders"
+                          className="block px-4 py-2 hover:bg-gray-100"
+                        >
+                          Moje zamówienia
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          to="/settings"
+                          className="block px-4 py-2 hover:bg-gray-100"
+                        >
+                          Ustawienia
+                        </Link>
+                      </li>
+                      <li>
+                        <button
+                          onClick={handleLogout}
+                          className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                        >
+                          Wyloguj
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
             </div>
           ) : (
             <Link to="/auth/login">
