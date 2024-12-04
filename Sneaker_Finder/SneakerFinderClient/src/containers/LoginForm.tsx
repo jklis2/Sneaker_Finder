@@ -30,11 +30,14 @@ export default function LoginForm() {
     setIsLoading(true);
 
     try {
+      console.log("Attempting login with:", { email: formData.email });
       const response = await fetch(`${API_URL}/api/users/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Accept": "application/json"
         },
+        credentials: "include",
         body: JSON.stringify({
           email: formData.email,
           password: formData.password,
@@ -42,18 +45,25 @@ export default function LoginForm() {
       });
 
       const data = await response.json();
+      console.log("Login response:", { status: response.status, data });
 
       if (!response.ok) {
         throw new Error(data.message || "Błąd logowania");
       }
 
       localStorage.setItem("token", data.token);
+      localStorage.setItem("userData", JSON.stringify({
+        firstName: data.firstName,
+        lastName: data.lastName
+      }));
+      
       if (formData.rememberMe) {
         localStorage.setItem("email", formData.email);
       }
 
       navigate("/");
     } catch (err) {
+      console.error("Login error:", err);
       setError(err instanceof Error ? err.message : "Wystąpił błąd podczas logowania");
     } finally {
       setIsLoading(false);
