@@ -44,7 +44,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
   try {
     const user = await User.findOne({ email });
-
+    
     if (user && (await user.matchPassword(password))) {
       res.json({
         _id: user.id,
