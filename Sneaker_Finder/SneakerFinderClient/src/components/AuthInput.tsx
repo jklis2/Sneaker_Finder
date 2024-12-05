@@ -17,14 +17,14 @@ export default function AuthInput({
 }: AuthInputProps) {
   return (
     <div className="mb-4">
-      <label className="text-gray-700 text-sm font-medium mb-2">{label}</label>
+      <label className="text-gray-700 text-sm font-medium mb-2 block">{label}</label>
       <input
         type={type}
         name={name}
         value={value}
         onChange={onChange}
         required={required}
-        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 bg-sky-200"
+        className="appearance-none border border-gray-300 rounded-lg w-full py-2.5 px-4 text-gray-900 placeholder-gray-500 bg-white focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all"
         placeholder={placeholder}
         {...props}
       />
