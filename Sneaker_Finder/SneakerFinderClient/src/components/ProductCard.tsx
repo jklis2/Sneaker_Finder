@@ -38,7 +38,7 @@ export default function ProductCard({
           },
           body: JSON.stringify({
             userId,
-            productId: name.replace(/\s+/g, "-").toLowerCase(), 
+            productId: name.replace(/\s+/g, "-").toLowerCase(),
             name,
             price,
           }),
@@ -64,8 +64,8 @@ export default function ProductCard({
 
   const containerClasses =
     size === "normal"
-      ? "border border-gray-300 shadow-lg rounded-lg p-4 w-1/4"
-      : "border border-gray-300 shadow-lg rounded-lg p-3 w-1/5";
+      ? "border border-gray-300 shadow-lg rounded-lg p-4 w-full sm:w-[300px]"
+      : "border border-gray-300 shadow-lg rounded-lg p-3 w-full sm:w-[280px]";
 
   const imageContainerClasses =
     size === "normal"
@@ -89,11 +89,11 @@ export default function ProductCard({
         <p className={`${size === "normal" ? "text-lg" : "text-base"}`}>
           ${price.toFixed(2)}
         </p>
-        <div className="flex gap-2">
+        <div className="flex gap-2 mt-4">
           <button
             onClick={handleAddToCart}
             disabled={isLoading}
-            className={`${
+            className={`flex-1 ${
               size === "normal" ? "py-2 px-4" : "py-1.5 px-3"
             } bg-black hover:bg-gray-800 text-white font-bold rounded transition-colors duration-200`}
           >
@@ -101,7 +101,7 @@ export default function ProductCard({
           </button>
           <button
             onClick={handleDetails}
-            className={`${
+            className={`flex-1 ${
               size === "normal" ? "py-2 px-4" : "py-1.5 px-3"
             } bg-gray-500 text-white rounded hover:bg-gray-600`}
           >

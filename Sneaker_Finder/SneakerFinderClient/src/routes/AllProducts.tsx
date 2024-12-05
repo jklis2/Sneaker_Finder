@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import Navbar from "../layouts/Navbar";
 import Footer from "../layouts/Footer";
 import ProductCard from "../components/ProductCard";
+import SearchProduct from "../components/SearchProduct";
+import Pagination from "../components/Pagination";
 
 interface StockXProduct {
   _id: string;
@@ -13,15 +15,20 @@ export default function AllProducts() {
   const [products, setProducts] = useState<StockXProduct[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 20;
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+    /* eslint-disable react-hooks/exhaustive-deps */
+  }, [currentPage]);
 
   const fetchProducts = async () => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/product`
+        `${
+          import.meta.env.VITE_API_URL
+        }/api/product?page=${currentPage}&limit=${productsPerPage}`
       );
 
       if (!response.ok) {
@@ -37,6 +44,13 @@ export default function AllProducts() {
       setIsLoading(false);
     }
   };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo(0, 0);
+  };
+
+  const totalPages = Math.ceil(products.length / productsPerPage);
 
   if (isLoading) {
     return (
@@ -62,25 +76,40 @@ export default function AllProducts() {
     );
   }
 
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = products.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
+
   return (
     <>
       <Navbar />
       <div className="container mx-auto px-4 py-8 flex flex-col items-center">
         <h1 className="text-3xl font-bold mb-8 text-center">All Products</h1>
-        {products.length === 0 ? (
+        <SearchProduct />
+        {currentProducts.length === 0 ? (
           <div className="text-center text-gray-500">No products found</div>
         ) : (
-          <div className="flex flex-wrap gap-4 justify-center max-w-7xl">
-            {products.map((product) => (
+          <div className="flex flex-wrap gap-3 justify-center items-start w-full max-w-[1280px] mx-auto px-1">
+            {currentProducts.map((product) => (
               <ProductCard
                 key={product._id}
                 _id={product._id}
                 name={product.name}
                 price={product.price}
-                size="small"
+                size="normal"
               />
             ))}
           </div>
+        )}
+        {products.length > productsPerPage && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         )}
       </div>
       <Footer />
