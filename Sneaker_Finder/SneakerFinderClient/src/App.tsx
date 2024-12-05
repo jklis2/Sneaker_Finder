@@ -8,6 +8,8 @@ import StyleAdvisor from "./routes/StyleAdvisor";
 import Cart from "./routes/Cart";
 import Orders from "./routes/Orders";
 import Settings from "./routes/Settings";
+import AllBrands from "./routes/AllBrands";
+import AllProducts from "./routes/AllProducts";
 
 export default function App() {
   return (
@@ -22,6 +24,8 @@ export default function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/allBrands" element={<AllBrands />} />
+        <Route path="/allProducts" element={<AllProducts />} />
       </Routes>
     </>
   );
