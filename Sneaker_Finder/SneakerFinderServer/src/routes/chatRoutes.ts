@@ -18,9 +18,18 @@ router.post("/", async (req: Request, res: Response): Promise<void> => {
   try {
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
-      messages: [{ role: "user", content: message }],
-      max_tokens: 50,
-      temperature: 0.7,
+      messages: [
+        {
+          role: "system",
+          content: "You are a helpful assistant specializing in helping users choose the best shoes for their needs. Provide recommendations based on style, purpose, budget, and personal preferences. Be concise and clear in your advice."
+        },
+        {
+          role: "user",
+          content: message
+        }
+      ],
+      max_tokens: 150,
+      temperature: 0.6,
     });
 
     const generatedText =
