@@ -46,16 +46,16 @@ export default function Navbar() {
           <Link to="/" className="text-gray-600 hover:text-gray-800 pl-16">
             Nowości
           </Link>
-          <Link to="/" className="text-gray-600 hover:text-gray-800">
-            Buty
+          <Link to="/allBrands" className="text-gray-600 hover:text-gray-800">
+            Marki
           </Link>
-          <Link to="/" className="text-gray-600 hover:text-gray-800">
-            Ubrania
+          <Link to="/allProducts" className="text-gray-600 hover:text-gray-800">
+            Produkty
           </Link>
-          <Link to="/" className="text-gray-600 hover:text-gray-800">
-            Akcesoria
+          <Link to="/styleAdvisor" className="text-gray-600 hover:text-gray-800">
+            Asystent modowy
           </Link>
-          <Link to="/" className="text-gray-600 hover:text-gray-800">
+          <Link to="/contact" className="text-gray-600 hover:text-gray-800">
             Kontakt
           </Link>
           <Link to="/" className="text-gray-600 hover:text-gray-800 pr-16">
