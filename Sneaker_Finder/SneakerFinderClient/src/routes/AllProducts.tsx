@@ -74,6 +74,7 @@ export default function AllProducts() {
             {products.map((product) => (
               <ProductCard
                 key={product._id}
+                _id={product._id}
                 name={product.name}
                 price={product.price}
                 size="small"

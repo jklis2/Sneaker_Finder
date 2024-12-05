@@ -1,5 +1,10 @@
 import ProductInfoComp from "../components/ProductInfoComp";
 
-export default function ProductInfo() {
-  return <ProductInfoComp name={"Yeezy Slide Onyx"} price={699} retail={329} />;
+interface ProductInfoProps {
+  name: string;
+  price: number;
+}
+
+export default function ProductInfo({ name, price }: ProductInfoProps) {
+  return <ProductInfoComp name={name} price={price} retail={price * 0.7} />;
 }

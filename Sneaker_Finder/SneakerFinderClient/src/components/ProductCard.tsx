@@ -1,17 +1,21 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface ProductCardProps {
+  _id: string;
   name: string;
   price: number;
   size?: "normal" | "small";
 }
 
 export default function ProductCard({
+  _id,
   name,
   price,
   size = "normal",
 }: ProductCardProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleAddToCart = async () => {
     setIsLoading(true);
@@ -34,7 +38,7 @@ export default function ProductCard({
           },
           body: JSON.stringify({
             userId,
-            productId: name.replace(/\s+/g, "-").toLowerCase(), // Using name as ID for now
+            productId: name.replace(/\s+/g, "-").toLowerCase(), 
             name,
             price,
           }),
@@ -52,6 +56,10 @@ export default function ProductCard({
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleDetails = () => {
+    navigate(`/product/${_id}`);
   };
 
   const containerClasses =
@@ -81,15 +89,25 @@ export default function ProductCard({
         <p className={`${size === "normal" ? "text-lg" : "text-base"}`}>
           ${price.toFixed(2)}
         </p>
-        <button
-          onClick={handleAddToCart}
-          disabled={isLoading}
-          className={`mt-4 w-full bg-black hover:bg-gray-800 text-white font-bold ${
-            size === "normal" ? "py-2 px-4" : "py-1.5 px-3"
-          } rounded transition-colors duration-200`}
-        >
-          {isLoading ? "Adding..." : "Add to Cart"}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={handleAddToCart}
+            disabled={isLoading}
+            className={`${
+              size === "normal" ? "py-2 px-4" : "py-1.5 px-3"
+            } bg-black hover:bg-gray-800 text-white font-bold rounded transition-colors duration-200`}
+          >
+            {isLoading ? "Adding..." : "Add to Cart"}
+          </button>
+          <button
+            onClick={handleDetails}
+            className={`${
+              size === "normal" ? "py-2 px-4" : "py-1.5 px-3"
+            } bg-gray-500 text-white rounded hover:bg-gray-600`}
+          >
+            Szczegóły
+          </button>
+        </div>
       </div>
     </div>
   );

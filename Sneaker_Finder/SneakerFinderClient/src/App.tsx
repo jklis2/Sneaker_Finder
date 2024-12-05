@@ -21,7 +21,7 @@ export default function App() {
         <Route path="/auth/register" element={<Register />} />
         <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
         <Route path="/brand" element={<Brand />} />
-        <Route path="/product" element={<Product />} />
+        <Route path="/product/:id" element={<Product />} />
         <Route path="/styleAdvisor" element={<StyleAdvisor />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/orders" element={<Orders />} />
