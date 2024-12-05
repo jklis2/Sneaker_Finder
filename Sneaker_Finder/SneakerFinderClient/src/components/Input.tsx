@@ -1,8 +1,8 @@
-interface ContactInputProps {
+interface InputProps {
   label: string;
   id: string;
   name: string;
-  type?: "text" | "email" | "textarea";
+  type?: "text" | "email" | "password" | "textarea";
   value: string;
   onChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -11,7 +11,7 @@ interface ContactInputProps {
   rows?: number;
 }
 
-export default function ContactInput({
+export default function Input({
   label,
   id,
   name,
@@ -20,7 +20,7 @@ export default function ContactInput({
   onChange,
   placeholder,
   rows,
-}: ContactInputProps) {
+}: InputProps) {
   const inputClasses =
     "w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors";
 

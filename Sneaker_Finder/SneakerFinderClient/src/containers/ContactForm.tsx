@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ContactInput from "../components/ContactInput";
+import Input from "../components/Input";
 import Button from "../components/Button";
 
 export default function ContactForm() {
@@ -31,7 +31,7 @@ export default function ContactForm() {
       </p>
 
       <form className="space-y-6">
-        <ContactInput
+        <Input
           label="Imię i nazwisko"
           id="name"
           name="name"
@@ -40,7 +40,7 @@ export default function ContactForm() {
           placeholder="Jan Kowalski"
         />
 
-        <ContactInput
+        <Input
           label="Adres email"
           id="email"
           name="email"
@@ -50,7 +50,7 @@ export default function ContactForm() {
           placeholder="jan.kowalski@example.com"
         />
 
-        <ContactInput
+        <Input
           label="Temat"
           id="subject"
           name="subject"
@@ -59,7 +59,7 @@ export default function ContactForm() {
           placeholder="W czym możemy pomóc?"
         />
 
-        <ContactInput
+        <Input
           label="Wiadomość"
           id="message"
           name="message"
