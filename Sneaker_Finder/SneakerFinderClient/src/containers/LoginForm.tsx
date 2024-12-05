@@ -53,6 +53,7 @@ export default function LoginForm() {
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("userData", JSON.stringify({
+        _id: data._id,
         firstName: data.firstName,
         lastName: data.lastName
       }));

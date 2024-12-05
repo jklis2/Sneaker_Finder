@@ -35,6 +35,7 @@ export default function RegisterForm() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
+
       ...prev,
       [name]: type === "checkbox" ? checked : value
     }));
@@ -89,6 +90,7 @@ export default function RegisterForm() {
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("userData", JSON.stringify({
+        _id: data._id,
         firstName: data.firstName,
         lastName: data.lastName
       }));
