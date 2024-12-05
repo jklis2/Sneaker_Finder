@@ -1,7 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Button from "../components/Button";
 import logo from "../assets/logo.png";
+import cartIcon from "../assets/icons/cart.svg";
+import ordersIcon from "../assets/icons/orders.svg";
+import settingsIcon from "../assets/icons/settings.svg";
+import logoutIcon from "../assets/icons/logout.svg";
 
 interface UserData {
   firstName: string;
@@ -11,6 +15,7 @@ interface UserData {
 export default function Navbar() {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,6 +23,19 @@ export default function Navbar() {
     if (storedUserData) {
       setUserData(JSON.parse(storedUserData));
     }
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const handleLogout = () => {
@@ -67,43 +85,58 @@ export default function Navbar() {
               <span className="text-gray-700">
                 {userData.firstName} {userData.lastName}
               </span>
-              <div className="relative">
-                <div
+              <div className="relative" ref={dropdownRef}>
+                <button
                   className="w-8 h-8 bg-green-500 rounded-full cursor-pointer"
                   onClick={toggleDropdown}
-                ></div>
+                  aria-expanded={isDropdownOpen}
+                  aria-haspopup="true"
+                  aria-label="User menu"
+                />
                 {isDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50">
+                  <div 
+                    className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50"
+                    role="menu"
+                    aria-orientation="vertical"
+                  >
                     <ul className="py-2 text-gray-700">
                       <li>
                         <Link
                           to="/cart"
-                          className="block px-4 py-2 hover:bg-gray-100"
+                          className="flex items-center px-4 py-2 hover:bg-gray-100"
+                          role="menuitem"
                         >
+                          <img src={cartIcon} alt="" className="w-5 h-5 mr-2" aria-hidden="true" />
                           Koszyk
                         </Link>
                       </li>
                       <li>
                         <Link
                           to="/orders"
-                          className="block px-4 py-2 hover:bg-gray-100"
+                          className="flex items-center px-4 py-2 hover:bg-gray-100"
+                          role="menuitem"
                         >
+                          <img src={ordersIcon} alt="" className="w-5 h-5 mr-2" aria-hidden="true" />
                           Moje zamówienia
                         </Link>
                       </li>
                       <li>
                         <Link
                           to="/settings"
-                          className="block px-4 py-2 hover:bg-gray-100"
+                          className="flex items-center px-4 py-2 hover:bg-gray-100"
+                          role="menuitem"
                         >
+                          <img src={settingsIcon} alt="" className="w-5 h-5 mr-2" aria-hidden="true" />
                           Ustawienia
                         </Link>
                       </li>
                       <li>
                         <button
                           onClick={handleLogout}
-                          className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                          className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100"
+                          role="menuitem"
                         >
+                          <img src={logoutIcon} alt="" className="w-5 h-5 mr-2" aria-hidden="true" />
                           Wyloguj
                         </button>
                       </li>
