@@ -1,7 +1,11 @@
 import express, { Request, Response } from "express";
-import axios from "axios";
+import { OpenAI } from "openai";
 
 const router = express.Router();
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 router.post("/", async (req: Request, res: Response): Promise<void> => {
   const { message } = req.body;
@@ -12,44 +16,23 @@ router.post("/", async (req: Request, res: Response): Promise<void> => {
   }
 
   try {
-    const response = await axios.post(
-      "https://api-inference.huggingface.co/models/gpt2",
-      {
-        inputs: message,
-        parameters: {
-          max_length: 50,
-          temperature: 0.7,
-        },
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.HUGGING_FACE_API_KEY}`,
-        },
-      }
-    );
-
-    if (
-      response.data?.error ===
-      "Model openai-community/gpt2 is currently loading"
-    ) {
-      res.status(503).json({
-        error:
-          "The model is currently loading. Please try again in a few seconds.",
-        estimated_time: response.data.estimated_time,
-      });
-      return;
-    }
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [{ role: "user", content: message }],
+      max_tokens: 50,
+      temperature: 0.7,
+    });
 
     const generatedText =
-      response.data[0]?.generated_text || "No response generated.";
+      response.choices[0]?.message?.content || "No response generated.";
     res.json({ reply: generatedText });
   } catch (err: any) {
     console.error(
-      "Error communicating with Hugging Face API:",
+      "Error communicating with OpenAI API:",
       err.response?.data || err.message || err
     );
     res.status(500).json({
-      error: "Error communicating with Hugging Face API.",
+      error: "Error communicating with OpenAI API.",
     });
   }
 });
