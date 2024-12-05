@@ -34,10 +34,9 @@ export default function RegisterForm() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -69,7 +68,7 @@ export default function RegisterForm() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Accept": "application/json"
+          Accept: "application/json",
         },
         credentials: "include",
         body: JSON.stringify({
@@ -89,16 +88,23 @@ export default function RegisterForm() {
       }
 
       localStorage.setItem("token", data.token);
-      localStorage.setItem("userData", JSON.stringify({
-        _id: data._id,
-        firstName: data.firstName,
-        lastName: data.lastName
-      }));
+      localStorage.setItem(
+        "userData",
+        JSON.stringify({
+          _id: data._id,
+          firstName: data.firstName,
+          lastName: data.lastName,
+        })
+      );
 
       navigate("/");
     } catch (err) {
       console.error("Registration error:", err);
-      setError(err instanceof Error ? err.message : "An error occurred during registration");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "An error occurred during registration"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -116,7 +122,10 @@ export default function RegisterForm() {
           </p>
         </div>
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+          <div
+            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+            role="alert"
+          >
             <span className="block sm:inline">{error}</span>
           </div>
         )}
@@ -209,19 +218,25 @@ export default function RegisterForm() {
                 required
               />
               <label className="ml-2 block text-sm text-gray-900">
-                I accept the regulations and privacy policy
+                I accept {" "}
+                <span
+                  onClick={() => navigate("/privacyPolicy")}
+                  className="text-indigo-600 hover:text-indigo-500 cursor-pointer"
+                >
+                  the regulations and privacy policy
+                </span>
               </label>
             </div>
           </div>
           <div>
-            <Button 
-              name={isLoading ? "Signing up..." : "Sign up"} 
+            <Button
+              name={isLoading ? "Signing up..." : "Sign up"}
               disabled={isLoading}
             />
           </div>
 
           <div className="mt-6 text-center">
-            <a 
+            <a
               onClick={() => navigate("/auth/login")}
               className="font-medium text-indigo-600 hover:text-indigo-500 cursor-pointer"
             >

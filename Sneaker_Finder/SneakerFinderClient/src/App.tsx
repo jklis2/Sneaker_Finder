@@ -10,6 +10,7 @@ import Orders from "./routes/Orders";
 import Settings from "./routes/Settings";
 import AllBrands from "./routes/AllBrands";
 import AllProducts from "./routes/AllProducts";
+import PrivacyPolicy from "./routes/PrivacyPolicy";
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/auth/login" element={<Login />} />
         <Route path="/auth/register" element={<Register />} />
+        <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
         <Route path="/brand" element={<Brand />} />
         <Route path="/product" element={<Product />} />
         <Route path="/styleAdvisor" element={<StyleAdvisor />} />
