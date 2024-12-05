@@ -32,7 +32,7 @@ scrape(URL, saveData).catch(console.error);
 app.use("/api/users", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/cart", cartRoutes);
-app.use("/api/products", productsRoutes);
+app.use("/api/product", productsRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
