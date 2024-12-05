@@ -11,6 +11,7 @@ import Settings from "./routes/Settings";
 import AllBrands from "./routes/AllBrands";
 import AllProducts from "./routes/AllProducts";
 import PrivacyPolicy from "./routes/PrivacyPolicy";
+import Contact from "./routes/Contact";
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="/allBrands" element={<AllBrands />} />
         <Route path="/allProducts" element={<AllProducts />} />
       </Routes>
