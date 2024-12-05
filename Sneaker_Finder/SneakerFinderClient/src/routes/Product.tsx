@@ -71,10 +71,10 @@ export default function Product() {
   return (
     <main>
       <Navbar />
-      <div className="max-w-7xl mx-auto py-8">
-        <div className="flex justify-between items-start">
+      <div className="max-w-7xl mx-auto py-8 px-4">
+        <div className="grid md:grid-cols-2 gap-8">
           <ProductPhotos name={product.name} imageUrl={product.imageUrl} />
-          <ProductInfo name={product.name} price={product.price} />
+          <ProductInfo id={product._id} name={product.name} price={product.price} />
         </div>
         <ProductDescription description={product.description} />
       </div>
