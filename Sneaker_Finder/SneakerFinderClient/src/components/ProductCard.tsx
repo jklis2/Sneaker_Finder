@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import AddToCartConfirmation from "./AddToCartConfirmation";
 
 interface ProductCardProps {
   _id: string;
@@ -15,32 +16,35 @@ export default function ProductCard({
   size = "normal",
 }: ProductCardProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleAddToCart = async () => {
     setIsLoading(true);
+    setError("");
     try {
-      const userId = localStorage.getItem("userData")
-        ? JSON.parse(localStorage.getItem("userData")!)._id
-        : null;
-
-      if (!userId) {
-        alert("Please log in to add items to cart");
+      const userData = localStorage.getItem("userData");
+      if (!userData) {
+        setError("Please log in to add items to cart");
         return;
       }
 
+      const { _id: userId } = JSON.parse(userData);
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/cart/add`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: JSON.stringify({
             userId,
-            productId: name.replace(/\s+/g, "-").toLowerCase(),
+            productId: _id,
             name,
             price,
+            quantity: 1,
           }),
         }
       );
@@ -49,10 +53,10 @@ export default function ProductCard({
         throw new Error("Failed to add item to cart");
       }
 
-      alert("Item added to cart successfully!");
+      setShowConfirmation(true);
     } catch (error) {
       console.error("Error adding to cart:", error);
-      alert("Failed to add item to cart");
+      setError("Failed to add item to cart");
     } finally {
       setIsLoading(false);
     }
@@ -73,42 +77,59 @@ export default function ProductCard({
       : "h-32 w-full flex items-center justify-center bg-red-500";
 
   return (
-    <div className={containerClasses}>
-      <div className={imageContainerClasses}>
-        {/* Placeholder for the image */}
-        <span className="text-white text-xs uppercase">Image placeholder</span>
-      </div>
-      <div className="mt-4">
-        <h3
-          className={`${
-            size === "normal" ? "text-lg" : "text-base"
-          } font-semibold`}
-        >
-          {name}
-        </h3>
-        <p className={`${size === "normal" ? "text-lg" : "text-base"}`}>
-          ${price.toFixed(2)}
-        </p>
-        <div className="flex gap-2 mt-4">
-          <button
-            onClick={handleAddToCart}
-            disabled={isLoading}
-            className={`flex-1 ${
-              size === "normal" ? "py-2 px-4" : "py-1.5 px-3"
-            } bg-black hover:bg-gray-800 text-white font-bold rounded transition-colors duration-200`}
+    <>
+      <div className={containerClasses}>
+        <div className={imageContainerClasses}>
+          {/* Placeholder for the image */}
+          <span className="text-white text-xs uppercase">Image placeholder</span>
+        </div>
+        <div className="mt-4">
+          <h3
+            className={`${
+              size === "normal" ? "text-lg" : "text-base"
+            } font-semibold`}
           >
-            {isLoading ? "Adding..." : "Add to Cart"}
-          </button>
-          <button
-            onClick={handleDetails}
-            className={`flex-1 ${
-              size === "normal" ? "py-2 px-4" : "py-1.5 px-3"
-            } bg-gray-500 text-white rounded hover:bg-gray-600`}
-          >
-            Szczegóły
-          </button>
+            {name}
+          </h3>
+          <p className={`${size === "normal" ? "text-lg" : "text-base"}`}>
+            ${price.toFixed(2)}
+          </p>
+          {error && (
+            <p className="text-red-500 text-sm mt-2">{error}</p>
+          )}
+          <div className="flex gap-2 mt-4">
+            <button
+              onClick={handleAddToCart}
+              disabled={isLoading}
+              className={`flex-1 ${
+                size === "normal" ? "py-2 px-4" : "py-1.5 px-3"
+              } bg-black hover:bg-gray-800 text-white font-bold rounded transition-colors duration-200 disabled:bg-gray-400`}
+            >
+              {isLoading ? "Adding..." : "Add to Cart"}
+            </button>
+            <button
+              onClick={handleDetails}
+              className={`flex-1 ${
+                size === "normal" ? "py-2 px-4" : "py-1.5 px-3"
+              } border border-black hover:bg-gray-100 font-bold rounded transition-colors duration-200`}
+            >
+              Details
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+
+      {showConfirmation && (
+        <AddToCartConfirmation
+          item={{
+            productId: _id,
+            name,
+            price,
+            quantity: 1,
+          }}
+          onClose={() => setShowConfirmation(false)}
+        />
+      )}
+    </>
   );
 }
