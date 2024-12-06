@@ -12,6 +12,8 @@ import AllBrands from "./routes/AllBrands";
 import AllProducts from "./routes/AllProducts";
 import PrivacyPolicy from "./routes/PrivacyPolicy";
 import Contact from "./routes/Contact";
+import Checkout from "./routes/Checkout";
+import OrderConfirmation from "./routes/OrderConfirmation";
 
 export default function App() {
   return (
@@ -25,6 +27,8 @@ export default function App() {
         <Route path="/product/:id" element={<Product />} />
         <Route path="/styleAdvisor" element={<StyleAdvisor />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/order-confirmation" element={<OrderConfirmation />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/contact" element={<Contact />} />
