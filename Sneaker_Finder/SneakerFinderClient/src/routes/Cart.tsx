@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../layouts/Navbar";
 import Footer from "../layouts/Footer";
 
@@ -15,6 +16,7 @@ interface CartData {
 }
 
 export default function Cart() {
+  const navigate = useNavigate();
   const [cart, setCart] = useState<CartData>({ items: [], total: 0 });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -183,9 +185,12 @@ export default function Cart() {
               <span className="text-xl font-semibold">Total:</span>
               <span className="text-xl">${cart.total.toFixed(2)}</span>
             </div>
-            <div className="flex justify-end">
-              <button className="bg-black text-white px-8 py-3 rounded hover:bg-gray-800 transition-colors">
-                Checkout
+            <div className="mt-8 flex justify-end">
+              <button
+                onClick={() => navigate("/checkout")}
+                className="bg-black text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+              >
+                Proceed to Checkout
               </button>
             </div>
           </div>
