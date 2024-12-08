@@ -6,6 +6,7 @@ import userRoutes from "./routes/userRoutes";
 import chatRoutes from "./routes/chatRoutes";
 import cartRoutes from "./routes/cartRoutes";
 import productsRoutes from "./routes/productsRoutes";
+import checkoutRoutes from "./routes/checkoutRoutes";
 import { scrape, saveData } from "./services/scrape";
 
 dotenv.config();
@@ -33,6 +34,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/product", productsRoutes);
+app.use("/api/checkout", checkoutRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
