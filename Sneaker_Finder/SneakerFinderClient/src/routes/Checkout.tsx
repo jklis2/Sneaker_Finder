@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../layouts/Navbar";
 import Footer from "../layouts/Footer";
 import { useAuth } from "../context/AuthContext";
+import { getShippingAddresses } from "../services/userService";
 
-// eslint-disable-next-line react-hooks/exhaustive-deps
 interface ShippingMethod {
   id: string;
   name: string;
@@ -28,6 +28,16 @@ interface CartItem {
 interface CartData {
   items: CartItem[];
   total: number;
+}
+
+interface ShippingAddress {
+  street: string;
+  number: string;
+  apartmentNumber?: string;
+  city: string;
+  province: string;
+  postalCode: string;
+  phoneNumber: string;
 }
 
 const shippingMethods: ShippingMethod[] = [
@@ -91,12 +101,17 @@ export default function Checkout() {
   const [selectedShipping, setSelectedShipping] = useState(shippingMethods[0].id);
   const [selectedPayment, setSelectedPayment] = useState(paymentMethods[0].id);
 
+  const [savedAddresses, setSavedAddresses] = useState<ShippingAddress[]>([]);
+  const [selectedAddressIndex, setSelectedAddressIndex] = useState<number | null>(null);
+  const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
+
   useEffect(() => {
     if (isAuthenticated && userData) {
       fetchCart();
+      fetchSavedAddresses();
       // Pre-fill form data with user information
-      setFormData(prevData => ({
-        ...prevData,
+      setFormData(prev => ({
+        ...prev,
         email: userData.email || "",
         firstName: userData.firstName || "",
         lastName: userData.lastName || "",
@@ -144,6 +159,60 @@ export default function Checkout() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const fetchSavedAddresses = async () => {
+    try {
+      const addresses = await getShippingAddresses();
+      setSavedAddresses(addresses);
+      if (addresses.length > 0) {
+        setSelectedAddressIndex(0);
+        const firstAddress = addresses[0];
+        setFormData(prev => ({
+          ...prev,
+          address: firstAddress.street + " " + firstAddress.number,
+          apartment: firstAddress.apartmentNumber || "",
+          city: firstAddress.city,
+          state: firstAddress.province,
+          zipCode: firstAddress.postalCode,
+          phone: firstAddress.phoneNumber,
+        }));
+      } else {
+        setIsAddingNewAddress(true);
+      }
+    } catch (error) {
+      console.error("Error fetching addresses:", error);
+      setError("Failed to load saved addresses");
+    }
+  };
+
+  const handleAddressSelect = (index: number) => {
+    setSelectedAddressIndex(index);
+    const selectedAddress = savedAddresses[index];
+    setFormData(prev => ({
+      ...prev,
+      address: selectedAddress.street + " " + selectedAddress.number,
+      apartment: selectedAddress.apartmentNumber || "",
+      city: selectedAddress.city,
+      state: selectedAddress.province,
+      zipCode: selectedAddress.postalCode,
+      phone: selectedAddress.phoneNumber,
+    }));
+    setIsAddingNewAddress(false);
+  };
+
+  const handleAddNewAddress = () => {
+    setSelectedAddressIndex(null);
+    setIsAddingNewAddress(true);
+    setFormData(prev => ({
+      ...prev,
+      address: "",
+      apartment: "",
+      city: "",
+      state: "",
+      zipCode: "",
+      phone: "",
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -270,6 +339,116 @@ export default function Checkout() {
                 </div>
               </div>
 
+              {/* Shipping Address Section */}
+              <div className="mt-8">
+                <h3 className="text-lg font-semibold mb-4">Shipping Address</h3>
+                
+                {savedAddresses.length > 0 && (
+                  <div className="mb-6">
+                    <div className="grid grid-cols-1 gap-4">
+                      {savedAddresses.map((address, index) => (
+                        <div
+                          key={index}
+                          className={`border p-4 rounded-lg cursor-pointer ${
+                            selectedAddressIndex === index ? 'border-black' : 'border-gray-200'
+                          }`}
+                          onClick={() => handleAddressSelect(index)}
+                        >
+                          <p className="font-medium">{address.street} {address.number}</p>
+                          {address.apartmentNumber && <p className="text-gray-600">Apt {address.apartmentNumber}</p>}
+                          <p className="text-gray-600">{address.city}, {address.province} {address.postalCode}</p>
+                          <p className="text-gray-600">{address.phoneNumber}</p>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <button
+                      type="button"
+                      onClick={handleAddNewAddress}
+                      className="mt-4 text-black underline hover:text-gray-700"
+                    >
+                      Add New Address
+                    </button>
+                  </div>
+                )}
+
+                {(isAddingNewAddress || savedAddresses.length === 0) && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="col-span-2">
+                      <input
+                        type="text"
+                        value={formData.address}
+                        onChange={(e) =>
+                          setFormData({ ...formData, address: e.target.value })
+                        }
+                        placeholder="Street Address"
+                        required
+                        className="w-full p-2 border rounded"
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        value={formData.apartment}
+                        onChange={(e) =>
+                          setFormData({ ...formData, apartment: e.target.value })
+                        }
+                        placeholder="Apartment, suite, etc. (optional)"
+                        className="w-full p-2 border rounded"
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        value={formData.city}
+                        onChange={(e) =>
+                          setFormData({ ...formData, city: e.target.value })
+                        }
+                        placeholder="City"
+                        required
+                        className="w-full p-2 border rounded"
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        value={formData.state}
+                        onChange={(e) =>
+                          setFormData({ ...formData, state: e.target.value })
+                        }
+                        placeholder="State/Province"
+                        required
+                        className="w-full p-2 border rounded"
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        value={formData.zipCode}
+                        onChange={(e) =>
+                          setFormData({ ...formData, zipCode: e.target.value })
+                        }
+                        placeholder="ZIP/Postal Code"
+                        required
+                        className="w-full p-2 border rounded"
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="tel"
+                        value={formData.phone}
+                        onChange={(e) =>
+                          setFormData({ ...formData, phone: e.target.value })
+                        }
+                        placeholder="Phone"
+                        required
+                        className="w-full p-2 border rounded"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* Shipping Information */}
               <div>
                 <h3 className="text-lg font-semibold mb-4">Shipping Information</h3>
@@ -291,65 +470,6 @@ export default function Checkout() {
                       setFormData({ ...formData, lastName: e.target.value })
                     }
                     placeholder="Last Name"
-                    required
-                    className="w-full p-2 border rounded"
-                  />
-                  <input
-                    type="text"
-                    value={formData.address}
-                    onChange={(e) =>
-                      setFormData({ ...formData, address: e.target.value })
-                    }
-                    placeholder="Address"
-                    required
-                    className="w-full p-2 border rounded md:col-span-2"
-                  />
-                  <input
-                    type="text"
-                    value={formData.apartment}
-                    onChange={(e) =>
-                      setFormData({ ...formData, apartment: e.target.value })
-                    }
-                    placeholder="Apartment, suite, etc. (optional)"
-                    className="w-full p-2 border rounded md:col-span-2"
-                  />
-                  <input
-                    type="text"
-                    value={formData.city}
-                    onChange={(e) =>
-                      setFormData({ ...formData, city: e.target.value })
-                    }
-                    placeholder="City"
-                    required
-                    className="w-full p-2 border rounded"
-                  />
-                  <input
-                    type="text"
-                    value={formData.state}
-                    onChange={(e) =>
-                      setFormData({ ...formData, state: e.target.value })
-                    }
-                    placeholder="State"
-                    required
-                    className="w-full p-2 border rounded"
-                  />
-                  <input
-                    type="text"
-                    value={formData.zipCode}
-                    onChange={(e) =>
-                      setFormData({ ...formData, zipCode: e.target.value })
-                    }
-                    placeholder="ZIP Code"
-                    required
-                    className="w-full p-2 border rounded"
-                  />
-                  <input
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) =>
-                      setFormData({ ...formData, phone: e.target.value })
-                    }
-                    placeholder="Phone"
                     required
                     className="w-full p-2 border rounded"
                   />
