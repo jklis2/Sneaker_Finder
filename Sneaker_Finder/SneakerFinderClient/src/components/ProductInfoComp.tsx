@@ -1,5 +1,6 @@
 import { useState } from "react";
 import AddToCartConfirmation from "./AddToCartConfirmation";
+import { useAuth } from "../context/AuthContext";
 
 interface ProductInfoCompProps {
   id: string;
@@ -18,42 +19,59 @@ export default function ProductInfoComp({
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const { isAuthenticated, userData } = useAuth();
 
   const handleAddToCart = async () => {
     try {
       setIsLoading(true);
       setError("");
 
-      const userData = localStorage.getItem("userData");
-      if (!userData) {
+      if (!isAuthenticated || !userData) {
         setError("Please log in to add items to cart");
         return;
       }
 
-      const { _id: userId } = JSON.parse(userData);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError("Authentication token not found");
+        return;
+      }
+
+      // Log the request payload for debugging
+      const payload = {
+        userId: userData._id,
+        productId: id,
+        name,
+        price,
+        quantity,
+      };
+      console.log('Adding to cart with payload:', payload);
+
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/cart/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Authorization": `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          userId,
-          productId: id,
-          name,
-          price,
-          quantity,
-        }),
+        body: JSON.stringify(payload),
       });
 
+      const responseData = await response.json();
+      console.log('Server response:', responseData);
+
       if (!response.ok) {
-        throw new Error("Failed to add item to cart");
+        throw new Error(responseData.message || "Failed to add item to cart");
       }
 
       setShowConfirmation(true);
+      setError("");
     } catch (err) {
       console.error("Error adding to cart:", err);
-      setError("Failed to add item to cart. Please try again.");
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Failed to add item to cart. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -98,6 +116,10 @@ export default function ProductInfoComp({
         >
           {isLoading ? "Adding to Cart..." : "Add to Cart"}
         </button>
+
+        <div className="text-xs text-gray-500">
+          Product ID: {id}
+        </div>
       </div>
 
       {showConfirmation && (

@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../layouts/Navbar";
 import Footer from "../layouts/Footer";
+import { useAuth } from "../context/AuthContext";
 
+// eslint-disable-next-line react-hooks/exhaustive-deps
 interface ShippingMethod {
   id: string;
   name: string;
@@ -69,6 +71,7 @@ const paymentMethods: PaymentMethod[] = [
 
 export default function Checkout() {
   const navigate = useNavigate();
+  const { isAuthenticated, userData } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [cart, setCart] = useState<CartData>({ items: [], total: 0 });
@@ -89,348 +92,379 @@ export default function Checkout() {
   const [selectedPayment, setSelectedPayment] = useState(paymentMethods[0].id);
 
   useEffect(() => {
-    fetchCart();
-  }, []);
+    if (isAuthenticated && userData) {
+      fetchCart();
+      // Pre-fill form data with user information
+      setFormData(prevData => ({
+        ...prevData,
+        email: userData.email || "",
+        firstName: userData.firstName || "",
+        lastName: userData.lastName || "",
+      }));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, userData]);
 
   const fetchCart = async () => {
     try {
-      const userId = localStorage.getItem("userData")
-        ? JSON.parse(localStorage.getItem("userData")!)._id
-        : null;
+      setIsLoading(true);
+      setError("");
 
-      if (!userId) {
-        setError("Please log in to view your cart");
-        return;
+      if (!isAuthenticated || !userData?._id) {
+        throw new Error("Please log in to view your cart");
       }
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/cart?userId=${userId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error("Authentication token not found");
+      }
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/cart?userId=${userData._id}`,
+        {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
         }
-      });
+      );
 
       if (!response.ok) {
-        throw new Error("Failed to fetch cart");
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Failed to fetch cart");
       }
 
       const data = await response.json();
       setCart(data);
     } catch (error) {
       console.error("Error fetching cart:", error);
-      setError("Failed to load cart");
-    }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError("");
-
-    try {
-      const userData = localStorage.getItem("userData");
-      if (!userData) {
-        throw new Error("Please log in to complete checkout");
+      setError(error instanceof Error ? error.message : "Failed to load cart");
+      if (error instanceof Error && error.message.includes("Please log in")) {
+        navigate("/login");
       }
-
-      const { _id: userId } = JSON.parse(userData);
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/create`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          userId,
-          shippingDetails: {
-            ...formData,
-            shippingMethod: selectedShipping,
-          },
-          paymentMethod: selectedPayment,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to create order");
-      }
-
-      // Clear cart and redirect to order confirmation
-      navigate("/order-confirmation");
-    } catch (err) {
-      console.error("Checkout error:", err);
-      setError(err instanceof Error ? err.message : "Failed to process checkout");
     } finally {
       setIsLoading(false);
     }
   };
 
-  return (
-    <main>
-      <Navbar />
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Checkout</h1>
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
 
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded mb-6">
-            {error}
+    try {
+      if (!isAuthenticated || !userData?._id) {
+        throw new Error("Please log in to complete checkout");
+      }
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error("Authentication token not found");
+      }
+
+      // Add your checkout logic here
+      const selectedShippingMethod = shippingMethods.find(m => m.id === selectedShipping);
+      if (!selectedShippingMethod) {
+        throw new Error("Invalid shipping method selected");
+      }
+
+      const orderData = {
+        userId: userData._id,
+        items: cart.items,
+        shippingMethod: selectedShipping,
+        paymentMethod: selectedPayment,
+        shippingAddress: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          address: formData.address,
+          apartment: formData.apartment,
+          city: formData.city,
+          state: formData.state,
+          zipCode: formData.zipCode,
+          phone: formData.phone,
+        },
+        total: cart.total + selectedShippingMethod.price,
+      };
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Failed to create order");
+      }
+
+      // Redirect to success page or order confirmation
+      navigate("/order-confirmation");
+    } catch (error) {
+      console.error("Checkout error:", error);
+      setError(error instanceof Error ? error.message : "Failed to process checkout");
+      if (error instanceof Error && error.message.includes("Please log in")) {
+        navigate("/login");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <div className="flex-grow container mx-auto px-4 py-8">
+          <div className="text-center">Loading checkout...</div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <div className="flex-grow container mx-auto px-4 py-8">
+          <div className="text-center text-red-500">{error}</div>
+          <div className="text-center mt-4">
+            <button
+              onClick={() => navigate("/login")}
+              className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800"
+            >
+              Go to Login
+            </button>
           </div>
-        )}
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <form onSubmit={handleSubmit} className="space-y-8">
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Navbar />
+      <div className="flex-grow container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Checkout Form */}
+          <div className="space-y-8">
+            <h2 className="text-2xl font-bold">Checkout</h2>
+            <form onSubmit={handleSubmit} className="space-y-6">
               {/* Contact Information */}
-              <section className="bg-white p-6 rounded-lg shadow-sm border">
-                <h2 className="text-xl font-semibold mb-4">Contact Information</h2>
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
                 <div className="space-y-4">
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      required
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black"
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
-                        First Name
-                      </label>
-                      <input
-                        type="text"
-                        id="firstName"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleInputChange}
-                        required
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
-                        Last Name
-                      </label>
-                      <input
-                        type="text"
-                        id="lastName"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleInputChange}
-                        required
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black"
-                      />
-                    </div>
-                  </div>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
+                    placeholder="Email"
+                    required
+                    className="w-full p-2 border rounded"
+                  />
                 </div>
-              </section>
+              </div>
 
-              {/* Shipping Address */}
-              <section className="bg-white p-6 rounded-lg shadow-sm border">
-                <h2 className="text-xl font-semibold mb-4">Shipping Address</h2>
-                <div className="space-y-4">
-                  <div>
-                    <label htmlFor="address" className="block text-sm font-medium text-gray-700">
-                      Street Address
-                    </label>
-                    <input
-                      type="text"
-                      id="address"
-                      name="address"
-                      value={formData.address}
-                      onChange={handleInputChange}
-                      required
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="apartment" className="block text-sm font-medium text-gray-700">
-                      Apartment, suite, etc. (optional)
-                    </label>
-                    <input
-                      type="text"
-                      id="apartment"
-                      name="apartment"
-                      value={formData.apartment}
-                      onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black"
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <label htmlFor="city" className="block text-sm font-medium text-gray-700">
-                        City
-                      </label>
-                      <input
-                        type="text"
-                        id="city"
-                        name="city"
-                        value={formData.city}
-                        onChange={handleInputChange}
-                        required
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="state" className="block text-sm font-medium text-gray-700">
-                        State
-                      </label>
-                      <input
-                        type="text"
-                        id="state"
-                        name="state"
-                        value={formData.state}
-                        onChange={handleInputChange}
-                        required
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700">
-                        ZIP Code
-                      </label>
-                      <input
-                        type="text"
-                        id="zipCode"
-                        name="zipCode"
-                        value={formData.zipCode}
-                        onChange={handleInputChange}
-                        required
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                      Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      required
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black"
-                    />
-                  </div>
+              {/* Shipping Information */}
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Shipping Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <input
+                    type="text"
+                    value={formData.firstName}
+                    onChange={(e) =>
+                      setFormData({ ...formData, firstName: e.target.value })
+                    }
+                    placeholder="First Name"
+                    required
+                    className="w-full p-2 border rounded"
+                  />
+                  <input
+                    type="text"
+                    value={formData.lastName}
+                    onChange={(e) =>
+                      setFormData({ ...formData, lastName: e.target.value })
+                    }
+                    placeholder="Last Name"
+                    required
+                    className="w-full p-2 border rounded"
+                  />
+                  <input
+                    type="text"
+                    value={formData.address}
+                    onChange={(e) =>
+                      setFormData({ ...formData, address: e.target.value })
+                    }
+                    placeholder="Address"
+                    required
+                    className="w-full p-2 border rounded md:col-span-2"
+                  />
+                  <input
+                    type="text"
+                    value={formData.apartment}
+                    onChange={(e) =>
+                      setFormData({ ...formData, apartment: e.target.value })
+                    }
+                    placeholder="Apartment, suite, etc. (optional)"
+                    className="w-full p-2 border rounded md:col-span-2"
+                  />
+                  <input
+                    type="text"
+                    value={formData.city}
+                    onChange={(e) =>
+                      setFormData({ ...formData, city: e.target.value })
+                    }
+                    placeholder="City"
+                    required
+                    className="w-full p-2 border rounded"
+                  />
+                  <input
+                    type="text"
+                    value={formData.state}
+                    onChange={(e) =>
+                      setFormData({ ...formData, state: e.target.value })
+                    }
+                    placeholder="State"
+                    required
+                    className="w-full p-2 border rounded"
+                  />
+                  <input
+                    type="text"
+                    value={formData.zipCode}
+                    onChange={(e) =>
+                      setFormData({ ...formData, zipCode: e.target.value })
+                    }
+                    placeholder="ZIP Code"
+                    required
+                    className="w-full p-2 border rounded"
+                  />
+                  <input
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) =>
+                      setFormData({ ...formData, phone: e.target.value })
+                    }
+                    placeholder="Phone"
+                    required
+                    className="w-full p-2 border rounded"
+                  />
                 </div>
-              </section>
+              </div>
 
               {/* Shipping Method */}
-              <section className="bg-white p-6 rounded-lg shadow-sm border">
-                <h2 className="text-xl font-semibold mb-4">Shipping Method</h2>
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Shipping Method</h3>
                 <div className="space-y-4">
                   {shippingMethods.map((method) => (
                     <label
                       key={method.id}
-                      className={`flex items-center justify-between p-4 border rounded-lg cursor-pointer transition-colors ${
-                        selectedShipping === method.id
-                          ? "border-black bg-gray-50"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
+                      className="flex items-center justify-between p-4 border rounded cursor-pointer hover:bg-gray-50"
                     >
                       <div className="flex items-center">
                         <input
                           type="radio"
-                          name="shippingMethod"
+                          name="shipping"
                           value={method.id}
                           checked={selectedShipping === method.id}
                           onChange={(e) => setSelectedShipping(e.target.value)}
-                          className="h-4 w-4 text-black focus:ring-black border-gray-300"
+                          className="mr-3"
                         />
-                        <div className="ml-4">
+                        <div>
                           <div className="font-medium">{method.name}</div>
-                          <div className="text-sm text-gray-500">{method.estimatedDays}</div>
+                          <div className="text-sm text-gray-500">
+                            {method.estimatedDays}
+                          </div>
                         </div>
                       </div>
                       <div className="font-medium">${method.price.toFixed(2)}</div>
                     </label>
                   ))}
                 </div>
-              </section>
+              </div>
 
               {/* Payment Method */}
-              <section className="bg-white p-6 rounded-lg shadow-sm border">
-                <h2 className="text-xl font-semibold mb-4">Payment Method</h2>
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Payment Method</h3>
                 <div className="space-y-4">
                   {paymentMethods.map((method) => (
                     <label
                       key={method.id}
-                      className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${
-                        selectedPayment === method.id
-                          ? "border-black bg-gray-50"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
+                      className="flex items-center p-4 border rounded cursor-pointer hover:bg-gray-50"
                     >
                       <input
                         type="radio"
-                        name="paymentMethod"
+                        name="payment"
                         value={method.id}
                         checked={selectedPayment === method.id}
                         onChange={(e) => setSelectedPayment(e.target.value)}
-                        className="h-4 w-4 text-black focus:ring-black border-gray-300"
+                        className="mr-3"
                       />
-                      <span className="ml-2">{method.icon}</span>
-                      <span className="ml-2">{method.name}</span>
+                      <div className="font-medium">{method.name}</div>
                     </label>
                   ))}
                 </div>
-              </section>
-
-              {/* Submit Button */}
-              <div className="flex justify-end">
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="bg-black text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors disabled:bg-gray-400"
-                >
-                  {isLoading ? "Processing..." : "Place Order"}
-                </button>
               </div>
+
+              <button
+                type="submit"
+                disabled={isLoading || cart.items.length === 0}
+                className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition-colors disabled:bg-gray-400"
+              >
+                {isLoading ? "Processing..." : "Place Order"}
+              </button>
             </form>
           </div>
 
           {/* Order Summary */}
-          <div className="lg:col-span-1">
-            <div className="bg-white p-6 rounded-lg shadow-sm border sticky top-8">
-              <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-              <div className="space-y-4 mb-4">
-                {cart.items.map((item) => (
-                  <div key={item.productId} className="flex justify-between items-center py-2 border-b">
-                    <div>
-                      <div className="font-medium">{item.name}</div>
-                      <div className="text-sm text-gray-500">Quantity: {item.quantity}</div>
+          <div className="bg-gray-50 p-6 rounded-lg">
+            <h3 className="text-xl font-bold mb-4">Order Summary</h3>
+            <div className="space-y-4">
+              {cart.items.map((item) => (
+                <div
+                  key={item.productId}
+                  className="flex justify-between items-center"
+                >
+                  <div>
+                    <div className="font-medium">{item.name}</div>
+                    <div className="text-sm text-gray-500">
+                      Quantity: {item.quantity}
                     </div>
-                    <div className="font-medium">${(item.price * item.quantity).toFixed(2)}</div>
                   </div>
-                ))}
-              </div>
-
-              <div className="space-y-2 pt-4 border-t">
-                <div className="flex justify-between">
-                  <span>Subtotal</span>
-                  <span>${cart.total.toFixed(2)}</span>
+                  <div className="font-medium">
+                    ${(item.price * item.quantity).toFixed(2)}
+                  </div>
                 </div>
-                <div className="flex justify-between">
-                  <span>Shipping</span>
-                  <span>${shippingMethods.find((m) => m.id === selectedShipping)?.price.toFixed(2) || '0.00'}</span>
+              ))}
+              <div className="border-t pt-4">
+                <div className="flex justify-between mb-2">
+                  <div>Subtotal</div>
+                  <div>${cart.total.toFixed(2)}</div>
                 </div>
-                <div className="flex justify-between font-semibold text-lg pt-2 border-t">
-                  <span>Total</span>
-                  <span>
-                    ${(cart.total + (shippingMethods.find((m) => m.id === selectedShipping)?.price || 0)).toFixed(2)}
-                  </span>
+                <div className="flex justify-between mb-2">
+                  <div>Shipping</div>
+                  <div>
+                    $
+                    {(
+                      shippingMethods.find((m) => m.id === selectedShipping)
+                        ?.price || 0
+                    ).toFixed(2)}
+                  </div>
+                </div>
+                <div className="flex justify-between font-bold text-lg">
+                  <div>Total</div>
+                  <div>
+                    $
+                    {(
+                      cart.total +
+                      (shippingMethods.find((m) => m.id === selectedShipping)
+                        ?.price || 0)
+                    ).toFixed(2)}
+                  </div>
                 </div>
               </div>
             </div>
@@ -438,6 +472,6 @@ export default function Checkout() {
         </div>
       </div>
       <Footer />
-    </main>
+    </div>
   );
 }

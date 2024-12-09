@@ -6,24 +6,13 @@ import cartIcon from "../assets/icons/cart.svg";
 import ordersIcon from "../assets/icons/orders.svg";
 import settingsIcon from "../assets/icons/settings.svg";
 import logoutIcon from "../assets/icons/logout.svg";
-
-interface UserData {
-  firstName: string;
-  lastName: string;
-}
+import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
-  const [userData, setUserData] = useState<UserData | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const storedUserData = localStorage.getItem("userData");
-    if (storedUserData) {
-      setUserData(JSON.parse(storedUserData));
-    }
-  }, []);
+  const { userData, logout } = useAuth();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -39,10 +28,7 @@ export default function Navbar() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userData");
-    localStorage.removeItem("email");
-    setUserData(null);
+    logout();
     navigate("/");
   };
 

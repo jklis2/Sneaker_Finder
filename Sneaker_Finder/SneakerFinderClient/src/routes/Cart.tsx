@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../layouts/Navbar";
 import Footer from "../layouts/Footer";
+import { useAuth } from "../context/AuthContext";
 
 interface CartItem {
   productId: string;
@@ -17,42 +18,52 @@ interface CartData {
 
 export default function Cart() {
   const navigate = useNavigate();
+  const { userData, isAuthenticated } = useAuth();
   const [cart, setCart] = useState<CartData>({ items: [], total: 0 });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetchCart();
-  }, []);
+    if (isAuthenticated && userData) {
+      fetchCart();
+    } else {
+      setError("Please log in to view your cart");
+      setIsLoading(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, userData]);
 
   const fetchCart = async () => {
     try {
-      const userId = localStorage.getItem("userData")
-        ? JSON.parse(localStorage.getItem("userData")!)._id
-        : null;
-
-      if (!userId) {
-        setError("Please log in to view your cart");
-        setIsLoading(false);
-        return;
+      if (!userData?._id) {
+        throw new Error("User ID not found");
       }
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/cart?userId=${userId}`, {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error("Authentication token not found");
+      }
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/cart?userId=${userData._id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         }
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch cart");
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Failed to fetch cart");
       }
 
       const data = await response.json();
       setCart(data);
+      setError("");
     } catch (error) {
       console.error("Error fetching cart:", error);
-      setError("Failed to load cart");
+      setError(error instanceof Error ? error.message : "Failed to load cart");
+      setCart({ items: [], total: 0 });
     } finally {
       setIsLoading(false);
     }
@@ -60,114 +71,130 @@ export default function Cart() {
 
   const updateQuantity = async (productId: string, quantity: number) => {
     try {
-      const userId = JSON.parse(localStorage.getItem("userData")!)._id;
+      if (!userData?._id) {
+        throw new Error("User ID not found");
+      }
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error("Authentication token not found");
+      }
+
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/cart/update`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
-          userId,
+          userId: userData._id,
           productId,
           quantity,
         }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to update cart");
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Failed to update cart");
       }
 
       const data = await response.json();
       setCart(data);
+      setError("");
     } catch (error) {
       console.error("Error updating cart:", error);
-      alert("Failed to update cart");
+      setError(error instanceof Error ? error.message : "Failed to update cart");
     }
   };
 
   const removeItem = async (productId: string) => {
     try {
-      const userId = JSON.parse(localStorage.getItem("userData")!)._id;
+      if (!userData?._id) {
+        throw new Error("User ID not found");
+      }
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error("Authentication token not found");
+      }
+
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/cart/remove`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
-          userId,
+          userId: userData._id,
           productId,
         }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to remove item");
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Failed to remove item");
       }
 
       const data = await response.json();
       setCart(data);
+      setError("");
     } catch (error) {
       console.error("Error removing item:", error);
-      alert("Failed to remove item");
+      setError(error instanceof Error ? error.message : "Failed to remove item");
     }
   };
 
   if (isLoading) {
     return (
-      <>
+      <div className="min-h-screen flex flex-col">
         <Navbar />
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
+        <div className="flex-grow container mx-auto px-4 py-8">
+          <div className="text-center">Loading cart...</div>
         </div>
         <Footer />
-      </>
-    );
-  }
-
-  if (error) {
-    return (
-      <>
-        <Navbar />
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-red-500 text-xl">{error}</div>
-        </div>
-        <Footer />
-      </>
+      </div>
     );
   }
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <Navbar />
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
-        {cart.items.length === 0 ? (
-          <div className="text-center text-gray-500">Your cart is empty</div>
+      <div className="flex-grow container mx-auto px-4 py-8">
+        {error ? (
+          <div className="text-red-500 text-center mb-4">{error}</div>
+        ) : cart.items.length === 0 ? (
+          <div className="text-center">
+            <p className="text-gray-600 mb-4">Your cart is empty</p>
+            <button
+              onClick={() => navigate("/")}
+              className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800"
+            >
+              Continue Shopping
+            </button>
+          </div>
         ) : (
-          <div className="space-y-8">
+          <div className="space-y-6">
             {cart.items.map((item) => (
               <div
                 key={item.productId}
-                className="flex items-center justify-between border-b pb-4"
+                className="flex items-center justify-between p-4 bg-white rounded-lg shadow"
               >
-                <div className="flex items-center space-x-4">
-                  <div className="w-20 h-20 bg-gray-200 rounded"></div>
-                  <div>
-                    <h3 className="font-semibold">{item.name}</h3>
-                    <p className="text-gray-600">${item.price.toFixed(2)}</p>
-                  </div>
+                <div>
+                  <h3 className="font-semibold">{item.name}</h3>
+                  <p className="text-gray-600">${item.price.toFixed(2)}</p>
                 </div>
                 <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center border rounded">
                     <button
-                      onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                      className="px-2 py-1 border rounded"
+                      className="px-3 py-1 border-r hover:bg-gray-100"
+                      onClick={() => updateQuantity(item.productId, Math.max(0, item.quantity - 1))}
                     >
                       -
                     </button>
-                    <span>{item.quantity}</span>
+                    <span className="px-4 py-1">{item.quantity}</span>
                     <button
+                      className="px-3 py-1 border-l hover:bg-gray-100"
                       onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                      className="px-2 py-1 border rounded"
                     >
                       +
                     </button>
@@ -181,22 +208,19 @@ export default function Cart() {
                 </div>
               </div>
             ))}
-            <div className="flex justify-between items-center pt-4">
-              <span className="text-xl font-semibold">Total:</span>
-              <span className="text-xl">${cart.total.toFixed(2)}</span>
+            <div className="text-right text-xl font-bold">
+              Total: ${cart.total.toFixed(2)}
             </div>
-            <div className="mt-8 flex justify-end">
-              <button
-                onClick={() => navigate("/checkout")}
-                className="bg-black text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
-              >
-                Proceed to Checkout
-              </button>
-            </div>
+            <button
+              onClick={() => navigate("/checkout")}
+              className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800"
+            >
+              Checkout
+            </button>
           </div>
         )}
       </div>
       <Footer />
-    </>
+    </div>
   );
 }

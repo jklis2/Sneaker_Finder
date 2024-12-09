@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AddToCartConfirmation from "./AddToCartConfirmation";
+import { useAuth } from "../context/AuthContext";
 
 interface ProductCardProps {
   _id: string;
@@ -19,44 +20,61 @@ export default function ProductCard({
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { isAuthenticated, userData } = useAuth();
 
   const handleAddToCart = async () => {
     setIsLoading(true);
     setError("");
     try {
-      const userData = localStorage.getItem("userData");
-      if (!userData) {
+      if (!isAuthenticated || !userData) {
         setError("Please log in to add items to cart");
         return;
       }
 
-      const { _id: userId } = JSON.parse(userData);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError("Authentication token not found");
+        return;
+      }
+
+      // Log the request payload for debugging
+      const payload = {
+        userId: userData._id,
+        productId: _id,
+        name,
+        price,
+        quantity: 1,
+      };
+      console.log('Adding to cart with payload:', payload);
+
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/cart/add`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Authorization": `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            userId,
-            productId: _id,
-            name,
-            price,
-            quantity: 1,
-          }),
+          body: JSON.stringify(payload),
         }
       );
 
+      const responseData = await response.json();
+      console.log('Server response:', responseData);
+
       if (!response.ok) {
-        throw new Error("Failed to add item to cart");
+        throw new Error(responseData.message || "Failed to add item to cart");
       }
 
       setShowConfirmation(true);
+      setError("");
     } catch (error) {
       console.error("Error adding to cart:", error);
-      setError("Failed to add item to cart");
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("Failed to add item to cart");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -101,20 +119,19 @@ export default function ProductCard({
             <button
               onClick={handleAddToCart}
               disabled={isLoading}
-              className={`flex-1 ${
-                size === "normal" ? "py-2 px-4" : "py-1.5 px-3"
-              } bg-black hover:bg-gray-800 text-white font-bold rounded transition-colors duration-200 disabled:bg-gray-400`}
+              className="flex-1 bg-black text-white py-2 rounded hover:bg-gray-800 transition-colors disabled:bg-gray-400"
             >
               {isLoading ? "Adding..." : "Add to Cart"}
             </button>
             <button
               onClick={handleDetails}
-              className={`flex-1 ${
-                size === "normal" ? "py-2 px-4" : "py-1.5 px-3"
-              } border border-black hover:bg-gray-100 font-bold rounded transition-colors duration-200`}
+              className="flex-1 border border-black text-black py-2 rounded hover:bg-gray-100 transition-colors"
             >
               Details
             </button>
+          </div>
+          <div className="text-xs text-gray-500 mt-2">
+            Product ID: {_id}
           </div>
         </div>
       </div>

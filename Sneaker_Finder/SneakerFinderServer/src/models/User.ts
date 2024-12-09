@@ -1,15 +1,37 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 import bcrypt from "bcrypt";
 
+interface IShippingAddress {
+  street: string;
+  number: string;
+  apartmentNumber?: string;
+  city: string;
+  postalCode: string;
+  province: string;
+  phoneNumber: string;
+}
+
 export interface IUser extends Document {
+  _id: Types.ObjectId;
   firstName: string;
   lastName: string;
   email: string;
   gender: "Male" | "Female";
   birthDate: Date;
   password: string;
+  shippingAddresses?: IShippingAddress[];
   matchPassword: (enteredPassword: string) => Promise<boolean>;
 }
+
+const ShippingAddressSchema: Schema = new Schema({
+  street: { type: String, required: true },
+  number: { type: String, required: true },
+  apartmentNumber: { type: String, required: false },
+  city: { type: String, required: true },
+  postalCode: { type: String, required: true },
+  province: { type: String, required: true },
+  phoneNumber: { type: String, required: true },
+});
 
 const UserSchema: Schema = new Schema(
   {
@@ -19,6 +41,7 @@ const UserSchema: Schema = new Schema(
     gender: { type: String, required: true, enum: ["Male", "Female"] },
     birthDate: { type: Date, required: true },
     password: { type: String, required: true },
+    shippingAddresses: { type: [ShippingAddressSchema], required: false, default: [] },
   },
   {
     timestamps: true,

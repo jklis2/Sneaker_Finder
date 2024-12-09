@@ -1,8 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Input from "../components/Input";
 import Button from "../components/Button";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import {
+  getCurrentUserData,
+  updateUserEmail,
+  updateUserPassword,
+  addShippingAddress,
+  deleteShippingAddress,
+  updateShippingAddress,
+  type ShippingAddress,
+} from "../services/userService";
 
 export default function SettingsForm() {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
   const [userData, setUserData] = useState({
     currentEmail: "",
     newEmail: "",
@@ -17,18 +34,200 @@ export default function SettingsForm() {
     },
   });
 
+  const emptyAddress: ShippingAddress = {
+    street: "",
+    number: "",
+    apartmentNumber: "",
+    city: "",
+    postalCode: "",
+    province: "",
+    phoneNumber: "",
+  };
+
+  const [addresses, setAddresses] = useState<ShippingAddress[]>([]);
+  const [newAddress, setNewAddress] = useState<ShippingAddress>(emptyAddress);
+  const [editingAddress, setEditingAddress] = useState<{
+    index: number;
+    address: ShippingAddress;
+  } | null>(null);
+  const [isAddingAddress, setIsAddingAddress] = useState(false);
+
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/auth/login');
+    }
+  }, [isAuthenticated, navigate]);
+
+  // Fetch user data on component mount
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!isAuthenticated) return;
+      
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        const data = await getCurrentUserData();
+        setUserData((prev) => ({
+          ...prev,
+          currentEmail: data.email,
+        }));
+        setAddresses(data.shippingAddresses || []);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('Failed to load user data');
+        }
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [isAuthenticated]);
+
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    const { name, value, type } = e.target as HTMLInputElement;
-    setUserData((prev) => ({
+    const { name, value, type } = e.target;
+    if (type === "checkbox") {
+      const target = e.target as HTMLInputElement;
+      setUserData((prev) => ({
+        ...prev,
+        [name]: target.checked,
+      }));
+    } else {
+      setUserData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handleAddressChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setNewAddress((prev) => ({
       ...prev,
-      [name]:
-        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+      [name]: value,
     }));
   };
+
+  const handleEditAddress = (index: number) => {
+    setEditingAddress({
+      index,
+      address: { ...addresses[index] },
+    });
+  };
+
+  const handleEditAddressChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    if (editingAddress) {
+      setEditingAddress({
+        ...editingAddress,
+        address: {
+          ...editingAddress.address,
+          [name]: value,
+        },
+      });
+    }
+  };
+
+  const handleUpdateAddress = async () => {
+    if (!editingAddress) return;
+
+    try {
+      setError(null);
+      await updateShippingAddress(editingAddress.index, editingAddress.address);
+      setAddresses((prev) =>
+        prev.map((addr, idx) =>
+          idx === editingAddress.index ? editingAddress.address : addr
+        )
+      );
+      setEditingAddress(null);
+      setSuccessMessage("Address updated successfully");
+    } catch (err) {
+      setError("Failed to update address");
+      console.error(err);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingAddress(null);
+  };
+
+  const handleUpdateEmail = async () => {
+    try {
+      setError(null);
+      await updateUserEmail(userData.newEmail);
+      setUserData((prev) => ({
+        ...prev,
+        currentEmail: userData.newEmail,
+        newEmail: "",
+      }));
+      setSuccessMessage("Email updated successfully");
+    } catch (err) {
+      setError("Failed to update email");
+      console.error(err);
+    }
+  };
+
+  const handleUpdatePassword = async () => {
+    try {
+      if (userData.newPassword !== userData.confirmPassword) {
+        setError("New passwords don't match");
+        return;
+      }
+      setError(null);
+      await updateUserPassword(userData.currentPassword, userData.newPassword);
+      setUserData((prev) => ({
+        ...prev,
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      }));
+      setSuccessMessage("Password updated successfully");
+    } catch (err) {
+      setError("Failed to update password");
+      console.error(err);
+    }
+  };
+
+  const handleAddAddress = async () => {
+    try {
+      setError(null);
+      await addShippingAddress(newAddress);
+      setAddresses((prev) => [...prev, newAddress]);
+      setNewAddress(emptyAddress);
+      setIsAddingAddress(false);
+      setSuccessMessage("Address added successfully");
+    } catch (err) {
+      setError("Failed to add address");
+      console.error(err);
+    }
+  };
+
+  const handleDeleteAddress = async (index: number) => {
+    try {
+      setError(null);
+      await deleteShippingAddress(index);
+      setAddresses((prev) => prev.filter((_, i) => i !== index));
+      setSuccessMessage("Address deleted successfully");
+    } catch (err) {
+      setError("Failed to delete address");
+      console.error(err);
+    }
+  };
+
+  if (isLoading) {
+    return <div className="text-center py-12">Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
@@ -36,6 +235,18 @@ export default function SettingsForm() {
         <h2 className="text-3xl font-semibold text-gray-800 mb-8 text-center">
           Ustawienia konta
         </h2>
+
+        {error && (
+          <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+            {error}
+          </div>
+        )}
+
+        {successMessage && (
+          <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+            {successMessage}
+          </div>
+        )}
 
         <div className="space-y-12">
           {/* Profile Section */}
@@ -66,7 +277,7 @@ export default function SettingsForm() {
                 type="email"
                 value={userData.currentEmail}
                 onChange={handleChange}
-                placeholder="jan.kowalski@example.com"
+                disabled
               />
               <Input
                 label="Nowy email"
@@ -78,7 +289,11 @@ export default function SettingsForm() {
                 placeholder="nowy.email@example.com"
               />
               <div className="flex justify-end pt-2">
-                <Button name="Zmień email" />
+                <Button
+                  name="Zmień email"
+                  onClick={handleUpdateEmail}
+                  disabled={!userData.newEmail}
+                />
               </div>
             </div>
           </section>
@@ -116,8 +331,235 @@ export default function SettingsForm() {
                 />
               </div>
               <div className="flex justify-end pt-2">
-                <Button name="Zmień hasło" />
+                <Button
+                  name="Zmień hasło"
+                  onClick={handleUpdatePassword}
+                  disabled={
+                    !userData.currentPassword ||
+                    !userData.newPassword ||
+                    !userData.confirmPassword
+                  }
+                />
               </div>
+            </div>
+          </section>
+
+          {/* Shipping Addresses Section */}
+          <section>
+            <h3 className="text-xl font-medium text-gray-800 mb-4 pb-2 border-b">
+              Adresy dostawy
+            </h3>
+            <div className="space-y-6">
+              {/* Existing Addresses */}
+              {addresses.map((address, index) => (
+                <div
+                  key={index}
+                  className="p-4 border rounded-lg bg-gray-50 relative"
+                >
+                  {editingAddress?.index === index ? (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Input
+                          label="Ulica"
+                          id={`edit-street-${index}`}
+                          name="street"
+                          type="text"
+                          value={editingAddress.address.street}
+                          onChange={handleEditAddressChange}
+                        />
+                        <Input
+                          label="Numer"
+                          id={`edit-number-${index}`}
+                          name="number"
+                          type="text"
+                          value={editingAddress.address.number}
+                          onChange={handleEditAddressChange}
+                        />
+                        <Input
+                          label="Numer mieszkania (opcjonalnie)"
+                          id={`edit-apartmentNumber-${index}`}
+                          name="apartmentNumber"
+                          type="text"
+                          value={editingAddress.address.apartmentNumber || ""}
+                          onChange={handleEditAddressChange}
+                        />
+                        <Input
+                          label="Miasto"
+                          id={`edit-city-${index}`}
+                          name="city"
+                          type="text"
+                          value={editingAddress.address.city}
+                          onChange={handleEditAddressChange}
+                        />
+                        <Input
+                          label="Kod pocztowy"
+                          id={`edit-postalCode-${index}`}
+                          name="postalCode"
+                          type="text"
+                          value={editingAddress.address.postalCode}
+                          onChange={handleEditAddressChange}
+                        />
+                        <Input
+                          label="Województwo"
+                          id={`edit-province-${index}`}
+                          name="province"
+                          type="text"
+                          value={editingAddress.address.province}
+                          onChange={handleEditAddressChange}
+                        />
+                        <Input
+                          label="Numer telefonu"
+                          id={`edit-phoneNumber-${index}`}
+                          name="phoneNumber"
+                          type="tel"
+                          value={editingAddress.address.phoneNumber}
+                          onChange={handleEditAddressChange}
+                        />
+                      </div>
+                      <div className="flex justify-end space-x-4">
+                        <Button name="Anuluj" onClick={handleCancelEdit} />
+                        <Button name="Zapisz zmiany" onClick={handleUpdateAddress} />
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="absolute top-2 right-2 flex space-x-2">
+                        <button
+                          onClick={() => handleEditAddress(index)}
+                          className="text-blue-500 hover:text-blue-700"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => handleDeleteAddress(index)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <p>
+                          <span className="font-medium">Ulica:</span> {address.street}{" "}
+                          {address.number}
+                          {address.apartmentNumber && ` m. ${address.apartmentNumber}`}
+                        </p>
+                        <p>
+                          <span className="font-medium">Miasto:</span> {address.city}
+                        </p>
+                        <p>
+                          <span className="font-medium">Kod pocztowy:</span>{" "}
+                          {address.postalCode}
+                        </p>
+                        <p>
+                          <span className="font-medium">Województwo:</span>{" "}
+                          {address.province}
+                        </p>
+                        <p>
+                          <span className="font-medium">Telefon:</span>{" "}
+                          {address.phoneNumber}
+                        </p>
+                      </div>
+                    </>
+                  )}
+                </div>
+              ))}
+
+              {/* Add New Address Form */}
+              {isAddingAddress ? (
+                <div className="p-4 border rounded-lg">
+                  <h4 className="text-lg font-medium mb-4">Nowy adres</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Input
+                      label="Ulica"
+                      id="street"
+                      name="street"
+                      type="text"
+                      value={newAddress.street}
+                      onChange={handleAddressChange}
+                    />
+                    <Input
+                      label="Numer"
+                      id="number"
+                      name="number"
+                      type="text"
+                      value={newAddress.number}
+                      onChange={handleAddressChange}
+                    />
+                    <Input
+                      label="Numer mieszkania (opcjonalnie)"
+                      id="apartmentNumber"
+                      name="apartmentNumber"
+                      type="text"
+                      value={newAddress.apartmentNumber || ""}
+                      onChange={handleAddressChange}
+                    />
+                    <Input
+                      label="Miasto"
+                      id="city"
+                      name="city"
+                      type="text"
+                      value={newAddress.city}
+                      onChange={handleAddressChange}
+                    />
+                    <Input
+                      label="Kod pocztowy"
+                      id="postalCode"
+                      name="postalCode"
+                      type="text"
+                      value={newAddress.postalCode}
+                      onChange={handleAddressChange}
+                    />
+                    <Input
+                      label="Województwo"
+                      id="province"
+                      name="province"
+                      type="text"
+                      value={newAddress.province}
+                      onChange={handleAddressChange}
+                    />
+                    <Input
+                      label="Numer telefonu"
+                      id="phoneNumber"
+                      name="phoneNumber"
+                      type="tel"
+                      value={newAddress.phoneNumber}
+                      onChange={handleAddressChange}
+                    />
+                  </div>
+                  <div className="flex justify-end space-x-4 mt-4">
+                    <Button
+                      name="Anuluj"
+                      onClick={() => setIsAddingAddress(false)}
+                    />
+                    <Button name="Dodaj adres" onClick={handleAddAddress} />
+                  </div>
+                </div>
+              ) : (
+                <div className="flex justify-start">
+                  <Button
+                    name="Dodaj nowy adres"
+                    onClick={() => setIsAddingAddress(true)}
+                  />
+                </div>
+              )}
             </div>
           </section>
 
