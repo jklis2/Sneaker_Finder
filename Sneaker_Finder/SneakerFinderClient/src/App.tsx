@@ -23,7 +23,8 @@ export default function App() {
         <Route path="/auth/login" element={<Login />} />
         <Route path="/auth/register" element={<Register />} />
         <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
-        <Route path="/brand" element={<Brand />} />
+        <Route path="/brands" element={<AllBrands />} />
+        <Route path="/:brandName/products" element={<Brand />} />
         <Route path="/product/:id" element={<Product />} />
         <Route path="/styleAdvisor" element={<StyleAdvisor />} />
         <Route path="/cart" element={<Cart />} />
@@ -32,8 +33,7 @@ export default function App() {
         <Route path="/orders" element={<Orders />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/allBrands" element={<AllBrands />} />
-        <Route path="/allProducts" element={<AllProducts />} />
+        <Route path="/products" element={<AllProducts />} />
       </Routes>
     </>
   );

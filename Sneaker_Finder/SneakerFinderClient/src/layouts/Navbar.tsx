@@ -16,7 +16,10 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsDropdownOpen(false);
       }
     };
@@ -50,13 +53,16 @@ export default function Navbar() {
           <Link to="/" className="text-gray-600 hover:text-gray-800 pl-16">
             Nowości
           </Link>
-          <Link to="/allBrands" className="text-gray-600 hover:text-gray-800">
+          <Link to="/brands" className="text-gray-600 hover:text-gray-800">
             Marki
           </Link>
-          <Link to="/allProducts" className="text-gray-600 hover:text-gray-800">
+          <Link to="/products" className="text-gray-600 hover:text-gray-800">
             Produkty
           </Link>
-          <Link to="/styleAdvisor" className="text-gray-600 hover:text-gray-800">
+          <Link
+            to="/styleAdvisor"
+            className="text-gray-600 hover:text-gray-800"
+          >
             Asystent modowy
           </Link>
           <Link to="/contact" className="text-gray-600 hover:text-gray-800">
@@ -80,7 +86,7 @@ export default function Navbar() {
                   aria-label="User menu"
                 />
                 {isDropdownOpen && (
-                  <div 
+                  <div
                     className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50"
                     role="menu"
                     aria-orientation="vertical"
@@ -92,7 +98,12 @@ export default function Navbar() {
                           className="flex items-center px-4 py-2 hover:bg-gray-100"
                           role="menuitem"
                         >
-                          <img src={cartIcon} alt="" className="w-5 h-5 mr-2" aria-hidden="true" />
+                          <img
+                            src={cartIcon}
+                            alt=""
+                            className="w-5 h-5 mr-2"
+                            aria-hidden="true"
+                          />
                           Koszyk
                         </Link>
                       </li>
@@ -102,7 +113,12 @@ export default function Navbar() {
                           className="flex items-center px-4 py-2 hover:bg-gray-100"
                           role="menuitem"
                         >
-                          <img src={ordersIcon} alt="" className="w-5 h-5 mr-2" aria-hidden="true" />
+                          <img
+                            src={ordersIcon}
+                            alt=""
+                            className="w-5 h-5 mr-2"
+                            aria-hidden="true"
+                          />
                           Moje zamówienia
                         </Link>
                       </li>
@@ -112,7 +128,12 @@ export default function Navbar() {
                           className="flex items-center px-4 py-2 hover:bg-gray-100"
                           role="menuitem"
                         >
-                          <img src={settingsIcon} alt="" className="w-5 h-5 mr-2" aria-hidden="true" />
+                          <img
+                            src={settingsIcon}
+                            alt=""
+                            className="w-5 h-5 mr-2"
+                            aria-hidden="true"
+                          />
                           Ustawienia
                         </Link>
                       </li>
@@ -122,7 +143,12 @@ export default function Navbar() {
                           className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100"
                           role="menuitem"
                         >
-                          <img src={logoutIcon} alt="" className="w-5 h-5 mr-2" aria-hidden="true" />
+                          <img
+                            src={logoutIcon}
+                            alt=""
+                            className="w-5 h-5 mr-2"
+                            aria-hidden="true"
+                          />
                           Wyloguj
                         </button>
                       </li>
