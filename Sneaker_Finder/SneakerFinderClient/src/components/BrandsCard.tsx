@@ -18,7 +18,7 @@ export default function BrandsCard({ name, variant = 'default' }: BrandsCardProp
 
   const cardClasses = variant === 'large' 
     ? "flex flex-col items-center p-4 bg-white rounded-xl shadow-lg w-72 hover:shadow-xl transition-shadow duration-300"
-    : "flex flex-col items-center p-2 bg-gray-100 rounded-lg shadow-sm w-1/5";
+    : "flex flex-col items-center p-2 bg-gray-100 rounded-lg shadow-sm w-[350px]";
 
   const imageClasses = variant === 'large'
     ? "w-full h-40 bg-red-500 flex items-center justify-center rounded-lg mb-4"

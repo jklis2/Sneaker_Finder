@@ -53,6 +53,9 @@ export default function Navbar() {
           <Link to="/" className="text-gray-600 hover:text-gray-800 pl-16">
             Nowości
           </Link>
+          <Link to="/" className="text-gray-600 hover:text-gray-800">
+            Promocje
+          </Link>
           <Link to="/brands" className="text-gray-600 hover:text-gray-800">
             Marki
           </Link>
@@ -65,11 +68,8 @@ export default function Navbar() {
           >
             Asystent modowy
           </Link>
-          <Link to="/contact" className="text-gray-600 hover:text-gray-800">
+          <Link to="/contact" className="text-gray-600 hover:text-gray-800 pr-16">
             Kontakt
-          </Link>
-          <Link to="/" className="text-gray-600 hover:text-gray-800 pr-16">
-            Promocje
           </Link>
 
           {userData ? (
