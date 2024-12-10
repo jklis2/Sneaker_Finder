@@ -22,7 +22,7 @@ const BESTSELLER_PRODUCTS = [
 export default function Bestsellers() {
   return (
     <>
-      <H1 className="px-12">Bestsellery</H1>
+      <H1 className="px-12 mt-32">Bestsellery</H1>
       <div className="flex justify-around items-center py-10">
         {BESTSELLER_PRODUCTS.map(product => (
           <ProductCard

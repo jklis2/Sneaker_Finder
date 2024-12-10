@@ -39,6 +39,13 @@ export default function Navbar() {
     setIsDropdownOpen((prev) => !prev);
   };
 
+  const handleScroll = (elementId: string) => {
+    const element = document.getElementById(elementId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <header>
       <nav
@@ -50,12 +57,18 @@ export default function Navbar() {
             <img src={logo} alt="Sneaker Finder Logo" className="w-32 h-18" />
           </Link>
 
-          <Link to="/" className="text-gray-600 hover:text-gray-800 pl-16">
+          <button 
+            onClick={() => handleScroll('latest-products')} 
+            className="text-gray-600 hover:text-gray-800 pl-16"
+          >
             Nowości
-          </Link>
-          <Link to="/" className="text-gray-600 hover:text-gray-800">
+          </button>
+          <button 
+            onClick={() => handleScroll('promotions')} 
+            className="text-gray-600 hover:text-gray-800"
+          >
             Promocje
-          </Link>
+          </button>
           <Link to="/brands" className="text-gray-600 hover:text-gray-800">
             Marki
           </Link>
