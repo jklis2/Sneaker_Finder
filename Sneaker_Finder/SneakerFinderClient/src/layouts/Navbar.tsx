@@ -7,12 +7,14 @@ import ordersIcon from "../assets/icons/orders.svg";
 import settingsIcon from "../assets/icons/settings.svg";
 import logoutIcon from "../assets/icons/logout.svg";
 import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { userData, logout } = useAuth();
+  const { getCartItemsCount } = useCart();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -117,7 +119,12 @@ export default function Navbar() {
                             className="w-5 h-5 mr-2"
                             aria-hidden="true"
                           />
-                          Koszyk
+                          <span className="flex-grow">Koszyk</span>
+                          {getCartItemsCount() > 0 && (
+                            <span className="bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                              {getCartItemsCount()}
+                            </span>
+                          )}
                         </Link>
                       </li>
                       <li>

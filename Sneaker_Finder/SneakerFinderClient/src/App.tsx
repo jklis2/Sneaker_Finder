@@ -14,10 +14,11 @@ import PrivacyPolicy from "./routes/PrivacyPolicy";
 import Contact from "./routes/Contact";
 import Checkout from "./routes/Checkout";
 import OrderConfirmation from "./routes/OrderConfirmation";
+import { CartProvider } from "./context/CartContext";
 
 export default function App() {
   return (
-    <>
+    <CartProvider>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/auth/login" element={<Login />} />
@@ -35,6 +36,6 @@ export default function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/products" element={<AllProducts />} />
       </Routes>
-    </>
+    </CartProvider>
   );
 }

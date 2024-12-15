@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../layouts/Navbar";
 import Footer from "../layouts/Footer";
 import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 
 interface CartItem {
   productId: string;
@@ -22,6 +23,7 @@ export default function Cart() {
   const [cart, setCart] = useState<CartData>({ items: [], total: 0 });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const { items: contextItems, addItem, clearItems } = useCart();
 
   useEffect(() => {
     if (isAuthenticated && userData) {
@@ -59,6 +61,18 @@ export default function Cart() {
 
       const data = await response.json();
       setCart(data);
+      
+      // Synchronize with CartContext
+      if (data.items) {
+        // Clear existing items first
+        clearItems();
+        data.items.forEach(item => {
+          for (let i = 0; i < item.quantity; i++) {
+            addItem(item.productId);
+          }
+        });
+      }
+      
       setError("");
     } catch (error) {
       console.error("Error fetching cart:", error);
