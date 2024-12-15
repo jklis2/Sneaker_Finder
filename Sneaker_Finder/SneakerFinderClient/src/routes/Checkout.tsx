@@ -230,46 +230,23 @@ export default function Checkout() {
         throw new Error("Authentication token not found");
       }
 
-      // Add your checkout logic here
-      const selectedShippingMethod = shippingMethods.find(m => m.id === selectedShipping);
-      if (!selectedShippingMethod) {
-        throw new Error("Invalid shipping method selected");
-      }
-
-      const orderData = {
-        userId: userData._id,
-        items: cart.items,
-        shippingMethod: selectedShipping,
-        paymentMethod: selectedPayment,
-        shippingAddress: {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          address: formData.address,
-          apartment: formData.apartment,
-          city: formData.city,
-          state: formData.state,
-          zipCode: formData.zipCode,
-          phone: formData.phone,
-        },
-        total: cart.total + selectedShippingMethod.price,
-      };
-
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/create`, {
+      // Create Stripe checkout session
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/checkout/create-checkout-session?userId=${userData._id}`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
         },
-        body: JSON.stringify(orderData),
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Failed to create order");
+        throw new Error(errorData.message || "Failed to create checkout session");
       }
 
-      // Redirect to success page or order confirmation
-      navigate("/order-confirmation");
+      const { url } = await response.json();
+      
+      // Redirect to Stripe Checkout
+      window.location.href = url;
     } catch (error) {
       console.error("Checkout error:", error);
       setError(error instanceof Error ? error.message : "Failed to process checkout");
