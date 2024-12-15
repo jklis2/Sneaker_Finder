@@ -23,7 +23,7 @@ export default function Cart() {
   const [cart, setCart] = useState<CartData>({ items: [], total: 0 });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-  const { items: contextItems, addItem, clearItems } = useCart();
+  const { addItem, removeItem: removeContextItem, clearItems } = useCart();
 
   useEffect(() => {
     if (isAuthenticated && userData) {
@@ -94,6 +94,10 @@ export default function Cart() {
         throw new Error("Authentication token not found");
       }
 
+      // Get current quantity before update
+      const currentItem = cart.items.find(item => item.productId === productId);
+      const currentQuantity = currentItem ? currentItem.quantity : 0;
+
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/cart/update`, {
         method: "PUT",
         headers: {
@@ -114,6 +118,18 @@ export default function Cart() {
 
       const data = await response.json();
       setCart(data);
+
+      // Update CartContext based on quantity difference
+      if (quantity > currentQuantity) {
+        for (let i = 0; i < quantity - currentQuantity; i++) {
+          addItem(productId);
+        }
+      } else if (quantity < currentQuantity) {
+        for (let i = 0; i < currentQuantity - quantity; i++) {
+          removeContextItem(productId);
+        }
+      }
+
       setError("");
     } catch (error) {
       console.error("Error updating cart:", error);
@@ -131,6 +147,10 @@ export default function Cart() {
       if (!token) {
         throw new Error("Authentication token not found");
       }
+
+      // Get current quantity before removal
+      const currentItem = cart.items.find(item => item.productId === productId);
+      const currentQuantity = currentItem ? currentItem.quantity : 0;
 
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/cart/remove`, {
         method: "DELETE",
@@ -151,6 +171,12 @@ export default function Cart() {
 
       const data = await response.json();
       setCart(data);
+
+      // Remove items from CartContext
+      for (let i = 0; i < currentQuantity; i++) {
+        removeContextItem(productId);
+      }
+
       setError("");
     } catch (error) {
       console.error("Error removing item:", error);
