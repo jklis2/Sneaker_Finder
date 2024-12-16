@@ -8,6 +8,7 @@ interface ProductCardProps {
   name: string;
   price: number;
   size?: "normal" | "small";
+  imageUrl?: string;
 }
 
 export default function ProductCard({
@@ -15,6 +16,7 @@ export default function ProductCard({
   name,
   price,
   size = "normal",
+  imageUrl,
 }: ProductCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -86,52 +88,60 @@ export default function ProductCard({
 
   const containerClasses =
     size === "normal"
-      ? "border border-gray-300 shadow-lg rounded-lg p-4 w-full sm:w-[300px]"
-      : "border border-gray-300 shadow-lg rounded-lg p-3 w-full sm:w-[280px]";
+      ? "border border-gray-300 shadow-lg rounded-lg p-4 w-full sm:w-[300px] h-[450px] flex flex-col"
+      : "border border-gray-300 shadow-lg rounded-lg p-3 w-full sm:w-[280px] h-[420px] flex flex-col";
 
   const imageContainerClasses =
     size === "normal"
-      ? "h-40 w-full flex items-center justify-center bg-red-500"
-      : "h-32 w-full flex items-center justify-center bg-red-500";
+      ? "h-52 w-full flex items-center justify-center bg-gray-100 rounded overflow-hidden"
+      : "h-44 w-full flex items-center justify-center bg-gray-100 rounded overflow-hidden";
 
   return (
     <>
       <div className={containerClasses}>
         <div className={imageContainerClasses}>
-          {/* Placeholder for the image */}
-          <span className="text-white text-xs uppercase">Image placeholder</span>
+          <img 
+            src={imageUrl} 
+            alt={name}
+            className="h-full w-full object-cover rounded"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = '/placeholder-image.png'; //TO DO
+            }}
+          />
         </div>
-        <div className="mt-4">
-          <h3
-            className={`${
-              size === "normal" ? "text-lg" : "text-base"
-            } font-semibold`}
-          >
-            {name}
-          </h3>
-          <p className={`${size === "normal" ? "text-lg" : "text-base"}`}>
-            ${price.toFixed(2)}
-          </p>
+        <div className="flex-1 flex flex-col justify-between">
+          <div>
+            <h3
+              className={`${
+                size === "normal" ? "text-lg" : "text-base"
+              } font-semibold mt-4 line-clamp-2`}
+            >
+              {name}
+            </h3>
+            <p className={`${size === "normal" ? "text-lg" : "text-base"} mt-2`}>
+              ${price.toFixed(2)}
+            </p>
+          </div>
           {error && (
             <p className="text-red-500 text-sm mt-2">{error}</p>
           )}
-          <div className="flex gap-2 mt-4">
-            <button
-              onClick={handleAddToCart}
-              disabled={isLoading}
-              className="flex-1 bg-black text-white py-2 rounded hover:bg-gray-800 transition-colors disabled:bg-gray-400"
-            >
-              {isLoading ? "Adding..." : "Add to Cart"}
-            </button>
-            <button
-              onClick={handleDetails}
-              className="flex-1 border border-black text-black py-2 rounded hover:bg-gray-100 transition-colors"
-            >
-              Details
-            </button>
-          </div>
-          <div className="text-xs text-gray-500 mt-2">
-            Product ID: {_id}
+          <div className="mt-auto">
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={handleAddToCart}
+                disabled={isLoading}
+                className="flex-1 bg-black text-white py-2 rounded hover:bg-gray-800 transition-colors disabled:bg-gray-400"
+              >
+                {isLoading ? "Adding..." : "Add to Cart"}
+              </button>
+              <button
+                onClick={handleDetails}
+                className="flex-1 border border-black text-black py-2 rounded hover:bg-gray-100 transition-colors"
+              >
+                Details
+              </button>
+            </div>
           </div>
         </div>
       </div>

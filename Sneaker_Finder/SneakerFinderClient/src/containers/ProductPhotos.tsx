@@ -5,13 +5,13 @@ interface ProductPhotosProps {
 
 export default function ProductPhotos({ imageUrl, name }: ProductPhotosProps) {
   return (
-    <div className="w-1/2 p-4">
-      <div className="h-96 flex items-center justify-center bg-gray-100 rounded-lg">
+    <div className="w-full p-4">
+      <div className="h-[500px] flex items-center justify-center overflow-hidden">
         {imageUrl ? (
           <img
             src={imageUrl}
             alt={name}
-            className="max-h-full max-w-full object-contain"
+            className="w-full h-full object-cover scale-110"
           />
         ) : (
           <div className="text-center">

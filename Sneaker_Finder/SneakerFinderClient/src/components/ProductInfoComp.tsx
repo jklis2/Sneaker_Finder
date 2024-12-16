@@ -7,6 +7,9 @@ interface ProductInfoCompProps {
   name: string;
   price: number;
   retail: number;
+  brand: string;
+  availableSizes?: string[];
+  color?: string;
 }
 
 export default function ProductInfoComp({
@@ -14,6 +17,9 @@ export default function ProductInfoComp({
   name,
   price,
   retail,
+  brand,
+  availableSizes,
+  color,
 }: ProductInfoCompProps) {
   const [quantity, setQuantity] = useState(1);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -79,12 +85,35 @@ export default function ProductInfoComp({
 
   return (
     <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-sm">
-      <h2 className="text-2xl font-bold mb-4">{name}</h2>
+      <h2 className="text-2xl font-bold mb-1">{name}</h2>
+      <p className="text-gray-600 mb-4">{brand}</p>
       <div className="space-y-4 mb-6">
         <div>
           <p className="text-2xl font-bold">${price.toFixed(2)}</p>
           <p className="text-sm text-gray-500">Retail price: ${retail.toFixed(2)}</p>
         </div>
+
+        {color && (
+          <div>
+            <p className="text-sm text-gray-600">Kolor: {color}</p>
+          </div>
+        )}
+        
+        {availableSizes && availableSizes.length > 0 && (
+          <div>
+            <p className="text-sm font-medium text-gray-700 mb-2">Available Sizes</p>
+            <div className="grid grid-cols-3 gap-2">
+              {availableSizes.map((size) => (
+                <div
+                  key={size}
+                  className="text-center border rounded py-2 text-sm hover:bg-gray-50"
+                >
+                  {size}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         
         <div className="flex items-center space-x-4">
           <label htmlFor="quantity" className="text-gray-700">Quantity:</label>
@@ -116,10 +145,6 @@ export default function ProductInfoComp({
         >
           {isLoading ? "Adding to Cart..." : "Add to Cart"}
         </button>
-
-        <div className="text-xs text-gray-500">
-          Product ID: {id}
-        </div>
       </div>
 
       {showConfirmation && (

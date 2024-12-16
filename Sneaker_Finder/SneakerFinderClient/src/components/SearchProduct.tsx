@@ -1,8 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import searchIcon from "../assets/icons/search.svg";
 
-export default function SearchProduct() {
+interface SearchProductProps {
+  onSearch: (term: string) => void;
+}
+
+export default function SearchProduct({ onSearch }: SearchProductProps) {
   const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    // Debounce the search to avoid too many updates
+    const timeoutId = setTimeout(() => {
+      onSearch(searchTerm);
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, onSearch]);
 
   return (
     <div className="w-full max-w-2xl mx-auto px-4 py-6">

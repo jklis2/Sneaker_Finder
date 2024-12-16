@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Navbar from "../layouts/Navbar";
 import Footer from "../layouts/Footer";
 import ProductCard from "../components/ProductCard";
@@ -9,6 +9,7 @@ interface StockXProduct {
   _id: string;
   name: string;
   price: number;
+  imageUrl: string;
 }
 
 export default function AllProducts() {
@@ -16,81 +17,95 @@ export default function AllProducts() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
   const productsPerPage = 20;
 
   useEffect(() => {
-    fetchProducts();
-    /* eslint-disable react-hooks/exhaustive-deps */
-  }, [currentPage]);
+    const fetchProducts = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/product`
+        );
 
-  const fetchProducts = async () => {
-    try {
-      const response = await fetch(
-        `${
-          import.meta.env.VITE_API_URL
-        }/api/product?page=${currentPage}&limit=${productsPerPage}`
-      );
+        if (!response.ok) {
+          throw new Error("Failed to fetch products");
+        }
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch products");
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        setError("Failed to load products");
+      } finally {
+        setIsLoading(false);
       }
+    };
 
-      const data = await response.json();
-      setProducts(data);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-      setError("Failed to load products");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    fetchProducts();
+  }, []);
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
     window.scrollTo(0, 0);
+    setCurrentPage(page);
   };
 
-  const totalPages = Math.ceil(products.length / productsPerPage);
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    setCurrentPage(1);
+  };
+
+  const filteredProducts = useMemo(() => {
+    if (!searchTerm) return products;
+    
+    const searchLower = searchTerm.toLowerCase();
+    return products.filter((product) =>
+      product.name.toLowerCase().includes(searchLower)
+    );
+  }, [products, searchTerm]);
+
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  const startIndex = (currentPage - 1) * productsPerPage;
+  const endIndex = startIndex + productsPerPage;
+  const currentProducts = filteredProducts.slice(startIndex, endIndex);
 
   if (isLoading) {
     return (
-      <>
+      <main>
         <Navbar />
         <div className="min-h-screen flex items-center justify-center">
           <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
         </div>
         <Footer />
-      </>
+      </main>
     );
   }
 
   if (error) {
     return (
-      <>
+      <main>
         <Navbar />
         <div className="min-h-screen flex items-center justify-center">
-          <div className="text-red-500 text-xl">{error}</div>
+          <div className="text-center text-red-600">
+            <h2 className="text-xl font-bold mb-2">Error Loading Products</h2>
+            <p>{error}</p>
+          </div>
         </div>
         <Footer />
-      </>
+      </main>
     );
   }
 
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = products.slice(
-    indexOfFirstProduct,
-    indexOfLastProduct
-  );
-
   return (
-    <>
+    <main>
       <Navbar />
       <div className="container mx-auto px-4 py-8 flex flex-col items-center">
         <h1 className="text-3xl font-bold mb-8 text-center">All Products</h1>
-        <SearchProduct />
+        <SearchProduct onSearch={handleSearch} />
         {currentProducts.length === 0 ? (
-          <div className="text-center text-gray-500">No products found</div>
+          <div className="text-center text-gray-500 mt-8">
+            {searchTerm ? "No products found matching your search" : "No products found"}
+          </div>
         ) : (
           <div className="flex flex-wrap gap-3 justify-center items-start w-full max-w-[1280px] mx-auto px-1">
             {currentProducts.map((product) => (
@@ -99,12 +114,13 @@ export default function AllProducts() {
                 _id={product._id}
                 name={product.name}
                 price={product.price}
+                imageUrl={product.imageUrl}
                 size="normal"
               />
             ))}
           </div>
         )}
-        {products.length > productsPerPage && (
+        {totalPages > 1 && (
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
@@ -113,6 +129,6 @@ export default function AllProducts() {
         )}
       </div>
       <Footer />
-    </>
+    </main>
   );
 }

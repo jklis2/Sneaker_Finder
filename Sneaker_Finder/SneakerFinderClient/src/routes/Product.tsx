@@ -1,22 +1,24 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import ProductDescription from "../containers/ProductDescription";
 import ProductInfo from "../containers/ProductInfo";
 import ProductPhotos from "../containers/ProductPhotos";
 import Footer from "../layouts/Footer";
 import Navbar from "../layouts/Navbar";
 
-interface ProductData {
+interface Product {
   _id: string;
   name: string;
   price: number;
-  description?: string;
+  retail: number;
+  brand: string;
+  availableSizes: string[];
+  color: string;
   imageUrl?: string;
 }
 
 export default function Product() {
   const { id } = useParams();
-  const [product, setProduct] = useState<ProductData | null>(null);
+  const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,6 +34,7 @@ export default function Product() {
         }
 
         const data = await response.json();
+        console.log('Product data from API:', data);  // Debug log
         setProduct(data);
       } catch (error) {
         console.error("Error fetching product:", error);
@@ -71,12 +74,19 @@ export default function Product() {
   return (
     <main>
       <Navbar />
-      <div className="max-w-7xl mx-auto py-8 px-4">
-        <div className="grid md:grid-cols-2 gap-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           <ProductPhotos name={product.name} imageUrl={product.imageUrl} />
-          <ProductInfo id={product._id} name={product.name} price={product.price} />
+          <ProductInfo 
+            id={product._id} 
+            name={product.name} 
+            price={product.price}
+            retail={product.retail}
+            brand={product.brand}
+            availableSizes={product.availableSizes}
+            color={product.color}
+          />
         </div>
-        <ProductDescription description={product.description} />
       </div>
       <Footer />
     </main>

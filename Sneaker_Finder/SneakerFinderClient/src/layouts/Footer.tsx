@@ -77,8 +77,8 @@ export default function Footer() {
           />
         </a>
       </div>
-      <div className="flex justify-between items-center w-full">
-        <div className="flex text-center text-xs">
+      <div className="flex justify-center items-center w-full">
+        <div className="text-center text-xs">
           <p> 2024 Sneakers Finder. All rights reserved</p>
         </div>
       </div>
