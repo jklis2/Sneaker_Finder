@@ -3,6 +3,7 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import axios from 'axios';
 import {
   getCurrentUserData,
   updateUserEmail,
@@ -32,6 +33,7 @@ export default function SettingsForm() {
       email: true,
       push: false,
     },
+    profilePicture: "",
   });
 
   const emptyAddress: ShippingAddress = {
@@ -72,6 +74,7 @@ export default function SettingsForm() {
         setUserData((prev) => ({
           ...prev,
           currentEmail: data.email,
+          profilePicture: data.profilePicture,
         }));
         setAddresses(data.shippingAddresses || []);
       } catch (err) {
@@ -225,6 +228,44 @@ export default function SettingsForm() {
     }
   };
 
+  const handleUpdateProfilePicture = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setIsLoading(true);
+      const formData = new FormData();
+      formData.append('profilePicture', file);
+
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/users/me/profile-picture`,
+          formData,
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+
+        if (response.data) {
+          setUserData(prev => ({
+            ...prev,
+            profilePicture: response.data.profilePicture,
+          }));
+          setSuccessMessage("Zdjęcie profilowe zostało zaktualizowane");
+          setTimeout(() => setSuccessMessage(null), 3000);
+        }
+      } catch (error) {
+        console.error('Error uploading profile picture:', error);
+        setError("Błąd podczas aktualizacji zdjęcia profilowego");
+        setTimeout(() => setError(null), 3000);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
   if (isLoading) {
     return <div className="text-center py-12">Loading...</div>;
   }
@@ -250,19 +291,43 @@ export default function SettingsForm() {
 
         <div className="space-y-12">
           {/* Profile Section */}
-          <section>
-            <h3 className="text-xl font-medium text-gray-800 mb-4 pb-2 border-b">
-              Profil
-            </h3>
-            <div className="space-y-6">
-              <div className="flex items-center space-x-4 mb-6">
-                <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
-                  <span className="text-gray-500">Avatar</span>
+          <div className="bg-white rounded-lg shadow p-6 mb-8">
+            <section>
+              <h3 className="text-xl font-medium text-gray-800 mb-4 pb-2 border-b">
+                Profil
+              </h3>
+              <div className="space-y-6">
+                <div className="flex items-center space-x-4 mb-6">
+                  <div
+                    className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center"
+                  >
+                    {userData.profilePicture ? (
+                      <img
+                        src={userData.profilePicture}
+                        alt="Avatar"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-gray-500">Avatar</span>
+                    )}
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleUpdateProfilePicture}
+                    className="hidden"
+                    id="profile-picture-input"
+                  />
+                  <label 
+                    htmlFor="profile-picture-input" 
+                    className="bg-[#1C2632] text-white px-4 py-2 rounded-full w-full hover:bg-opacity-90 disabled:opacity-50 cursor-pointer"
+                  >
+                    {isLoading ? 'Uploading...' : 'Zmień avatar'}
+                  </label>
                 </div>
-                <Button name="Zmień avatar" />
               </div>
-            </div>
-          </section>
+            </section>
+          </div>
 
           {/* Email Section */}
           <section>
@@ -422,7 +487,7 @@ export default function SettingsForm() {
                       </div>
                     </div>
                   ) : (
-                    <>
+                    <div>
                       <div className="absolute top-2 right-2 flex space-x-2">
                         <button
                           onClick={() => handleEditAddress(index)}
@@ -477,7 +542,7 @@ export default function SettingsForm() {
                           {address.phoneNumber}
                         </p>
                       </div>
-                    </>
+                    </div>
                   )}
                 </div>
               ))}
