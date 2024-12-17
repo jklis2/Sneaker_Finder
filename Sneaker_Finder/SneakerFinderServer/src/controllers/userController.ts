@@ -1,12 +1,14 @@
-import { Request, Response } from "express";
+import { Request, Response, Express } from "express";
 import User from "../models/User";
 import jwt from "jsonwebtoken";
 import mongoose from 'mongoose';
+import cloudinary from '../config/cloudinary';
 
 interface AuthRequest extends Request {
   user?: {
     _id: mongoose.Types.ObjectId;
   };
+  file?: Express.Multer.File;
 }
 
 const generateToken = (userId: mongoose.Types.ObjectId): string => {
@@ -306,5 +308,45 @@ export const updateUserPassword = async (
   } catch (error) {
     const err = error as Error;
     res.status(500).json({ message: err.message });
+  }
+};
+
+export const uploadProfilePicture = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    if (!req.file) {
+      res.status(400).json({ message: "No file uploaded" });
+      return;
+    }
+
+    const user = await User.findById(req.user?._id);
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    // Convert buffer to base64
+    const b64 = Buffer.from(req.file.buffer).toString('base64');
+    const dataURI = `data:${req.file.mimetype};base64,${b64}`;
+
+    // Upload to Cloudinary
+    const result = await cloudinary.uploader.upload(dataURI, {
+      folder: 'profile_pictures',
+      public_id: `user_${user._id}`,
+    });
+
+    // Update user's profile picture URL
+    user.profilePicture = result.secure_url;
+    await user.save();
+
+    res.status(200).json({
+      message: "Profile picture updated successfully",
+      profilePicture: result.secure_url
+    });
+  } catch (error) {
+    console.error('Error uploading profile picture:', error);
+    res.status(500).json({ message: "Error uploading profile picture" });
   }
 };

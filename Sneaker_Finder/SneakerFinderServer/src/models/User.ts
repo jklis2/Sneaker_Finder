@@ -19,6 +19,7 @@ export interface IUser extends Document {
   gender: "Male" | "Female";
   birthDate: Date;
   password: string;
+  profilePicture?: string;
   shippingAddresses?: IShippingAddress[];
   matchPassword: (enteredPassword: string) => Promise<boolean>;
 }
@@ -41,6 +42,7 @@ const UserSchema: Schema = new Schema(
     gender: { type: String, required: true, enum: ["Male", "Female"] },
     birthDate: { type: Date, required: true },
     password: { type: String, required: true },
+    profilePicture: { type: String, required: false },
     shippingAddresses: { type: [ShippingAddressSchema], required: false, default: [] },
   },
   {
