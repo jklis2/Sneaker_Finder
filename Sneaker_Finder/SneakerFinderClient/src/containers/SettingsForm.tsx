@@ -53,6 +53,7 @@ export default function SettingsForm() {
     address: ShippingAddress;
   } | null>(null);
   const [isAddingAddress, setIsAddingAddress] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -266,6 +267,51 @@ export default function SettingsForm() {
     }
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      // Update email
+      if (userData.newEmail && userData.newEmail !== userData.currentEmail) {
+        await updateUserEmail(userData.newEmail);
+      }
+
+      // Update password
+      if (userData.newPassword && userData.confirmPassword) {
+        if (userData.newPassword !== userData.confirmPassword) {
+          setError("Hasła nie są takie same");
+          return;
+        }
+        await updateUserPassword(userData.newPassword);
+      }
+
+      // Get the latest user data after updates
+      const updatedUserData = await getCurrentUserData();
+      setUserData(prev => ({
+        ...prev,
+        currentEmail: updatedUserData.email,
+        profilePicture: updatedUserData.profilePicture || prev.profilePicture,
+      }));
+
+      setSuccessMessage("Dane zostały zaktualizowane");
+      setTimeout(() => setSuccessMessage(null), 3000);
+
+      // Reset password
+      setUserData(prev => ({
+        ...prev,
+        newPassword: "",
+        confirmPassword: "",
+      }));
+    } catch (error) {
+      console.error("Error updating user data:", error);
+      setError("Wystąpił błąd podczas aktualizacji danych");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   if (isLoading) {
     return <div className="text-center py-12">Loading...</div>;
   }
@@ -308,7 +354,7 @@ export default function SettingsForm() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <span className="text-gray-500">Avatar</span>
+                      <span className="text-gray-500">Zdjęcie profilowe</span>
                     )}
                   </div>
                   <input
@@ -322,7 +368,7 @@ export default function SettingsForm() {
                     htmlFor="profile-picture-input" 
                     className="bg-[#1C2632] text-white px-4 py-2 rounded-full w-full hover:bg-opacity-90 disabled:opacity-50 cursor-pointer"
                   >
-                    {isLoading ? 'Uploading...' : 'Zmień avatar'}
+                    {isLoading ? 'Uploading...' : 'Zmień zdjęcie'}
                   </label>
                 </div>
               </div>
@@ -693,10 +739,12 @@ export default function SettingsForm() {
           </section>
 
           <div className="pt-6 border-t">
-            <div className="flex justify-end space-x-4">
-              <Button name="Anuluj" />
-              <Button name="Zapisz zmiany" />
-            </div>
+            <form onSubmit={handleSubmit}>
+              <div className="flex justify-end space-x-4">
+                <Button name="Anuluj" />
+                <Button name="Zapisz zmiany" type="submit" disabled={isSubmitting} />
+              </div>
+            </form>
           </div>
         </div>
       </div>
