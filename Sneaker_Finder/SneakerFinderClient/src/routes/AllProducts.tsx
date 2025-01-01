@@ -24,15 +24,20 @@ export default function AllProducts() {
     const fetchProducts = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/product`
-        );
+        const apiUrl = `${import.meta.env.VITE_API_URL}/api/products`;
+        console.log('Fetching products from:', apiUrl);
+        
+        const response = await fetch(apiUrl);
+        console.log('Response status:', response.status);
 
         if (!response.ok) {
-          throw new Error("Failed to fetch products");
+          const errorText = await response.text();
+          console.error('Error response:', errorText);
+          throw new Error(`Failed to fetch products: ${errorText}`);
         }
 
         const data = await response.json();
+        console.log('Fetched products:', data);
         setProducts(data);
       } catch (error) {
         console.error("Error fetching products:", error);

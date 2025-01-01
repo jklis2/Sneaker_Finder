@@ -17,7 +17,7 @@ const BASE_URL = "https://grailpoint.com";
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL || "http://localhost:5001",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Accept"],
@@ -33,7 +33,7 @@ connectDB();
 app.use("/api/users", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/cart", cartRoutes);
-app.use("/api/product", productsRoutes);
+app.use("/api/products", productsRoutes); 
 app.use("/api/checkout", checkoutRoutes);
 
 app.listen(PORT, () => {
