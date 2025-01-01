@@ -14,6 +14,7 @@ import PrivacyPolicy from "./routes/PrivacyPolicy";
 import Contact from "./routes/Contact";
 import Checkout from "./routes/Checkout";
 import OrderConfirmation from "./routes/OrderConfirmation";
+import CheckoutSuccess from "./routes/CheckoutSuccess";
 import { CartProvider } from "./context/CartContext";
 
 export default function App() {
@@ -30,6 +31,7 @@ export default function App() {
         <Route path="/styleAdvisor" element={<StyleAdvisor />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/checkout/success" element={<CheckoutSuccess />} />
         <Route path="/order-confirmation" element={<OrderConfirmation />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/settings" element={<Settings />} />

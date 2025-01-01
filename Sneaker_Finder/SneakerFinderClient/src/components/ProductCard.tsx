@@ -100,15 +100,21 @@ export default function ProductCard({
     <>
       <div className={containerClasses}>
         <div className={imageContainerClasses}>
-          <img 
-            src={imageUrl} 
-            alt={name}
-            className="h-full w-full object-cover rounded"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.src = '/placeholder-image.png'; //TO DO
-            }}
-          />
+          {imageUrl ? (
+            <img 
+              src={imageUrl} 
+              alt={name}
+              className="h-full w-full object-cover rounded"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = '/icons/placeholder.svg';
+              }}
+            />
+          ) : (
+            <div className="h-full w-full flex items-center justify-center bg-gray-200 rounded">
+              <span className="text-gray-400">No image available</span>
+            </div>
+          )}
         </div>
         <div className="flex-1 flex flex-col justify-between">
           <div>

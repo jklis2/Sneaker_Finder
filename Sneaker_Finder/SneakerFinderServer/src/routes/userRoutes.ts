@@ -14,6 +14,7 @@ import {
 } from "../controllers/userController";
 import { protect } from "../middleware/authMiddleware";
 import upload from "../middleware/uploadMiddleware";
+import { getUserPayments } from '../controllers/paymentController';
 
 const router = express.Router();
 
@@ -30,5 +31,6 @@ router.get("/me/addresses", protect, asyncHandler(getShippingAddresses));
 router.post("/me/addresses", protect, asyncHandler(addShippingAddress));
 router.put("/me/addresses/:addressIndex", protect, asyncHandler(updateShippingAddress));
 router.delete("/me/addresses/:addressIndex", protect, asyncHandler(deleteShippingAddress));
+router.get('/orders', asyncHandler(getUserPayments));
 
 export default router;
