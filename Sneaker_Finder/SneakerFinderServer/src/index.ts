@@ -16,23 +16,17 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const BASE_URL = "https://grailpoint.com";
 
-// Configure Express to parse JSON for all routes EXCEPT the webhook route
-app.use((req, res, next) => {
-  if (req.originalUrl === '/api/checkout/webhook') {
-    next();
-  } else {
-    express.json()(req, res, next);
-  }
-});
+app.use(express.json());
 
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5001",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "Accept"],
-  })
-);
+app.use("/api/checkout/webhook", express.raw({ type: 'application/json' }));
+
+app.use(cors({
+  origin: 'http://localhost:5001',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range']
+}));
 
 connectDB();
 

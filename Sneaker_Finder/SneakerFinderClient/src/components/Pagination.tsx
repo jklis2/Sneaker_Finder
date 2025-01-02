@@ -9,7 +9,7 @@ export default function Pagination({
   totalPages,
   onPageChange,
 }: PaginationProps) {
-  const pageNumbers = [];
+  const pageNumbers: number[] = [];
   const maxVisiblePages = 5;
 
   let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
@@ -23,15 +23,21 @@ export default function Pagination({
     pageNumbers.push(i);
   }
 
-  const buttonBaseClasses = "px-4 py-2 rounded-md transition-all duration-200 font-medium";
+  const buttonBaseClasses =
+    "px-4 py-2 rounded-md transition-all duration-200 font-medium";
   const activeButtonClasses = "bg-black text-white hover:bg-gray-800";
-  const inactiveButtonClasses = "bg-white text-black border border-gray-300 hover:bg-gray-100";
-  const disabledButtonClasses = "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200";
+  const inactiveButtonClasses =
+    "bg-white text-black border border-gray-300 hover:bg-gray-100";
+  const disabledButtonClasses =
+    "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200";
 
   return (
     <nav className="flex justify-center items-center space-x-2 my-8 select-none">
       <button
-        onClick={() => onPageChange(currentPage - 1)}
+        onClick={() => {
+          const newPage = currentPage - 1;
+          onPageChange(newPage);
+        }}
         disabled={currentPage === 1}
         className={`${buttonBaseClasses} ${
           currentPage === 1 ? disabledButtonClasses : inactiveButtonClasses
@@ -45,7 +51,9 @@ export default function Pagination({
       {startPage > 1 && (
         <>
           <button
-            onClick={() => onPageChange(1)}
+            onClick={() => {
+              onPageChange(1);
+            }}
             className={`${buttonBaseClasses} ${inactiveButtonClasses}`}
             aria-label="Go to first page"
           >
@@ -62,7 +70,9 @@ export default function Pagination({
       {pageNumbers.map((number) => (
         <button
           key={number}
-          onClick={() => onPageChange(number)}
+          onClick={() => {
+            onPageChange(number);
+          }}
           className={`${buttonBaseClasses} ${
             currentPage === number ? activeButtonClasses : inactiveButtonClasses
           }`}
@@ -81,7 +91,9 @@ export default function Pagination({
             </span>
           )}
           <button
-            onClick={() => onPageChange(totalPages)}
+            onClick={() => {
+              onPageChange(totalPages);
+            }}
             className={`${buttonBaseClasses} ${inactiveButtonClasses}`}
             aria-label="Go to last page"
           >
@@ -91,10 +103,15 @@ export default function Pagination({
       )}
 
       <button
-        onClick={() => onPageChange(currentPage + 1)}
+        onClick={() => {
+          const newPage = currentPage + 1;
+          onPageChange(newPage);
+        }}
         disabled={currentPage === totalPages}
         className={`${buttonBaseClasses} ${
-          currentPage === totalPages ? disabledButtonClasses : inactiveButtonClasses
+          currentPage === totalPages
+            ? disabledButtonClasses
+            : inactiveButtonClasses
         }`}
         aria-label="Next page"
       >
