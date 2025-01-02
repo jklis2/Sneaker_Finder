@@ -5,9 +5,18 @@ import { handleWebhook } from '../controllers/webhookController';
 
 const router = express.Router();
 
+// Regular routes with JSON parsing
 router.get('/info', getCheckoutInfo);
 router.post('/create-checkout-session', createCheckoutSession);
 router.post('/confirm', confirmPayment);
-router.post('/webhook', express.raw({type: 'application/json'}), handleWebhook);
+
+// Webhook route with raw body parsing
+router.post(
+  '/webhook',
+  express.raw({ type: 'application/json', verify: (req, res, buf) => {
+    (req as any).rawBody = buf;
+  }}),
+  handleWebhook
+);
 
 export default router;

@@ -7,6 +7,7 @@ import chatRoutes from "./routes/chatRoutes";
 import cartRoutes from "./routes/cartRoutes";
 import productsRoutes from "./routes/productsRoutes";
 import checkoutRoutes from "./routes/checkoutRoutes";
+import orderRoutes from "./routes/orderRoutes";
 import { scrapeAllProducts, saveData } from "./services/scrape";
 
 dotenv.config();
@@ -14,6 +15,15 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 const BASE_URL = "https://grailpoint.com";
+
+// Configure Express to parse JSON for all routes EXCEPT the webhook route
+app.use((req, res, next) => {
+  if (req.originalUrl === '/api/checkout/webhook') {
+    next();
+  } else {
+    express.json()(req, res, next);
+  }
+});
 
 app.use(
   cors({
@@ -24,8 +34,6 @@ app.use(
   })
 );
 
-app.use(express.json());
-
 connectDB();
 
 //scrapeAllProducts(BASE_URL, saveData).catch(console.error);
@@ -33,8 +41,9 @@ connectDB();
 app.use("/api/users", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/cart", cartRoutes);
-app.use("/api/products", productsRoutes); 
+app.use("/api/products", productsRoutes);
 app.use("/api/checkout", checkoutRoutes);
+app.use("/api/orders", orderRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
