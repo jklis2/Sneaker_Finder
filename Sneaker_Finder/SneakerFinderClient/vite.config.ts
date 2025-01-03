@@ -8,7 +8,7 @@ export default defineConfig({
     port: 5001,
     proxy: {
       '/api': {
-        target: 'https://sneaker-finder-client-8cb4.onrender.com',
+        target: 'https://sneaker-finder-server-g1jq.onrender.com',
         changeOrigin: true,
         secure: true,
         rewrite: (path) => path.replace(/^\/api/, '/api'),
@@ -25,7 +25,7 @@ export default defineConfig({
         }
       },
       '/webhook': {
-        target: 'https://sneaker-finder-client-8cb4.onrender.com',
+        target: 'https://sneaker-finder-server-g1jq.onrender.com',
         changeOrigin: true,
         secure: true,
       }
