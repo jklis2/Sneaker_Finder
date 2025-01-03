@@ -3,7 +3,7 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import axios from 'axios';
+import axios from "axios";
 import {
   getCurrentUserData,
   updateUserEmail,
@@ -11,7 +11,7 @@ import {
   addShippingAddress,
   deleteShippingAddress,
   updateShippingAddress,
-  type ShippingAddress,
+  ShippingAddress,
 } from "../services/userService";
 
 export default function SettingsForm() {
@@ -20,8 +20,17 @@ export default function SettingsForm() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
-  const [userData, setUserData] = useState({
+  const [userData, setUserData] = useState<{
+    currentEmail: string;
+    newEmail: string;
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+    language: string;
+    newsletter: boolean;
+    notifications: { email: boolean; push: boolean };
+    profilePicture?: string;
+  }>({
     currentEmail: "",
     newEmail: "",
     currentPassword: "",
@@ -29,13 +38,9 @@ export default function SettingsForm() {
     confirmPassword: "",
     language: "pl",
     newsletter: true,
-    notifications: {
-      email: true,
-      push: false,
-    },
+    notifications: { email: true, push: false },
     profilePicture: "",
   });
-
   const emptyAddress: ShippingAddress = {
     street: "",
     number: "",
@@ -45,7 +50,6 @@ export default function SettingsForm() {
     province: "",
     phoneNumber: "",
   };
-
   const [addresses, setAddresses] = useState<ShippingAddress[]>([]);
   const [newAddress, setNewAddress] = useState<ShippingAddress>(emptyAddress);
   const [editingAddress, setEditingAddress] = useState<{
@@ -55,22 +59,18 @@ export default function SettingsForm() {
   const [isAddingAddress, setIsAddingAddress] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Redirect if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate('/auth/login');
+      navigate("/auth/login");
     }
   }, [isAuthenticated, navigate]);
 
-  // Fetch user data on component mount
   useEffect(() => {
     const fetchUserData = async () => {
       if (!isAuthenticated) return;
-      
       try {
         setIsLoading(true);
         setError(null);
-        
         const data = await getCurrentUserData();
         setUserData((prev) => ({
           ...prev,
@@ -79,35 +79,30 @@ export default function SettingsForm() {
         }));
         setAddresses(data.shippingAddresses || []);
       } catch (err) {
+        console.error(err);
         if (err instanceof Error) {
           setError(err.message);
         } else {
-          setError('Failed to load user data');
+          setError("Failed to load user data");
         }
-        console.error(err);
       } finally {
         setIsLoading(false);
       }
     };
-
     fetchUserData();
   }, [isAuthenticated]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value, type } = e.target;
     if (type === "checkbox") {
       const target = e.target as HTMLInputElement;
-      setUserData((prev) => ({
-        ...prev,
-        [name]: target.checked,
-      }));
+      setUserData((prev) => ({ ...prev, [name]: target.checked }));
     } else {
-      setUserData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+      setUserData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
@@ -115,17 +110,11 @@ export default function SettingsForm() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setNewAddress((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setNewAddress((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleEditAddress = (index: number) => {
-    setEditingAddress({
-      index,
-      address: { ...addresses[index] },
-    });
+    setEditingAddress({ index, address: { ...addresses[index] } });
   };
 
   const handleEditAddressChange = (
@@ -135,17 +124,13 @@ export default function SettingsForm() {
     if (editingAddress) {
       setEditingAddress({
         ...editingAddress,
-        address: {
-          ...editingAddress.address,
-          [name]: value,
-        },
+        address: { ...editingAddress.address, [name]: value },
       });
     }
   };
 
   const handleUpdateAddress = async () => {
     if (!editingAddress) return;
-
     try {
       setError(null);
       await updateShippingAddress(editingAddress.index, editingAddress.address);
@@ -157,8 +142,8 @@ export default function SettingsForm() {
       setEditingAddress(null);
       setSuccessMessage("Address updated successfully");
     } catch (err) {
-      setError("Failed to update address");
       console.error(err);
+      setError("Failed to update address");
     }
   };
 
@@ -177,8 +162,8 @@ export default function SettingsForm() {
       }));
       setSuccessMessage("Email updated successfully");
     } catch (err) {
-      setError("Failed to update email");
       console.error(err);
+      setError("Failed to update email");
     }
   };
 
@@ -186,6 +171,7 @@ export default function SettingsForm() {
     try {
       if (userData.newPassword !== userData.confirmPassword) {
         setError("New passwords don't match");
+        console.error("New passwords don't match");
         return;
       }
       setError(null);
@@ -198,8 +184,8 @@ export default function SettingsForm() {
       }));
       setSuccessMessage("Password updated successfully");
     } catch (err) {
-      setError("Failed to update password");
       console.error(err);
+      setError("Failed to update password");
     }
   };
 
@@ -212,8 +198,8 @@ export default function SettingsForm() {
       setIsAddingAddress(false);
       setSuccessMessage("Address added successfully");
     } catch (err) {
-      setError("Failed to add address");
       console.error(err);
+      setError("Failed to add address");
     }
   };
 
@@ -224,41 +210,41 @@ export default function SettingsForm() {
       setAddresses((prev) => prev.filter((_, i) => i !== index));
       setSuccessMessage("Address deleted successfully");
     } catch (err) {
-      setError("Failed to delete address");
       console.error(err);
+      setError("Failed to delete address");
     }
   };
 
-  const handleUpdateProfilePicture = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUpdateProfilePicture = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
     if (file) {
       setIsLoading(true);
       const formData = new FormData();
-      formData.append('profilePicture', file);
-
+      formData.append("profilePicture", file);
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token");
         const response = await axios.post(
           `${import.meta.env.VITE_API_URL}/api/users/me/profile-picture`,
           formData,
           {
             headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'multipart/form-data',
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
             },
           }
         );
-
         if (response.data) {
-          setUserData(prev => ({
+          setUserData((prev) => ({
             ...prev,
             profilePicture: response.data.profilePicture,
           }));
           setSuccessMessage("Zdjęcie profilowe zostało zaktualizowane");
           setTimeout(() => setSuccessMessage(null), 3000);
         }
-      } catch (error) {
-        console.error('Error uploading profile picture:', error);
+      } catch (err) {
+        console.error(err);
         setError("Błąd podczas aktualizacji zdjęcia profilowego");
         setTimeout(() => setError(null), 3000);
       } finally {
@@ -271,41 +257,33 @@ export default function SettingsForm() {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
-
     try {
-      // Update email
       if (userData.newEmail && userData.newEmail !== userData.currentEmail) {
         await updateUserEmail(userData.newEmail);
       }
-
-      // Update password
       if (userData.newPassword && userData.confirmPassword) {
         if (userData.newPassword !== userData.confirmPassword) {
           setError("Hasła nie są takie same");
+          console.error("Hasła nie są takie same");
           return;
         }
-        await updateUserPassword(userData.newPassword);
+        await updateUserPassword(
+          userData.currentPassword,
+          userData.newPassword
+        );
       }
-
-      // Get the latest user data after updates
       const updatedUserData = await getCurrentUserData();
-      setUserData(prev => ({
+      setUserData((prev) => ({
         ...prev,
         currentEmail: updatedUserData.email,
         profilePicture: updatedUserData.profilePicture || prev.profilePicture,
-      }));
-
-      setSuccessMessage("Dane zostały zaktualizowane");
-      setTimeout(() => setSuccessMessage(null), 3000);
-
-      // Reset password
-      setUserData(prev => ({
-        ...prev,
         newPassword: "",
         confirmPassword: "",
       }));
+      setSuccessMessage("Dane zostały zaktualizowane");
+      setTimeout(() => setSuccessMessage(null), 3000);
     } catch (error) {
-      console.error("Error updating user data:", error);
+      console.error(error);
       setError("Wystąpił błąd podczas aktualizacji danych");
     } finally {
       setIsSubmitting(false);
@@ -322,21 +300,17 @@ export default function SettingsForm() {
         <h2 className="text-3xl font-semibold text-gray-800 mb-8 text-center">
           Ustawienia konta
         </h2>
-
         {error && (
           <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
             {error}
           </div>
         )}
-
         {successMessage && (
           <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
             {successMessage}
           </div>
         )}
-
         <div className="space-y-12">
-          {/* Profile Section */}
           <div className="bg-white rounded-lg shadow p-6 mb-8">
             <section>
               <h3 className="text-xl font-medium text-gray-800 mb-4 pb-2 border-b">
@@ -344,9 +318,7 @@ export default function SettingsForm() {
               </h3>
               <div className="space-y-6">
                 <div className="flex items-center space-x-4 mb-6">
-                  <div
-                    className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center"
-                  >
+                  <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
                     {userData.profilePicture ? (
                       <img
                         src={userData.profilePicture}
@@ -364,18 +336,16 @@ export default function SettingsForm() {
                     className="hidden"
                     id="profile-picture-input"
                   />
-                  <label 
-                    htmlFor="profile-picture-input" 
+                  <label
+                    htmlFor="profile-picture-input"
                     className="bg-[#1C2632] text-white px-4 py-2 rounded-full w-full hover:bg-opacity-90 disabled:opacity-50 cursor-pointer"
                   >
-                    {isLoading ? 'Uploading...' : 'Zmień zdjęcie'}
+                    {isLoading ? "Uploading..." : "Zmień zdjęcie"}
                   </label>
                 </div>
               </div>
             </section>
           </div>
-
-          {/* Email Section */}
           <section>
             <h3 className="text-xl font-medium text-gray-800 mb-4 pb-2 border-b">
               Zmiana email
@@ -408,8 +378,6 @@ export default function SettingsForm() {
               </div>
             </div>
           </section>
-
-          {/* Password Section */}
           <section>
             <h3 className="text-xl font-medium text-gray-800 mb-4 pb-2 border-b">
               Zmiana hasła
@@ -454,14 +422,11 @@ export default function SettingsForm() {
               </div>
             </div>
           </section>
-
-          {/* Shipping Addresses Section */}
           <section>
             <h3 className="text-xl font-medium text-gray-800 mb-4 pb-2 border-b">
               Adresy dostawy
             </h3>
             <div className="space-y-6">
-              {/* Existing Addresses */}
               {addresses.map((address, index) => (
                 <div
                   key={index}
@@ -529,7 +494,10 @@ export default function SettingsForm() {
                       </div>
                       <div className="flex justify-end space-x-4">
                         <Button name="Anuluj" onClick={handleCancelEdit} />
-                        <Button name="Zapisz zmiany" onClick={handleUpdateAddress} />
+                        <Button
+                          name="Zapisz zmiany"
+                          onClick={handleUpdateAddress}
+                        />
                       </div>
                     </div>
                   ) : (
@@ -568,12 +536,14 @@ export default function SettingsForm() {
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <p>
-                          <span className="font-medium">Ulica:</span> {address.street}{" "}
-                          {address.number}
-                          {address.apartmentNumber && ` m. ${address.apartmentNumber}`}
+                          <span className="font-medium">Ulica:</span>{" "}
+                          {address.street} {address.number}
+                          {address.apartmentNumber &&
+                            ` m. ${address.apartmentNumber}`}
                         </p>
                         <p>
-                          <span className="font-medium">Miasto:</span> {address.city}
+                          <span className="font-medium">Miasto:</span>{" "}
+                          {address.city}
                         </p>
                         <p>
                           <span className="font-medium">Kod pocztowy:</span>{" "}
@@ -592,8 +562,6 @@ export default function SettingsForm() {
                   )}
                 </div>
               ))}
-
-              {/* Add New Address Form */}
               {isAddingAddress ? (
                 <div className="p-4 border rounded-lg">
                   <h4 className="text-lg font-medium mb-4">Nowy adres</h4>
@@ -673,8 +641,6 @@ export default function SettingsForm() {
               )}
             </div>
           </section>
-
-          {/* Preferences Section */}
           <section>
             <h3 className="text-xl font-medium text-gray-800 mb-4 pb-2 border-b">
               Preferencje
@@ -694,7 +660,6 @@ export default function SettingsForm() {
                   <option value="en">English</option>
                 </select>
               </div>
-
               <div className="space-y-3">
                 <label className="flex items-center space-x-3">
                   <input
@@ -708,7 +673,6 @@ export default function SettingsForm() {
                     Chcę otrzymywać newsletter z najnowszymi ofertami
                   </span>
                 </label>
-
                 <label className="flex items-center space-x-3">
                   <input
                     type="checkbox"
@@ -721,7 +685,6 @@ export default function SettingsForm() {
                     Powiadomienia email o statusie zamówienia
                   </span>
                 </label>
-
                 <label className="flex items-center space-x-3">
                   <input
                     type="checkbox"
@@ -737,12 +700,15 @@ export default function SettingsForm() {
               </div>
             </div>
           </section>
-
           <div className="pt-6 border-t">
             <form onSubmit={handleSubmit}>
               <div className="flex justify-end space-x-4">
                 <Button name="Anuluj" />
-                <Button name="Zapisz zmiany" type="submit" disabled={isSubmitting} />
+                <Button
+                  name="Zapisz zmiany"
+                  type="submit"
+                  disabled={isSubmitting}
+                />
               </div>
             </form>
           </div>

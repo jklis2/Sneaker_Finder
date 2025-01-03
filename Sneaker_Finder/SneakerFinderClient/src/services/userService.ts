@@ -27,6 +27,7 @@ export interface UserData {
   firstName: string;
   lastName: string;
   shippingAddresses?: ShippingAddress[];
+  profilePicture?: string;
 }
 
 interface LoginResponse {

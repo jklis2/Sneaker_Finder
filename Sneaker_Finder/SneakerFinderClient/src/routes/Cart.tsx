@@ -32,7 +32,7 @@ export default function Cart() {
       setError("Please log in to view your cart");
       setIsLoading(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, userData]);
 
   const fetchCart = async () => {
@@ -41,38 +41,39 @@ export default function Cart() {
         throw new Error("User ID not found");
       }
 
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
         throw new Error("Authentication token not found");
       }
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/cart?userId=${userData._id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/cart?userId=${userData._id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          }
         }
-      });
+      );
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.message || "Failed to fetch cart");
       }
 
-      const data = await response.json();
+      const data: CartData = await response.json();
       setCart(data);
-      
-      // Synchronize with CartContext
+
       if (data.items) {
-        // Clear existing items first
         clearItems();
-        data.items.forEach(item => {
+        data.items.forEach((item: CartItem) => {
           for (let i = 0; i < item.quantity; i++) {
             addItem(item.productId);
           }
         });
       }
-      
+
       setError("");
     } catch (error) {
       console.error("Error fetching cart:", error);
@@ -89,37 +90,38 @@ export default function Cart() {
         throw new Error("User ID not found");
       }
 
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
         throw new Error("Authentication token not found");
       }
 
-      // Get current quantity before update
-      const currentItem = cart.items.find(item => item.productId === productId);
+      const currentItem = cart.items.find((item) => item.productId === productId);
       const currentQuantity = currentItem ? currentItem.quantity : 0;
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/cart/update`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          userId: userData._id,
-          productId,
-          quantity,
-        }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/cart/update`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            userId: userData._id,
+            productId,
+            quantity,
+          }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.message || "Failed to update cart");
       }
 
-      const data = await response.json();
+      const data: CartData = await response.json();
       setCart(data);
 
-      // Update CartContext based on quantity difference
       if (quantity > currentQuantity) {
         for (let i = 0; i < quantity - currentQuantity; i++) {
           addItem(productId);
@@ -143,36 +145,37 @@ export default function Cart() {
         throw new Error("User ID not found");
       }
 
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
         throw new Error("Authentication token not found");
       }
 
-      // Get current quantity before removal
-      const currentItem = cart.items.find(item => item.productId === productId);
+      const currentItem = cart.items.find((item) => item.productId === productId);
       const currentQuantity = currentItem ? currentItem.quantity : 0;
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/cart/remove`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          userId: userData._id,
-          productId,
-        }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/cart/remove`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            userId: userData._id,
+            productId,
+          }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.message || "Failed to remove item");
       }
 
-      const data = await response.json();
+      const data: CartData = await response.json();
       setCart(data);
 
-      // Remove items from CartContext
       for (let i = 0; i < currentQuantity; i++) {
         removeContextItem(productId);
       }
@@ -214,7 +217,7 @@ export default function Cart() {
           </div>
         ) : (
           <div className="space-y-6">
-            {cart.items.map((item) => (
+            {cart.items.map((item: CartItem) => (
               <div
                 key={item.productId}
                 className="flex items-center justify-between p-4 bg-white rounded-lg shadow"
@@ -227,14 +230,18 @@ export default function Cart() {
                   <div className="flex items-center border rounded">
                     <button
                       className="px-3 py-1 border-r hover:bg-gray-100"
-                      onClick={() => updateQuantity(item.productId, Math.max(0, item.quantity - 1))}
+                      onClick={() =>
+                        updateQuantity(item.productId, Math.max(0, item.quantity - 1))
+                      }
                     >
                       -
                     </button>
                     <span className="px-4 py-1">{item.quantity}</span>
                     <button
                       className="px-3 py-1 border-l hover:bg-gray-100"
-                      onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                      onClick={() =>
+                        updateQuantity(item.productId, item.quantity + 1)
+                      }
                     >
                       +
                     </button>

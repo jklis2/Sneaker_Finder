@@ -76,14 +76,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (response.token) {
         localStorage.setItem('token', response.token);
         setIsAuthenticated(true);
-        // Fetch user data after successful login
-        const userData = await getCurrentUserData();
+
+        const current = await getCurrentUserData();
         setUserData({
-          _id: userData._id,
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          email: userData.email,
-          profilePicture: userData.profilePicture,
+          _id: current._id,
+          firstName: current.firstName,
+          lastName: current.lastName,
+          email: current.email,
+          profilePicture: current.profilePicture,
         });
       }
     } catch (error) {
@@ -93,19 +93,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const register = async (userData: RegisterUserData) => {
+  const register = async (newUser: RegisterUserData) => {
     try {
-      const response = await registerUser(userData);
+      const response = await registerUser(newUser);
       if (response.token) {
         localStorage.setItem('token', response.token);
         setIsAuthenticated(true);
-        // After registration, get the complete user data including _id
+
         const completeUserData = await getCurrentUserData();
         setUserData({
           _id: completeUserData._id,
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          email: userData.email,
+          firstName: newUser.firstName,
+          lastName: newUser.lastName,
+          email: newUser.email,
           profilePicture: completeUserData.profilePicture,
         });
       }
