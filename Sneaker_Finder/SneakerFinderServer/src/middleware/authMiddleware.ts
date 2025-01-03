@@ -32,8 +32,13 @@ export const protect = async (
       // Get token from header
       token = req.headers.authorization.split(' ')[1];
 
+      const secret = process.env.JWT_SECRET;
+      if (!secret) {
+        throw new Error('JWT_SECRET is not configured');
+      }
+
       // Verify token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as JwtPayload;
+      const decoded = jwt.verify(token, secret) as JwtPayload;
 
       // Get user from the token and set it on the request
       const user = await User.findById(decoded.userId).select('-password') as IUser | null;

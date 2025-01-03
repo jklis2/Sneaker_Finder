@@ -12,7 +12,11 @@ interface AuthRequest extends Request {
 }
 
 const generateToken = (userId: mongoose.Types.ObjectId): string => {
-  return jwt.sign({ userId: userId.toString() }, process.env.JWT_SECRET || 'your-secret-key', {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET is not configured');
+  }
+  return jwt.sign({ userId: userId.toString() }, secret, {
     expiresIn: '30d',
   });
 };

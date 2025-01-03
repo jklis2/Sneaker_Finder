@@ -21,7 +21,7 @@ app.use(express.json());
 app.use("/api/checkout/webhook", express.raw({ type: 'application/json' }));
 
 app.use(cors({
-  origin: 'https://sneaker-finder-client-8cb4.onrender.com',
+  origin: ['https://sneaker-finder-client-8cb4.onrender.com', 'http://localhost:5001'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],

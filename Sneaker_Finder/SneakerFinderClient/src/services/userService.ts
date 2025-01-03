@@ -1,6 +1,10 @@
 import axios from 'axios';
 
-const API_URL = '/api/users';
+const API_BASE_URL = import.meta.env.PROD 
+  ? 'https://sneaker-finder-server-g1jq.onrender.com/api'
+  : '/api';
+
+const API_URL = `${API_BASE_URL}/users`;
 
 // Helper function to get auth header
 const getAuthHeader = () => {
