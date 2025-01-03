@@ -73,20 +73,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string) => {
     try {
       const response = await loginUser(email, password);
-      if (response.token) {
-        localStorage.setItem('token', response.token);
-        setIsAuthenticated(true);
-
-        const current = await getCurrentUserData();
-        setUserData({
-          _id: current._id,
-          firstName: current.firstName,
-          lastName: current.lastName,
-          email: current.email,
-          profilePicture: current.profilePicture,
-        });
+      if (!response.token) {
+        throw new Error('No token received from server');
       }
+      
+      localStorage.setItem('token', response.token);
+      
+      // Get user data before setting authenticated state
+      const current = await getCurrentUserData();
+      
+      // Only set authenticated state after successfully getting user data
+      setUserData({
+        _id: current._id,
+        firstName: current.firstName,
+        lastName: current.lastName,
+        email: current.email,
+        profilePicture: current.profilePicture,
+      });
+      setIsAuthenticated(true);
     } catch (error) {
+      localStorage.removeItem('token');
       setIsAuthenticated(false);
       setUserData(null);
       throw error;
