@@ -8,9 +8,9 @@ export default defineConfig({
     port: 5001,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'https://sneaker-finder-client-8cb4.onrender.com',
         changeOrigin: true,
-        secure: false,
+        secure: true,
         rewrite: (path) => path.replace(/^\/api/, '/api'),
         configure: (proxy) => {
           proxy.on('error', (err) => {
@@ -25,9 +25,9 @@ export default defineConfig({
         }
       },
       '/webhook': {
-        target: 'http://localhost:5002',
+        target: 'https://sneaker-finder-client-8cb4.onrender.com',
         changeOrigin: true,
-        secure: false,
+        secure: true,
       }
     }
   }
