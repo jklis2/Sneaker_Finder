@@ -66,8 +66,8 @@ export const createCheckoutSession = async (req: Request, res: Response): Promis
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
-      success_url: `${process.env.NODE_ENV === 'production' ? 'https://sneaker-finder-client-8cb4.onrender.com' : 'http://localhost:5001'}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NODE_ENV === 'production' ? 'https://sneaker-finder-client-8cb4.onrender.com' : 'http://localhost:5001'}/cart`,
+      success_url: `${process.env.NODE_ENV === 'production' ? 'https://sneaker-finder-client-8cb4.onrender.com/api' : 'http://localhost:5001'}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NODE_ENV === 'production' ? 'https://sneaker-finder-client-8cb4.onrender.com/api' : 'http://localhost:5001'}/cart`,
       metadata: {
         userId: userId,
       },
