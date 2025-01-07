@@ -19,7 +19,7 @@ interface PaymentDocument extends Document {
 dotenv.config();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-11-20.acacia'
+  apiVersion: '2024-12-18.acacia'
 });
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -76,7 +76,6 @@ async function processOrder(session: Stripe.Checkout.Session) {
 export const handleWebhook = async (req: Request, res: Response): Promise<void> => {
   console.log('Received webhook event');
   const sig = req.headers['stripe-signature'];
-
   if (!sig || !endpointSecret) {
     console.error('No signature or endpoint secret');
     res.status(400).send('Webhook Error: No signature');

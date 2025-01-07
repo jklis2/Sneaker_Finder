@@ -16,17 +16,23 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const BASE_URL = "https://grailpoint.com";
 
-app.use(express.json());
-
+// Configure webhook endpoint first to receive raw body
 app.use("/api/checkout/webhook", express.raw({ type: 'application/json' }));
 
-app.use(cors({
-  origin: ['https://sneaker-finder-client-8cb4.onrender.com', 'http://localhost:5001'],
+// Then configure JSON parsing for all other routes
+app.use(express.json());
+
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://sneaker-finder-client-8cb4.onrender.com']
+    : ['http://localhost:5001', 'http://127.0.0.1:5001', 'http://localhost:5173', 'http://127.0.0.1:5173'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
   exposedHeaders: ['Content-Range', 'X-Content-Range']
-}));
+};
+
+app.use(cors(corsOptions));
 
 connectDB();
 

@@ -2,12 +2,12 @@
   "name": "sneakerfinderserver",
   "version": "1.0.0",
   "main": "index.js",
-"scripts": {
-  "test": "echo \"Error: no test specified\" && exit 1",
-  "dev": "nodemon src/index.ts",
-  "build": "tsc",
-  "start": "node dist/index.js"
-},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -27,7 +27,7 @@
     "multer": "^1.4.5-lts.1",
     "openai": "^4.76.0",
     "puppeteer": "^23.10.0",
-    "stripe": "^17.4.0"
+    "stripe": "^17.5.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
