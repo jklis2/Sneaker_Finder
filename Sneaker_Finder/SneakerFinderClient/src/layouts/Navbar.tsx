@@ -216,9 +216,21 @@ export default function Navbar() {
               </button>
             </div>
           ) : (
-            <Link to="/auth/login">
-              <Button name="Zaloguj się" />
-            </Link>
+            <div className="relative flex items-center">
+              <Link to="/auth/login">
+                <Button name="Zaloguj się" />
+              </Link>
+              <button
+                className="lg:hidden p-2 ml-4"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                aria-expanded={isMobileMenuOpen}
+                aria-label="Toggle mobile menu"
+              >
+                <div className="w-6 h-0.5 bg-gray-600 mb-1"></div>
+                <div className="w-6 h-0.5 bg-gray-600 mb-1"></div>
+                <div className="w-6 h-0.5 bg-gray-600"></div>
+              </button>
+            </div>
           )}
         </div>
       </nav>
