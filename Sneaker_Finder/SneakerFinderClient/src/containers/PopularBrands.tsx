@@ -8,12 +8,39 @@ const POPULAR_BRANDS = brands.filter(brand =>
 );
 
 const AUTO_SCROLL_INTERVAL = 10000;
-const CARDS_TO_SHOW = 3;
+const CARDS_TO_SHOW_DESKTOP = 4;
+const CARDS_TO_SHOW_TABLET = 3;
+const CARDS_TO_SHOW_MOBILE = 2;
+const CARDS_TO_SHOW_SMALL = 1;
 
 export default function PopularBrands() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [cardsToShow, setCardsToShow] = useState(CARDS_TO_SHOW_DESKTOP);
   const timerRef = useRef<NodeJS.Timeout>();
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 590) {
+        setCardsToShow(CARDS_TO_SHOW_SMALL);
+      } else if (window.innerWidth < 815) {
+        setCardsToShow(CARDS_TO_SHOW_MOBILE);
+      } else if (window.innerWidth < 1035) {
+        setCardsToShow(CARDS_TO_SHOW_TABLET);
+      } else {
+        setCardsToShow(CARDS_TO_SHOW_DESKTOP);
+      }
+    };
+
+    // Initial check
+    handleResize();
+
+    // Add resize listener
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const extendedBrands = [...POPULAR_BRANDS, ...POPULAR_BRANDS, ...POPULAR_BRANDS];
 
@@ -64,7 +91,7 @@ export default function PopularBrands() {
   return (
     <div className="py-8">
       <H1 className="px-12 mb-6">Popularne Marki</H1>
-      <div className="relative max-w-[1200px] mx-auto px-16">
+      <div className="relative max-w-[1280px] mx-auto px-16">
         <button
           onClick={handlePrevious}
           className="absolute left-4 top-1/2 -translate-y-1/2 bg-white rounded-full w-10 h-10 shadow-md hover:shadow-lg transition-shadow z-10 text-xl font-bold"
@@ -77,7 +104,7 @@ export default function PopularBrands() {
           <div 
             className="flex transition-transform ease-in-out"
             style={{
-              transform: `translateX(calc(-${currentIndex * 100}% / ${CARDS_TO_SHOW}))`,
+              transform: `translateX(calc(-${currentIndex * 100}% / ${cardsToShow}))`,
               transition: isTransitioning ? 'transform 500ms ease-in-out' : 'none',
             }}
             onTransitionEnd={handleTransitionEnd}
@@ -85,13 +112,13 @@ export default function PopularBrands() {
             {extendedBrands.map((brand, index) => (
               <div 
                 key={`${brand.name}-${index}`}
-                className="flex-shrink-0 px-1"
+                className="flex-shrink-0 w-full xs:w-full sm:w-1/2 md:w-1/3 lg:w-1/4 px-4"
               >
                 <div className="flex justify-center items-center w-full">
                   <BrandsCard
                     name={brand.name}
                     photo={brand.image}
-                    variant="default"
+                    variant="large"
                   />
                 </div>
               </div>
