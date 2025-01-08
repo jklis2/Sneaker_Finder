@@ -24,7 +24,7 @@ export default function Pagination({
   }
 
   const buttonBaseClasses =
-    "px-4 py-2 rounded-md transition-all duration-200 font-medium";
+    "px-2 min-[580px]:px-4 py-1 min-[580px]:py-2 text-sm min-[580px]:text-base rounded-md transition-all duration-200 font-medium min-w-[32px] min-[580px]:min-w-[40px]";
   const activeButtonClasses = "bg-black text-white hover:bg-gray-800";
   const inactiveButtonClasses =
     "bg-white text-black border border-gray-300 hover:bg-gray-100";
@@ -32,7 +32,7 @@ export default function Pagination({
     "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200";
 
   return (
-    <nav className="flex justify-center items-center space-x-2 my-8 select-none">
+    <nav className="flex justify-center items-center space-x-1 min-[580px]:space-x-2 mt-4 min-[580px]:mt-8 mb-2 min-[580px]:mb-4 select-none">
       <button
         onClick={() => {
           const newPage = currentPage - 1;
@@ -60,7 +60,7 @@ export default function Pagination({
             1
           </button>
           {startPage > 2 && (
-            <span className="px-2 text-gray-500" aria-hidden="true">
+            <span className="px-1 min-[580px]:px-2 text-gray-500" aria-hidden="true">
               ...
             </span>
           )}
@@ -86,7 +86,7 @@ export default function Pagination({
       {endPage < totalPages && (
         <>
           {endPage < totalPages - 1 && (
-            <span className="px-2 text-gray-500" aria-hidden="true">
+            <span className="px-1 min-[580px]:px-2 text-gray-500" aria-hidden="true">
               ...
             </span>
           )}
@@ -109,9 +109,7 @@ export default function Pagination({
         }}
         disabled={currentPage === totalPages}
         className={`${buttonBaseClasses} ${
-          currentPage === totalPages
-            ? disabledButtonClasses
-            : inactiveButtonClasses
+          currentPage === totalPages ? disabledButtonClasses : inactiveButtonClasses
         }`}
         aria-label="Next page"
       >

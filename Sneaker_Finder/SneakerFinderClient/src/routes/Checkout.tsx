@@ -23,6 +23,7 @@ interface CartItem {
   name: string;
   price: number;
   quantity: number;
+  imageUrl?: string;
 }
 
 interface CartData {
@@ -38,6 +39,13 @@ interface ShippingAddress {
   province: string;
   postalCode: string;
   phoneNumber: string;
+}
+
+interface Product {
+  _id: string;
+  name: string;
+  price: number;
+  imageUrl?: string;
 }
 
 const shippingMethods: ShippingMethod[] = [
@@ -105,6 +113,19 @@ export default function Checkout() {
   const [selectedAddressIndex, setSelectedAddressIndex] = useState<number | null>(null);
   const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
 
+  const fetchProductDetails = async (productId: string): Promise<Product | null> => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/products/${productId}`
+      );
+      if (!response.ok) return null;
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching product details:", error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     if (isAuthenticated && userData) {
       fetchCart();
@@ -117,7 +138,7 @@ export default function Checkout() {
         lastName: userData.lastName || "",
       }));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, userData]);
 
   const fetchCart = async () => {
@@ -148,8 +169,20 @@ export default function Checkout() {
         throw new Error(errorData.message || "Failed to fetch cart");
       }
 
-      const data = await response.json();
-      setCart(data);
+      const data: CartData = await response.json();
+
+      // Fetch product details for each item
+      const itemsWithDetails = await Promise.all(
+        data.items.map(async (item) => {
+          const product = await fetchProductDetails(item.productId);
+          return {
+            ...item,
+            imageUrl: product?.imageUrl
+          };
+        })
+      );
+
+      setCart({ ...data, items: itemsWithDetails });
     } catch (error) {
       console.error("Error fetching cart:", error);
       setError(error instanceof Error ? error.message : "Failed to load cart");
@@ -519,22 +552,26 @@ export default function Checkout() {
 
           {/* Order Summary */}
           <div className="bg-gray-50 p-6 rounded-lg">
-            <h3 className="text-xl font-bold mb-4">Order Summary</h3>
+            <h2 className="text-lg font-medium text-gray-900 mb-4">Order Summary</h2>
             <div className="space-y-4">
               {cart.items.map((item) => (
-                <div
-                  key={item.productId}
-                  className="flex justify-between items-center"
-                >
-                  <div>
-                    <div className="font-medium">{item.name}</div>
-                    <div className="text-sm text-gray-500">
-                      Quantity: {item.quantity}
+                <div key={item.productId} className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-16 h-16 flex-shrink-0">
+                      <img
+                        src={item.imageUrl || "/images/placeholder.png"}
+                        alt={item.name}
+                        className="w-full h-full object-contain rounded"
+                      />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-900">{item.name}</h3>
+                      <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
                     </div>
                   </div>
-                  <div className="font-medium">
+                  <p className="text-sm font-medium text-gray-900">
                     ${(item.price * item.quantity).toFixed(2)}
-                  </div>
+                  </p>
                 </div>
               ))}
               <div className="border-t pt-4">

@@ -5,11 +5,19 @@ import Footer from "../layouts/Footer";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 
+interface Product {
+  _id: string;
+  name: string;
+  price: number;
+  imageUrl?: string;
+}
+
 interface CartItem {
   productId: string;
   name: string;
   price: number;
   quantity: number;
+  imageUrl?: string;
 }
 
 interface CartData {
@@ -24,6 +32,19 @@ export default function Cart() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const { addItem, removeItem: removeContextItem, clearItems } = useCart();
+
+  const fetchProductDetails = async (productId: string): Promise<Product | null> => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/products/${productId}`
+      );
+      if (!response.ok) return null;
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching product details:", error);
+      return null;
+    }
+  };
 
   useEffect(() => {
     if (isAuthenticated && userData) {
@@ -63,7 +84,19 @@ export default function Cart() {
       }
 
       const data: CartData = await response.json();
-      setCart(data);
+      
+      // Fetch product details for each item
+      const itemsWithDetails = await Promise.all(
+        data.items.map(async (item) => {
+          const product = await fetchProductDetails(item.productId);
+          return {
+            ...item,
+            imageUrl: product?.imageUrl
+          };
+        })
+      );
+
+      setCart({ ...data, items: itemsWithDetails });
 
       if (data.items) {
         clearItems();
@@ -222,9 +255,18 @@ export default function Cart() {
                 key={item.productId}
                 className="flex items-center justify-between p-4 bg-white rounded-lg shadow"
               >
-                <div>
-                  <h3 className="font-semibold">{item.name}</h3>
-                  <p className="text-gray-600">${item.price.toFixed(2)}</p>
+                <div className="flex items-center space-x-4">
+                  <div className="w-16 h-16 flex-shrink-0">
+                    <img
+                      src={item.imageUrl || "/images/placeholder.png"}
+                      alt={item.name}
+                      className="w-full h-full object-contain rounded"
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">{item.name}</h3>
+                    <p className="text-gray-600">${item.price.toFixed(2)}</p>
+                  </div>
                 </div>
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center border rounded">

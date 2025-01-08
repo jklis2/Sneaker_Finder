@@ -6,7 +6,7 @@ interface ProductPhotosProps {
 export default function ProductPhotos({ imageUrl, name }: ProductPhotosProps) {
   return (
     <div className="w-full p-4">
-      <div className="h-[500px] flex items-center justify-center overflow-hidden">
+      <div className="h-[400px] flex items-center justify-center overflow-hidden">
         {imageUrl ? (
           <img
             src={imageUrl}

@@ -95,10 +95,10 @@ export default function ProductInfoComp({
 
         {color && (
           <div>
-            <p className="text-sm text-gray-600">Kolor: {color}</p>
+            <p className="text-sm text-gray-600">Color: {color}</p>
           </div>
         )}
-        
+
         {availableSizes && availableSizes.length > 0 && (
           <div>
             <p className="text-sm font-medium text-gray-700 mb-2">Available Sizes</p>
@@ -114,7 +114,7 @@ export default function ProductInfoComp({
             </div>
           </div>
         )}
-        
+
         <div className="flex items-center space-x-4">
           <label htmlFor="quantity" className="text-gray-700">Quantity:</label>
           <div className="flex items-center border rounded">
@@ -153,7 +153,7 @@ export default function ProductInfoComp({
             productId: id,
             name,
             price,
-            quantity,
+            quantity
           }}
           onClose={() => setShowConfirmation(false)}
         />

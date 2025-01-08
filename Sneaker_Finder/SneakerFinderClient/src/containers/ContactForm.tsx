@@ -21,7 +21,7 @@ export default function ContactForm() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
+    <div className="max-w-[600px] mx-4 sm:mx-auto p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">
         Skontaktuj się z nami
       </h2>

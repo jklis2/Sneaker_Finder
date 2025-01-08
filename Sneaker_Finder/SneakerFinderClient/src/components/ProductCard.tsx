@@ -88,52 +88,34 @@ export default function ProductCard({
 
   const containerClasses =
     size === "normal"
-      ? "border border-gray-300 shadow-lg rounded-lg p-4 w-full sm:w-[300px] h-[450px] flex flex-col"
-      : "border border-gray-300 shadow-lg rounded-lg p-3 w-full sm:w-[280px] h-[420px] flex flex-col";
+      ? "border border-gray-300 shadow-lg rounded-lg p-3 w-[48%] md:w-[300px] h-[380px] md:h-[450px] flex flex-col"
+      : "border border-gray-300 shadow-lg rounded-lg p-2 w-[48%] md:w-[280px] h-[350px] md:h-[420px] flex flex-col";
 
   const imageContainerClasses =
     size === "normal"
-      ? "h-52 w-full flex items-center justify-center bg-gray-100 rounded overflow-hidden"
-      : "h-44 w-full flex items-center justify-center bg-gray-100 rounded overflow-hidden";
+      ? "aspect-square w-full flex items-center justify-center rounded overflow-hidden"
+      : "aspect-square w-full flex items-center justify-center rounded overflow-hidden";
 
   return (
     <>
       <div className={containerClasses}>
         <div className={imageContainerClasses}>
-          {imageUrl ? (
-            <img 
-              src={imageUrl} 
-              alt={name}
-              className="h-full w-full object-cover rounded"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = '/icons/placeholder.svg';
-              }}
-            />
-          ) : (
-            <div className="h-full w-full flex items-center justify-center bg-gray-200 rounded">
-              <span className="text-gray-400">No image available</span>
-            </div>
-          )}
+          <img
+            src={imageUrl || "/images/placeholder.png"}
+            alt={name}
+            className="w-full h-full object-contain p-2"
+          />
         </div>
-        <div className="flex-1 flex flex-col justify-between">
-          <div>
-            <h3
-              className={`${
-                size === "normal" ? "text-lg" : "text-base"
-              } font-semibold mt-4 line-clamp-2`}
-            >
-              {name}
-            </h3>
-            <p className={`${size === "normal" ? "text-lg" : "text-base"} mt-2`}>
-              ${price.toFixed(2)}
-            </p>
-          </div>
-          {error && (
-            <p className="text-red-500 text-sm mt-2">{error}</p>
-          )}
+        <div className="flex-grow flex flex-col justify-between mt-4">
+          <h3 className="text-sm md:text-base font-semibold line-clamp-2 mb-2">
+            {name}
+          </h3>
           <div className="mt-auto">
-            <div className="flex gap-2 mt-4">
+            <p className="text-lg md:text-xl font-bold mb-3">${price}</p>
+            {error && (
+              <p className="text-red-500 text-sm mb-2">{error}</p>
+            )}
+            <div className="flex flex-col gap-2">
               <button
                 onClick={handleAddToCart}
                 disabled={isLoading}

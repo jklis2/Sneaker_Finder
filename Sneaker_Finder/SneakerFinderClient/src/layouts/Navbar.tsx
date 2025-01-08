@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import Button from "../components/Button";
 import logo from "../assets/logo.png";
@@ -11,8 +11,11 @@ import { useCart } from "../context/CartContext";
 
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const { userData, logout } = useAuth();
   const { getCartItemsCount } = useCart();
 
@@ -32,6 +35,17 @@ export default function Navbar() {
     };
   }, []);
 
+  useEffect(() => {
+    if (location.pathname === "/" && location.state?.scrollTo) {
+      const element = document.getElementById(location.state.scrollTo);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+      // Clear the state after scrolling
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
+
   const handleLogout = () => {
     logout();
     navigate("/");
@@ -41,60 +55,74 @@ export default function Navbar() {
     setIsDropdownOpen((prev) => !prev);
   };
 
-  const handleScroll = (elementId: string) => {
-    const element = document.getElementById(elementId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+  const handleSectionClick = (sectionId: string) => {
+    if (location.pathname === "/") {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      navigate("/", { state: { scrollTo: sectionId } });
     }
+    setIsMobileMenuOpen(false); // Close mobile menu after clicking
   };
 
+  const NavLinks = () => (
+    <>
+      <button 
+        onClick={() => handleSectionClick('latest-products')} 
+        className="text-gray-600 hover:text-gray-800 w-full text-center"
+      >
+        Nowości
+      </button>
+      <button 
+        onClick={() => handleSectionClick('promotions')} 
+        className="text-gray-600 hover:text-gray-800 w-full text-center"
+      >
+        Promocje
+      </button>
+      <Link to="/brands" className="text-gray-600 hover:text-gray-800 w-full text-center">
+        Marki
+      </Link>
+      <Link to="/products" className="text-gray-600 hover:text-gray-800 w-full text-center">
+        Produkty
+      </Link>
+      <Link to="/styleAdvisor" className="text-gray-600 hover:text-gray-800 w-full text-center">
+        Asystent modowy
+      </Link>
+      <Link to="/contact" className="text-gray-600 hover:text-gray-800 w-full text-center">
+        Kontakt
+      </Link>
+    </>
+  );
+
   return (
-    <header>
+    <header className="relative bg-white">
       <nav
-        className="flex items-center justify-center p-6 lg:px-8"
+        className="flex items-center justify-between p-6 lg:px-8 relative z-50"
         aria-label="Main navigation"
       >
-        <div className="flex items-center justify-center space-x-8">
+        <div className="flex items-center">
           <Link to="/">
             <img src={logo} alt="Sneaker Finder Logo" className="w-32 h-18" />
           </Link>
+        </div>
 
-          <button 
-            onClick={() => handleScroll('latest-products')} 
-            className="text-gray-600 hover:text-gray-800 pl-16"
-          >
-            Nowości
-          </button>
-          <button 
-            onClick={() => handleScroll('promotions')} 
-            className="text-gray-600 hover:text-gray-800"
-          >
-            Promocje
-          </button>
-          <Link to="/brands" className="text-gray-600 hover:text-gray-800">
-            Marki
-          </Link>
-          <Link to="/products" className="text-gray-600 hover:text-gray-800">
-            Produkty
-          </Link>
-          <Link
-            to="/styleAdvisor"
-            className="text-gray-600 hover:text-gray-800"
-          >
-            Asystent modowy
-          </Link>
-          <Link to="/contact" className="text-gray-600 hover:text-gray-800 pr-16">
-            Kontakt
-          </Link>
+        {/* Desktop Navigation */}
+        <div className="hidden lg:flex items-center space-x-8">
+          <NavLinks />
+        </div>
 
+        {/* User Section - Always Visible */}
+        <div className="flex items-center">
           {userData ? (
-            <div className="relative flex items-center space-x-4">
+            <div className="relative flex items-center">
               <span className="text-gray-700">
                 {userData.firstName} {userData.lastName}
               </span>
               <div className="relative" ref={dropdownRef}>
                 <button
-                  className="w-8 h-8 bg-green-500 rounded-full cursor-pointer"
+                  className="w-8 h-8 bg-green-500 rounded-full cursor-pointer ml-4"
                   onClick={toggleDropdown}
                   aria-expanded={isDropdownOpen}
                   aria-haspopup="true"
@@ -176,6 +204,16 @@ export default function Navbar() {
                   </div>
                 )}
               </div>
+              <button
+                className="lg:hidden p-2 ml-4"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                aria-expanded={isMobileMenuOpen}
+                aria-label="Toggle mobile menu"
+              >
+                <div className="w-6 h-0.5 bg-gray-600 mb-1"></div>
+                <div className="w-6 h-0.5 bg-gray-600 mb-1"></div>
+                <div className="w-6 h-0.5 bg-gray-600"></div>
+              </button>
             </div>
           ) : (
             <Link to="/auth/login">
@@ -184,6 +222,19 @@ export default function Navbar() {
           )}
         </div>
       </nav>
+
+      {/* Mobile Menu */}
+      <div 
+        ref={mobileMenuRef}
+        className={`fixed left-0 right-0 bg-white shadow-lg z-40 lg:hidden overflow-hidden transition-[max-height] duration-200 ease-in-out ${
+          isMobileMenuOpen ? 'max-h-screen' : 'max-h-0'
+        }`}
+        style={{ top: '80px' }}
+      >
+        <div className="flex flex-col items-center space-y-6 py-8">
+          <NavLinks />
+        </div>
+      </div>
     </header>
   );
 }

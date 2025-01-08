@@ -214,7 +214,7 @@ export default function StyleChat() {
           </div>
         </div>
         <div className="bg-white rounded-b-xl shadow-lg border border-t-0 border-gray-200 p-4 mb-6">
-          <div className="flex items-center space-x-4">
+          <div className="flex flex-col max-[428px]:space-y-3 min-[429px]:flex-row min-[429px]:space-x-4">
             <input
               type="text"
               className="flex-grow px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent transition-all duration-200 placeholder-gray-400"

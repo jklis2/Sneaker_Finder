@@ -126,16 +126,17 @@ export default function Product() {
                 />
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 place-items-center">
               {similarProducts.map((product) => (
-                <ProductCard
-                  key={product._id}
-                  _id={product._id}
-                  name={product.name}
-                  price={product.price}
-                  imageUrl={product.imageUrl}
-                  size="small"
-                />
+                <div key={product._id} className="flex justify-center w-full">
+                  <ProductCard
+                    _id={product._id}
+                    name={product.name}
+                    price={product.price}
+                    imageUrl={product.imageUrl}
+                    size="small"
+                  />
+                </div>
               ))}
             </div>
           </div>

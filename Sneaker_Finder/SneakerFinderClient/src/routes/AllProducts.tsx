@@ -137,7 +137,7 @@ export default function AllProducts() {
               : "No products found"}
           </div>
         ) : (
-          <div className="flex flex-wrap gap-3 justify-center items-start w-full max-w-[1280px] mx-auto px-1">
+          <div className="flex flex-wrap gap-3 justify-between items-start w-full max-w-[1280px] mx-auto px-2">
             {currentProducts.map((product) => (
               <ProductCard
                 key={product._id}
