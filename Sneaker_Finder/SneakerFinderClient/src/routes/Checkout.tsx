@@ -24,6 +24,7 @@ interface CartItem {
   price: number;
   quantity: number;
   imageUrl?: string;
+  size?: string;
 }
 
 interface CartData {
@@ -567,6 +568,9 @@ export default function Checkout() {
                     <div>
                       <h3 className="text-sm font-medium text-gray-900">{item.name}</h3>
                       <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
+                      {item.size && (
+                        <p className="text-sm text-gray-500">Size: {item.size}</p>
+                      )}
                     </div>
                   </div>
                   <p className="text-sm font-medium text-gray-900">

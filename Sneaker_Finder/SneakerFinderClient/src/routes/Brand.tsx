@@ -12,6 +12,7 @@ interface BrandProduct {
   price: number;
   imageUrl?: string;
   brand: string;
+  availableSizes?: string[];
 }
 
 export default function Brand() {
@@ -174,6 +175,7 @@ export default function Brand() {
                 price={product.price}
                 imageUrl={product.imageUrl}
                 size="normal"
+                availableSizes={product.availableSizes}
               />
             ))}
           </div>

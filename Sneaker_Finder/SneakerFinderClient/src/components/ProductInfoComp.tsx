@@ -22,6 +22,7 @@ export default function ProductInfoComp({
   color,
 }: ProductInfoCompProps) {
   const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState<string>("");
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -34,6 +35,11 @@ export default function ProductInfoComp({
 
       if (!isAuthenticated || !userData) {
         setError("Please log in to add items to cart");
+        return;
+      }
+
+      if (availableSizes && availableSizes.length > 0 && !selectedSize) {
+        setError("Please select a size");
         return;
       }
 
@@ -50,6 +56,7 @@ export default function ProductInfoComp({
         name,
         price,
         quantity,
+        size: selectedSize,
       };
       console.log('Adding to cart with payload:', payload);
 
@@ -101,15 +108,23 @@ export default function ProductInfoComp({
 
         {availableSizes && availableSizes.length > 0 && (
           <div>
-            <p className="text-sm font-medium text-gray-700 mb-2">Available Sizes</p>
+            <p className="text-sm font-medium text-gray-700 mb-2">Select Size</p>
             <div className="grid grid-cols-3 gap-2">
               {availableSizes.map((size) => (
-                <div
+                <button
                   key={size}
-                  className="text-center border rounded py-2 text-sm hover:bg-gray-50"
+                  onClick={() => {
+                    setSelectedSize(size);
+                    setError("");
+                  }}
+                  className={`text-center border rounded py-2 text-sm transition-colors duration-200 ${
+                    selectedSize === size 
+                      ? 'bg-black text-white hover:bg-gray-800' 
+                      : 'hover:bg-gray-50'
+                  }`}
                 >
                   {size}
-                </div>
+                </button>
               ))}
             </div>
           </div>
@@ -153,7 +168,8 @@ export default function ProductInfoComp({
             productId: id,
             name,
             price,
-            quantity
+            quantity,
+            size: selectedSize,
           }}
           onClose={() => setShowConfirmation(false)}
         />

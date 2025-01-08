@@ -11,6 +11,7 @@ interface StockXProduct {
   name: string;
   price: number;
   imageUrl: string;
+  availableSizes: string[];
 }
 
 export default function AllProducts() {
@@ -146,6 +147,7 @@ export default function AllProducts() {
                 price={product.price}
                 imageUrl={product.imageUrl}
                 size="normal"
+                availableSizes={product.availableSizes}
               />
             ))}
           </div>

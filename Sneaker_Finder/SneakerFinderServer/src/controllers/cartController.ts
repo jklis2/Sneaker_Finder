@@ -16,7 +16,7 @@ export const getCart = async (req: Request, res: Response): Promise<void> => {
 // Add item to cart
 export const addToCart = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { userId, productId, name, price } = req.body;
+    const { userId, productId, name, price, size } = req.body;
 
     let cart = await Cart.findOne({ userId });
 
@@ -28,7 +28,10 @@ export const addToCart = async (req: Request, res: Response): Promise<void> => {
       });
     }
 
-    const existingItem = cart.items.find(item => item.productId === productId);
+    // Check for existing item with same productId AND size
+    const existingItem = cart.items.find(item => 
+      item.productId === productId && item.size === size
+    );
 
     if (existingItem) {
       existingItem.quantity += 1;
@@ -37,7 +40,8 @@ export const addToCart = async (req: Request, res: Response): Promise<void> => {
         productId,
         name,
         price,
-        quantity: 1
+        quantity: 1,
+        size
       });
     }
 
@@ -52,7 +56,7 @@ export const addToCart = async (req: Request, res: Response): Promise<void> => {
 // Update item quantity
 export const updateCartItem = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { userId, productId, quantity } = req.body;
+    const { userId, productId, quantity, size } = req.body;
 
     const cart = await Cart.findOne({ userId });
     if (!cart) {
@@ -60,14 +64,18 @@ export const updateCartItem = async (req: Request, res: Response): Promise<void>
       return;
     }
 
-    const item = cart.items.find(item => item.productId === productId);
+    const item = cart.items.find(item => 
+      item.productId === productId && item.size === size
+    );
     if (!item) {
       res.status(404).json({ message: "Item not found in cart" });
       return;
     }
 
     if (quantity <= 0) {
-      cart.items = cart.items.filter(item => item.productId !== productId);
+      cart.items = cart.items.filter(item => 
+        !(item.productId === productId && item.size === size)
+      );
     } else {
       item.quantity = quantity;
     }
@@ -83,7 +91,7 @@ export const updateCartItem = async (req: Request, res: Response): Promise<void>
 // Remove item from cart
 export const removeFromCart = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { userId, productId } = req.body;
+    const { userId, productId, size } = req.body;
 
     const cart = await Cart.findOne({ userId });
     if (!cart) {
@@ -91,7 +99,9 @@ export const removeFromCart = async (req: Request, res: Response): Promise<void>
       return;
     }
 
-    cart.items = cart.items.filter(item => item.productId !== productId);
+    cart.items = cart.items.filter(item => 
+      !(item.productId === productId && item.size === size)
+    );
     await cart.save();
     res.json(cart);
   } catch (error) {

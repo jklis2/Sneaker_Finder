@@ -9,6 +9,7 @@ interface ProductCardProps {
   price: number;
   size?: "normal" | "small";
   imageUrl?: string;
+  availableSizes?: string[];
 }
 
 export default function ProductCard({
@@ -17,14 +18,21 @@ export default function ProductCard({
   price,
   size = "normal",
   imageUrl,
+  availableSizes = [],
 }: ProductCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [error, setError] = useState("");
+  const [selectedSize, setSelectedSize] = useState<string>("");
   const navigate = useNavigate();
   const { isAuthenticated, userData } = useAuth();
 
   const handleAddToCart = async () => {
+    if (availableSizes && availableSizes.length > 0 && !selectedSize) {
+      setError("Please select a size");
+      return;
+    }
+
     setIsLoading(true);
     setError("");
     try {
@@ -39,13 +47,13 @@ export default function ProductCard({
         return;
       }
 
-      // Log the request payload for debugging
       const payload = {
         userId: userData._id,
         productId: _id,
         name,
         price,
         quantity: 1,
+        size: selectedSize,
       };
       console.log('Adding to cart with payload:', payload);
 
@@ -112,6 +120,25 @@ export default function ProductCard({
           </h3>
           <div className="mt-auto">
             <p className="text-lg md:text-xl font-bold mb-3">${price}</p>
+            {availableSizes && availableSizes.length > 0 && (
+              <div className="mb-3">
+                <select
+                  value={selectedSize}
+                  onChange={(e) => {
+                    setSelectedSize(e.target.value);
+                    setError("");
+                  }}
+                  className="w-full p-2 border rounded"
+                >
+                  <option value="">Select Size</option>
+                  {availableSizes.map((size) => (
+                    <option key={size} value={size}>
+                      {size}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
             {error && (
               <p className="text-red-500 text-sm mb-2">{error}</p>
             )}
@@ -141,6 +168,7 @@ export default function ProductCard({
             name,
             price,
             quantity: 1,
+            size: selectedSize
           }}
           onClose={() => setShowConfirmation(false)}
         />

@@ -5,6 +5,7 @@ interface CartItem {
   name: string;
   price: number;
   quantity: number;
+  size?: string;
 }
 
 interface AddToCartConfirmationProps {
@@ -37,6 +38,7 @@ export default function AddToCartConfirmation({ item, onClose }: AddToCartConfir
             <p className="text-lg font-semibold">{item.name}</p>
             <p className="text-gray-600">Quantity: {item.quantity}</p>
             <p className="text-gray-600">Price: ${item.price.toFixed(2)}</p>
+            {item.size && <p className="text-gray-600">Size: {item.size}</p>}
           </div>
           <div className="flex flex-col gap-3">
             <Link

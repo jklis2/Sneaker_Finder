@@ -5,6 +5,7 @@ interface ICartItem {
   name: string;
   price: number;
   quantity: number;
+  size?: string;
 }
 
 interface ICart extends Document {
@@ -17,7 +18,8 @@ const CartItemSchema = new Schema({
   productId: { type: String, required: true },
   name: { type: String, required: true },
   price: { type: Number, required: true },
-  quantity: { type: Number, required: true, default: 1 }
+  quantity: { type: Number, required: true, default: 1 },
+  size: { type: String }
 });
 
 const CartSchema = new Schema(

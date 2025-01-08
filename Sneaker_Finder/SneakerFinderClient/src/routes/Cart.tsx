@@ -18,6 +18,7 @@ interface CartItem {
   price: number;
   quantity: number;
   imageUrl?: string;
+  size?: string;
 }
 
 interface CartData {
@@ -143,6 +144,7 @@ export default function Cart() {
             userId: userData._id,
             productId,
             quantity,
+            size: cart.items.find(item => item.productId === productId)?.size
           }),
         }
       );
@@ -197,6 +199,7 @@ export default function Cart() {
           body: JSON.stringify({
             userId: userData._id,
             productId,
+            size: cart.items.find(item => item.productId === productId)?.size
           }),
         }
       );
@@ -266,6 +269,9 @@ export default function Cart() {
                   <div>
                     <h3 className="font-semibold">{item.name}</h3>
                     <p className="text-gray-600">${item.price.toFixed(2)}</p>
+                    {item.size && (
+                      <p className="text-gray-500 text-sm">Size: {item.size}</p>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-center space-x-4">

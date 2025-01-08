@@ -7,6 +7,7 @@ interface LatestProduct {
   name: string;
   price: number;
   imageUrl?: string;
+  availableSizes: string[];
 }
 
 export default function LatestProducts() {
@@ -69,6 +70,7 @@ export default function LatestProducts() {
             price={product.price}
             imageUrl={product.imageUrl}
             size="normal"
+            availableSizes={product.availableSizes}
           />
         ))}
       </div>

@@ -7,6 +7,7 @@ interface PromotionProduct {
   name: string;
   price: number;
   imageUrl?: string;
+  availableSizes: string[];
 }
 
 export default function Promotions() {
@@ -69,6 +70,7 @@ export default function Promotions() {
             price={product.price}
             imageUrl={product.imageUrl}
             size="normal"
+            availableSizes={product.availableSizes}
           />
         ))}
       </div>
