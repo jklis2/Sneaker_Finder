@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
+import ReactMarkdown from "react-markdown";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -149,7 +150,13 @@ export default function StyleChat() {
                       : "bg-white text-gray-800 rounded-tl-none shadow-md"
                   }`}
                 >
-                  <div className="relative z-10">{message.content}</div>
+                  {message.role === "assistant" ? (
+                    <ReactMarkdown className="prose">
+                      {message.content}
+                    </ReactMarkdown>
+                  ) : (
+                    <div className="relative z-10">{message.content}</div>
+                  )}
                   <div
                     className={`absolute top-0 ${
                       message.role === "user" ? "-right-2" : "-left-2"
