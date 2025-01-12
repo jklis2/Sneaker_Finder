@@ -3,6 +3,7 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useTranslation } from 'react-i18next';
 import axios from "axios";
 import {
   getCurrentUserData,
@@ -13,10 +14,12 @@ import {
   updateShippingAddress,
   ShippingAddress,
 } from "../services/userService";
+import i18n from "../i18n";
 
 export default function SettingsForm() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const { t } = useTranslation('settings');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -91,6 +94,20 @@ export default function SettingsForm() {
     };
     fetchUserData();
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    // Load saved language from localStorage or use browser default
+    const savedLanguage = localStorage.getItem('i18nextLng') || navigator.language.split('-')[0];
+    setUserData(prev => ({ ...prev, language: savedLanguage }));
+    i18n.changeLanguage(savedLanguage);
+  }, []);
+
+  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newLang = e.target.value;
+    setUserData(prev => ({ ...prev, language: newLang }));
+    i18n.changeLanguage(newLang);
+    localStorage.setItem('i18nextLng', newLang);
+  };
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -298,7 +315,7 @@ export default function SettingsForm() {
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md">
         <h2 className="text-3xl font-semibold text-gray-800 mb-8 text-center">
-          Ustawienia konta
+          {t('title')}
         </h2>
         {error && (
           <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
@@ -314,7 +331,7 @@ export default function SettingsForm() {
           <div className="bg-white rounded-lg shadow p-6 mb-8">
             <section>
               <h3 className="text-xl font-medium text-gray-800 mb-4 pb-2 border-b">
-                Profil
+                {t('profile')}
               </h3>
               <div className="space-y-6">
                 <div className="flex items-center space-x-4 mb-6">
@@ -326,7 +343,7 @@ export default function SettingsForm() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <span className="text-gray-500">Zdjęcie profilowe</span>
+                      <span className="text-gray-500">{t('profilePicture')}</span>
                     )}
                   </div>
                   <input
@@ -340,7 +357,7 @@ export default function SettingsForm() {
                     htmlFor="profile-picture-input"
                     className="bg-[#1C2632] text-white px-4 py-2 rounded-full w-full hover:bg-opacity-90 disabled:opacity-50 cursor-pointer"
                   >
-                    {isLoading ? "Uploading..." : "Zmień zdjęcie"}
+                    {isLoading ? t('placeholders.uploading') : t('changePicture')}
                   </label>
                 </div>
               </div>
@@ -348,11 +365,11 @@ export default function SettingsForm() {
           </div>
           <section>
             <h3 className="text-xl font-medium text-gray-800 mb-4 pb-2 border-b">
-              Zmiana email
+              {t('email')}
             </h3>
             <div className="space-y-4">
               <Input
-                label="Obecny email"
+                label={t('currentEmail')}
                 id="currentEmail"
                 name="currentEmail"
                 type="email"
@@ -361,17 +378,17 @@ export default function SettingsForm() {
                 disabled
               />
               <Input
-                label="Nowy email"
+                label={t('newEmail')}
                 id="newEmail"
                 name="newEmail"
                 type="email"
                 value={userData.newEmail}
                 onChange={handleChange}
-                placeholder="nowy.email@example.com"
+                placeholder={t('placeholders.email')}
               />
               <div className="flex justify-end pt-2">
                 <Button
-                  name="Zmień email"
+                  name={t('changeEmail')}
                   onClick={handleUpdateEmail}
                   disabled={!userData.newEmail}
                 />
@@ -380,11 +397,11 @@ export default function SettingsForm() {
           </section>
           <section>
             <h3 className="text-xl font-medium text-gray-800 mb-4 pb-2 border-b">
-              Zmiana hasła
+              {t('password')}
             </h3>
             <div className="space-y-4">
               <Input
-                label="Obecne hasło"
+                label={t('currentPassword')}
                 id="currentPassword"
                 name="currentPassword"
                 type="password"
@@ -393,7 +410,7 @@ export default function SettingsForm() {
               />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
-                  label="Nowe hasło"
+                  label={t('newPassword')}
                   id="newPassword"
                   name="newPassword"
                   type="password"
@@ -401,7 +418,7 @@ export default function SettingsForm() {
                   onChange={handleChange}
                 />
                 <Input
-                  label="Potwierdź nowe hasło"
+                  label={t('confirmPassword')}
                   id="confirmPassword"
                   name="confirmPassword"
                   type="password"
@@ -411,7 +428,7 @@ export default function SettingsForm() {
               </div>
               <div className="flex justify-end pt-2">
                 <Button
-                  name="Zmień hasło"
+                  name={t('changePassword')}
                   onClick={handleUpdatePassword}
                   disabled={
                     !userData.currentPassword ||
@@ -424,7 +441,7 @@ export default function SettingsForm() {
           </section>
           <section>
             <h3 className="text-xl font-medium text-gray-800 mb-4 pb-2 border-b">
-              Adresy dostawy
+              {t('shippingAddresses')}
             </h3>
             <div className="space-y-6">
               {addresses.map((address, index) => (
@@ -436,7 +453,7 @@ export default function SettingsForm() {
                     <div className="space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <Input
-                          label="Ulica"
+                          label={t('street')}
                           id={`edit-street-${index}`}
                           name="street"
                           type="text"
@@ -444,7 +461,7 @@ export default function SettingsForm() {
                           onChange={handleEditAddressChange}
                         />
                         <Input
-                          label="Numer"
+                          label={t('number')}
                           id={`edit-number-${index}`}
                           name="number"
                           type="text"
@@ -452,7 +469,7 @@ export default function SettingsForm() {
                           onChange={handleEditAddressChange}
                         />
                         <Input
-                          label="Numer mieszkania (opcjonalnie)"
+                          label={t('apartmentNumber')}
                           id={`edit-apartmentNumber-${index}`}
                           name="apartmentNumber"
                           type="text"
@@ -460,7 +477,7 @@ export default function SettingsForm() {
                           onChange={handleEditAddressChange}
                         />
                         <Input
-                          label="Miasto"
+                          label={t('city')}
                           id={`edit-city-${index}`}
                           name="city"
                           type="text"
@@ -468,7 +485,7 @@ export default function SettingsForm() {
                           onChange={handleEditAddressChange}
                         />
                         <Input
-                          label="Kod pocztowy"
+                          label={t('postalCode')}
                           id={`edit-postalCode-${index}`}
                           name="postalCode"
                           type="text"
@@ -476,7 +493,7 @@ export default function SettingsForm() {
                           onChange={handleEditAddressChange}
                         />
                         <Input
-                          label="Województwo"
+                          label={t('province')}
                           id={`edit-province-${index}`}
                           name="province"
                           type="text"
@@ -484,7 +501,7 @@ export default function SettingsForm() {
                           onChange={handleEditAddressChange}
                         />
                         <Input
-                          label="Numer telefonu"
+                          label={t('phoneNumber')}
                           id={`edit-phoneNumber-${index}`}
                           name="phoneNumber"
                           type="tel"
@@ -493,9 +510,9 @@ export default function SettingsForm() {
                         />
                       </div>
                       <div className="flex justify-end space-x-4">
-                        <Button name="Anuluj" onClick={handleCancelEdit} />
+                        <Button name={t('cancel')} onClick={handleCancelEdit} />
                         <Button
-                          name="Zapisz zmiany"
+                          name={t('saveChanges')}
                           onClick={handleUpdateAddress}
                         />
                       </div>
@@ -536,25 +553,25 @@ export default function SettingsForm() {
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <p>
-                          <span className="font-medium">Ulica:</span>{" "}
+                          <span className="font-medium">{t('street')}:</span>{" "}
                           {address.street} {address.number}
                           {address.apartmentNumber &&
                             ` m. ${address.apartmentNumber}`}
                         </p>
                         <p>
-                          <span className="font-medium">Miasto:</span>{" "}
+                          <span className="font-medium">{t('city')}:</span>{" "}
                           {address.city}
                         </p>
                         <p>
-                          <span className="font-medium">Kod pocztowy:</span>{" "}
+                          <span className="font-medium">{t('postalCode')}:</span>{" "}
                           {address.postalCode}
                         </p>
                         <p>
-                          <span className="font-medium">Województwo:</span>{" "}
+                          <span className="font-medium">{t('province')}:</span>{" "}
                           {address.province}
                         </p>
                         <p>
-                          <span className="font-medium">Telefon:</span>{" "}
+                          <span className="font-medium">{t('phoneNumber')}:</span>{" "}
                           {address.phoneNumber}
                         </p>
                       </div>
@@ -564,10 +581,10 @@ export default function SettingsForm() {
               ))}
               {isAddingAddress ? (
                 <div className="p-4 border rounded-lg">
-                  <h4 className="text-lg font-medium mb-4">Nowy adres</h4>
+                  <h4 className="text-lg font-medium mb-4">{t('newAddress')}</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Input
-                      label="Ulica"
+                      label={t('street')}
                       id="street"
                       name="street"
                       type="text"
@@ -575,7 +592,7 @@ export default function SettingsForm() {
                       onChange={handleAddressChange}
                     />
                     <Input
-                      label="Numer"
+                      label={t('number')}
                       id="number"
                       name="number"
                       type="text"
@@ -583,7 +600,7 @@ export default function SettingsForm() {
                       onChange={handleAddressChange}
                     />
                     <Input
-                      label="Numer mieszkania (opcjonalnie)"
+                      label={t('apartmentNumber')}
                       id="apartmentNumber"
                       name="apartmentNumber"
                       type="text"
@@ -591,7 +608,7 @@ export default function SettingsForm() {
                       onChange={handleAddressChange}
                     />
                     <Input
-                      label="Miasto"
+                      label={t('city')}
                       id="city"
                       name="city"
                       type="text"
@@ -599,7 +616,7 @@ export default function SettingsForm() {
                       onChange={handleAddressChange}
                     />
                     <Input
-                      label="Kod pocztowy"
+                      label={t('postalCode')}
                       id="postalCode"
                       name="postalCode"
                       type="text"
@@ -607,7 +624,7 @@ export default function SettingsForm() {
                       onChange={handleAddressChange}
                     />
                     <Input
-                      label="Województwo"
+                      label={t('province')}
                       id="province"
                       name="province"
                       type="text"
@@ -615,7 +632,7 @@ export default function SettingsForm() {
                       onChange={handleAddressChange}
                     />
                     <Input
-                      label="Numer telefonu"
+                      label={t('phoneNumber')}
                       id="phoneNumber"
                       name="phoneNumber"
                       type="tel"
@@ -625,16 +642,16 @@ export default function SettingsForm() {
                   </div>
                   <div className="flex justify-end space-x-4 mt-4">
                     <Button
-                      name="Anuluj"
+                      name={t('cancel')}
                       onClick={() => setIsAddingAddress(false)}
                     />
-                    <Button name="Dodaj adres" onClick={handleAddAddress} />
+                    <Button name={t('addAddress')} onClick={handleAddAddress} />
                   </div>
                 </div>
               ) : (
                 <div className="flex justify-start">
                   <Button
-                    name="Dodaj nowy adres"
+                    name={t('addNewAddress')}
                     onClick={() => setIsAddingAddress(true)}
                   />
                 </div>
@@ -643,21 +660,21 @@ export default function SettingsForm() {
           </section>
           <section>
             <h3 className="text-xl font-medium text-gray-800 mb-4 pb-2 border-b">
-              Preferencje
+              {t('preferences')}
             </h3>
             <div className="space-y-4">
               <div className="flex flex-col space-y-2">
                 <label className="block text-sm font-medium text-gray-700">
-                  Język
+                  {t('language')}
                 </label>
                 <select
                   name="language"
                   value={userData.language}
-                  onChange={handleChange}
+                  onChange={handleLanguageChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                 >
-                  <option value="pl">Polski</option>
-                  <option value="en">English</option>
+                  <option value="en">{t('languages.english')}</option>
+                  <option value="pl">{t('languages.polish')}</option>
                 </select>
               </div>
               <div className="space-y-3">
@@ -670,7 +687,7 @@ export default function SettingsForm() {
                     className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
                   <span className="text-sm text-gray-700">
-                    Chcę otrzymywać newsletter z najnowszymi ofertami
+                    {t('newsletter')}
                   </span>
                 </label>
                 <label className="flex items-center space-x-3">
@@ -682,7 +699,7 @@ export default function SettingsForm() {
                     className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
                   <span className="text-sm text-gray-700">
-                    Powiadomienia email o statusie zamówienia
+                    {t('emailNotifications')}
                   </span>
                 </label>
                 <label className="flex items-center space-x-3">
@@ -694,7 +711,7 @@ export default function SettingsForm() {
                     className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
                   <span className="text-sm text-gray-700">
-                    Powiadomienia push w przeglądarce
+                    {t('pushNotifications')}
                   </span>
                 </label>
               </div>
@@ -703,9 +720,9 @@ export default function SettingsForm() {
           <div className="pt-6 border-t">
             <form onSubmit={handleSubmit}>
               <div className="flex justify-end space-x-4">
-                <Button name="Anuluj" />
+                <Button name={t('cancel')} />
                 <Button
-                  name="Zapisz zmiany"
+                  name={t('saveChanges')}
                   type="submit"
                   disabled={isSubmitting}
                 />

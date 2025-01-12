@@ -1,0 +1,41 @@
+{
+  "title": "Ustawienia konta",
+  "profile": "Profil",
+  "email": "Zmiana email",
+  "password": "Zmiana hasła",
+  "language": "Język",
+  "preferences": "Preferencje",
+  "currentEmail": "Obecny email",
+  "newEmail": "Nowy email",
+  "changeEmail": "Zmień email",
+  "currentPassword": "Obecne hasło",
+  "newPassword": "Nowe hasło",
+  "confirmPassword": "Potwierdź nowe hasło",
+  "changePassword": "Zmień hasło",
+  "profilePicture": "Zdjęcie profilowe",
+  "changePicture": "Zmień zdjęcie",
+  "shippingAddresses": "Adresy dostawy",
+  "street": "Ulica",
+  "number": "Numer",
+  "apartmentNumber": "Numer mieszkania (opcjonalnie)",
+  "city": "Miasto",
+  "postalCode": "Kod pocztowy",
+  "province": "Województwo",
+  "phoneNumber": "Numer telefonu",
+  "cancel": "Anuluj",
+  "saveChanges": "Zapisz zmiany",
+  "newAddress": "Nowy adres",
+  "addAddress": "Dodaj adres",
+  "addNewAddress": "Dodaj nowy adres",
+  "newsletter": "Chcę otrzymywać newsletter z najnowszymi ofertami",
+  "emailNotifications": "Powiadomienia email o statusie zamówienia",
+  "pushNotifications": "Powiadomienia push w przeglądarce",
+  "languages": {
+    "english": "Angielski",
+    "polish": "Polski"
+  },
+  "placeholders": {
+    "email": "nowy.email@example.com",
+    "uploading": "Przesyłanie..."
+  }
+}

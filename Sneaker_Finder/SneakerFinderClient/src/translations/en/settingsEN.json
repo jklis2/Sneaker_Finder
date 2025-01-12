@@ -1,0 +1,41 @@
+{
+  "title": "Account Settings",
+  "profile": "Profile",
+  "email": "Change Email",
+  "password": "Change Password",
+  "language": "Language",
+  "preferences": "Preferences",
+  "currentEmail": "Current Email",
+  "newEmail": "New Email",
+  "changeEmail": "Change Email",
+  "currentPassword": "Current Password",
+  "newPassword": "New Password",
+  "confirmPassword": "Confirm New Password",
+  "changePassword": "Change Password",
+  "profilePicture": "Profile Picture",
+  "changePicture": "Change Picture",
+  "shippingAddresses": "Shipping Addresses",
+  "street": "Street",
+  "number": "Number",
+  "apartmentNumber": "Apartment Number (optional)",
+  "city": "City",
+  "postalCode": "Postal Code",
+  "province": "Province",
+  "phoneNumber": "Phone Number",
+  "cancel": "Cancel",
+  "saveChanges": "Save Changes",
+  "newAddress": "New Address",
+  "addAddress": "Add Address",
+  "addNewAddress": "Add New Address",
+  "newsletter": "I want to receive newsletter with latest offers",
+  "emailNotifications": "Email notifications about order status",
+  "pushNotifications": "Browser push notifications",
+  "languages": {
+    "english": "English",
+    "polish": "Polish"
+  },
+  "placeholders": {
+    "email": "new.email@example.com",
+    "uploading": "Uploading..."
+  }
+}
