@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import ProductInfo from "../containers/ProductInfo";
 import ProductPhotos from "../containers/ProductPhotos";
 import Footer from "../layouts/Footer";
@@ -19,6 +20,7 @@ interface Product {
 }
 
 export default function Product() {
+  const { t } = useTranslation('product');
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
@@ -33,7 +35,7 @@ export default function Product() {
       );
       
       if (!response.ok) {
-        throw new Error("Failed to fetch similar products");
+        throw new Error(t('product.fetchSimilarError'));
       }
 
       const products = await response.json();
@@ -55,7 +57,7 @@ export default function Product() {
         );
 
         if (!response.ok) {
-          throw new Error("Failed to fetch product");
+          throw new Error(t('product.fetchError'));
         }
 
         const data = await response.json();
@@ -63,13 +65,14 @@ export default function Product() {
         await fetchSimilarProducts(data);
       } catch (error) {
         console.error("Error fetching product:", error);
-        setError("Failed to load product details");
+        setError(t('product.fetchError'));
       } finally {
         setLoading(false);
       }
     };
 
     fetchProduct();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   if (loading) {
@@ -89,7 +92,7 @@ export default function Product() {
       <main>
         <Navbar />
         <div className="min-h-screen flex items-center justify-center">
-          <p className="text-red-500 text-xl">{error || "Product not found"}</p>
+          <p className="text-red-500 text-xl">{error || t('product.notFound')}</p>
         </div>
         <Footer />
       </main>
@@ -116,10 +119,10 @@ export default function Product() {
         {similarProducts.length > 0 && (
           <div className="mt-16 mb-12">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold">Similar Products</h2>
+              <h2 className="text-2xl font-bold">{t('product.similarProducts')}</h2>
               <div className="w-48">
                 <Button
-                  name={`View All ${product.brand} Products`}
+                  name={t('product.viewAllProducts', { brand: product.brand })}
                   type="button"
                   onClick={() => navigate(`/${product.brand.toLowerCase().replace(/\s+/g, '-')}/products`)}
                   className="text-sm"

@@ -1,0 +1,24 @@
+{
+  "hero": {
+    "caption1": "Stay up to date with the world of shoes",
+    "caption2": "Add items to your collections",
+    "caption3": "Watch shoe prices"
+  },
+  "bestsellers": {
+    "title": "Bestsellers",
+    "error": "Error Loading Bestsellers"
+  },
+  "latestProduct": {
+    "title": "Latest Products",
+    "error": "Error Loading Latest Products"
+  },
+  "promotions": {
+    "title": "Promotions",
+    "error": "Error Loading Promotions"
+  },
+  "popularBrands": {
+    "title": "Popular Brands",
+    "previousButton": "Previous brands",
+    "nextButton": "Next brands"
+  }
+}

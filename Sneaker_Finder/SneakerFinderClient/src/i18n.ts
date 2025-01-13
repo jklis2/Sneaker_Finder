@@ -35,6 +35,10 @@ import footerEN from './translations/en/footerEN.json';
 import footerPL from './translations/pl/footerPL.json';
 import navbarEN from './translations/en/navbarEN.json';
 import navbarPL from './translations/pl/navbarPL.json';
+import homeEN from './translations/en/homeEN.json';
+import homePL from './translations/pl/homePL.json';
+import productEN from './translations/en/productEN.json';
+import productPL from './translations/pl/productPL.json';
 
 i18n
   .use(LanguageDetector)
@@ -58,7 +62,9 @@ i18n
         addToCart: addToCartEN,
         orderConfirmation: orderConfirmationEN,
         footer: footerEN,
-        navbar: navbarEN
+        navbar: navbarEN,
+        home: homeEN,
+        product: productEN
       },
       pl: {
         settings: settingsPL,
@@ -77,7 +83,9 @@ i18n
         addToCart: addToCartPL,
         orderConfirmation: orderConfirmationPL,
         footer: footerPL,
-        navbar: navbarPL
+        navbar: navbarPL,
+        home: homePL,
+        product: productPL
       }
     },
     fallbackLng: 'en',

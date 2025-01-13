@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import AddToCartConfirmation from "./AddToCartConfirmation";
 import { useAuth } from "../context/AuthContext";
 
@@ -27,6 +28,7 @@ export default function ProductInfoComp({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const { isAuthenticated, userData } = useAuth();
+  const { t } = useTranslation('product');
 
   const handleAddToCart = async () => {
     try {
@@ -34,18 +36,18 @@ export default function ProductInfoComp({
       setError("");
 
       if (!isAuthenticated || !userData) {
-        setError("Please log in to add items to cart");
+        setError(t('productInfo.errors.loginRequired'));
         return;
       }
 
       if (availableSizes && availableSizes.length > 0 && !selectedSize) {
-        setError("Please select a size");
+        setError(t('productInfo.errors.sizeRequired'));
         return;
       }
 
       const token = localStorage.getItem('token');
       if (!token) {
-        setError("Authentication token not found");
+        setError(t('productInfo.errors.authTokenMissing'));
         return;
       }
 
@@ -73,7 +75,7 @@ export default function ProductInfoComp({
       console.log('Server response:', responseData);
 
       if (!response.ok) {
-        throw new Error(responseData.message || "Failed to add item to cart");
+        throw new Error(responseData.message || t('productInfo.errors.addToCartFailed'));
       }
 
       setShowConfirmation(true);
@@ -83,7 +85,7 @@ export default function ProductInfoComp({
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("Failed to add item to cart. Please try again.");
+        setError(t('productInfo.errors.addToCartFailed'));
       }
     } finally {
       setIsLoading(false);
@@ -97,18 +99,18 @@ export default function ProductInfoComp({
       <div className="space-y-4 mb-6">
         <div>
           <p className="text-2xl font-bold">${price.toFixed(2)}</p>
-          <p className="text-sm text-gray-500">Retail price: ${retail.toFixed(2)}</p>
+          <p className="text-sm text-gray-500">{t('productInfo.retailPrice')}: ${retail.toFixed(2)}</p>
         </div>
 
         {color && (
           <div>
-            <p className="text-sm text-gray-600">Color: {color}</p>
+            <p className="text-sm text-gray-600">{t('productInfo.color')}: {color}</p>
           </div>
         )}
 
         {availableSizes && availableSizes.length > 0 && (
           <div>
-            <p className="text-sm font-medium text-gray-700 mb-2">Select Size</p>
+            <p className="text-sm font-medium text-gray-700 mb-2">{t('productInfo.selectSize')}</p>
             <div className="grid grid-cols-3 gap-2">
               {availableSizes.map((size) => (
                 <button
@@ -131,7 +133,7 @@ export default function ProductInfoComp({
         )}
 
         <div className="flex items-center space-x-4">
-          <label htmlFor="quantity" className="text-gray-700">Quantity:</label>
+          <label htmlFor="quantity" className="text-gray-700">{t('productInfo.quantity')}:</label>
           <div className="flex items-center border rounded">
             <button
               className="px-3 py-1 border-r hover:bg-gray-100"
@@ -158,7 +160,7 @@ export default function ProductInfoComp({
           disabled={isLoading}
           className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition-colors disabled:bg-gray-400"
         >
-          {isLoading ? "Adding to Cart..." : "Add to Cart"}
+          {isLoading ? t('productInfo.addingToCart') : t('productInfo.addToCart')}
         </button>
       </div>
 

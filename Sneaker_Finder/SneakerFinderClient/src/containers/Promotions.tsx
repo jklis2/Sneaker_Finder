@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import H1 from "../components/H1";
 import ProductCard from "../components/ProductCard";
 
@@ -11,6 +12,7 @@ interface PromotionProduct {
 }
 
 export default function Promotions() {
+  const { t } = useTranslation('home');
   const [products, setProducts] = useState<PromotionProduct[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -52,7 +54,7 @@ export default function Promotions() {
   if (error) {
     return (
       <div className="text-center text-red-600 py-10">
-        <h2 className="text-xl font-bold mb-2">Error Loading Promotions</h2>
+        <h2 className="text-xl font-bold mb-2">{t('promotions.error')}</h2>
         <p>{error}</p>
       </div>
     );
@@ -60,7 +62,7 @@ export default function Promotions() {
 
   return (
     <>
-      <H1 className="px-12 mt-32">Promocje</H1>
+      <H1 className="px-12 mt-32">{t('promotions.title')}</H1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 min-[1260px]:grid-cols-4 gap-4 w-full max-w-[1280px] mx-auto px-2 justify-items-center">
         {products.map(product => (
           <ProductCard

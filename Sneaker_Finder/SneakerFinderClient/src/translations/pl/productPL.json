@@ -1,0 +1,24 @@
+{
+  "productInfo": {
+    "retailPrice": "Cena detaliczna",
+    "color": "Kolor",
+    "selectSize": "Wybierz rozmiar",
+    "quantity": "Ilość",
+    "addToCart": "Dodaj do koszyka",
+    "addingToCart": "Dodawanie do koszyka...",
+    "errors": {
+      "loginRequired": "Zaloguj się, aby dodać przedmioty do koszyka",
+      "sizeRequired": "Wybierz rozmiar",
+      "authTokenMissing": "Nie znaleziono tokenu uwierzytelniającego",
+      "addToCartFailed": "Nie udało się dodać przedmiotu do koszyka. Spróbuj ponownie."
+    }
+  },
+  "product": {
+    "loading": "Ładowanie produktu...",
+    "notFound": "Nie znaleziono produktu",
+    "fetchError": "Nie udało się załadować szczegółów produktu",
+    "similarProducts": "Podobne Produkty",
+    "viewAllProducts": "Zobacz wszystkie produkty {{brand}}",
+    "fetchSimilarError": "Nie udało się pobrać podobnych produktów"
+  }
+}

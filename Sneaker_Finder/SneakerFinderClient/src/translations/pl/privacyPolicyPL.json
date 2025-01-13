@@ -1,29 +1,27 @@
 {
   "title": "Polityka Prywatności",
-  "backToRegistration": "Powrót do Rejestracji",
-  "lastUpdated": "Ostatnia Aktualizacja",
   "sections": {
     "introduction": {
       "title": "Wprowadzenie",
-      "content": "W Sneaker Finder cenimy Twoją prywatność i zobowiązujemy się do ochrony Twoich danych osobowych. Ta Polityka Prywatności wyjaśnia, w jaki sposób zbieramy, wykorzystujemy i chronimy Twoje dane podczas korzystania z naszej strony internetowej."
+      "content": "W Sneaker Finder cenimy Twoją prywatność i jesteśmy zobowiązani do ochrony Twoich danych osobowych. Ta Polityka Prywatności wyjaśnia, w jaki sposób zbieramy, wykorzystujemy i chronimy Twoje dane podczas korzystania z naszej strony internetowej."
     },
     "dataCollection": {
-      "title": "Informacje, Które Zbieramy",
-      "content": "Podczas korzystania z naszej aplikacji zbieramy następujące dane:",
+      "title": "Zbierane Informacje",
+      "content": "Zbieramy następujące informacje podczas korzystania z naszej aplikacji:",
       "items": {
-        "0": "Dane rejestracyjne: imię, nazwisko, adres e-mail, hasło",
+        "0": "Dane rejestracyjne: imię, nazwisko, adres email, hasło",
         "1": "Dane techniczne: adres IP, typ urządzenia, system operacyjny",
-        "2": "Dane dotyczące korzystania z aplikacji: historia wyszukiwań, preferencje użytkownika"
+        "2": "Dane użytkowania: historia wyszukiwania, preferencje użytkownika"
       }
     },
     "dataUse": {
       "title": "Jak Wykorzystujemy Twoje Informacje",
       "content": "Twoje dane osobowe są przetwarzane w następujących celach:",
       "items": {
-        "0": "Umożliwienia korzystania z aplikacji Sneaker Finder",
-        "1": "Dostosowania treści i funkcji do Twoich preferencji",
-        "2": "Obsługi zgłoszeń użytkowników i udzielania wsparcia technicznego",
-        "3": "Przeprowadzania analiz statystycznych i poprawy działania aplikacji"
+        "0": "Umożliwienie korzystania z aplikacji Sneaker Finder",
+        "1": "Dostosowanie treści i funkcji do Twoich preferencji",
+        "2": "Obsługa zapytań użytkowników i wsparcie techniczne",
+        "3": "Prowadzenie analiz statystycznych i poprawa wydajności aplikacji"
       }
     },
     "dataSecurity": {
@@ -38,5 +36,8 @@
       "title": "Kontakt",
       "content": "Jeśli masz pytania dotyczące naszej Polityki Prywatności, skontaktuj się z nami pod adresem privacy@sneakerfinder.com"
     }
+  },
+  "button": {
+    "backToRegistration": "Powrót do Rejestracji"
   }
 }

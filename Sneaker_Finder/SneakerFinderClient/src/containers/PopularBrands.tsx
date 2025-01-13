@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import BrandsCard from "../components/BrandsCard";
 import H1 from "../components/H1";
 import { brands } from "../consts/brands";
@@ -14,6 +15,7 @@ const CARDS_TO_SHOW_MOBILE = 2;
 const CARDS_TO_SHOW_SMALL = 1;
 
 export default function PopularBrands() {
+  const { t } = useTranslation('home');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [cardsToShow, setCardsToShow] = useState(CARDS_TO_SHOW_DESKTOP);
@@ -90,12 +92,12 @@ export default function PopularBrands() {
 
   return (
     <div className="py-8">
-      <H1 className="px-12 mb-6">Popularne Marki</H1>
+      <H1 className="px-12 mb-6">{t('popularBrands.title')}</H1>
       <div className="relative max-w-[1280px] mx-auto px-16">
         <button
           onClick={handlePrevious}
           className="absolute left-4 top-1/2 -translate-y-1/2 bg-white rounded-full w-10 h-10 shadow-md hover:shadow-lg transition-shadow z-10 text-xl font-bold"
-          aria-label="Previous brands"
+          aria-label={t('popularBrands.previousButton')}
         >
           &lt;
         </button>
@@ -129,7 +131,7 @@ export default function PopularBrands() {
         <button
           onClick={handleNext}
           className="absolute right-4 top-1/2 -translate-y-1/2 bg-white rounded-full w-10 h-10 shadow-md hover:shadow-lg transition-shadow z-10 text-xl font-bold"
-          aria-label="Next brands"
+          aria-label={t('popularBrands.nextButton')}
         >
           &gt;
         </button>

@@ -1,0 +1,24 @@
+{
+  "productInfo": {
+    "retailPrice": "Retail price",
+    "color": "Color",
+    "selectSize": "Select Size",
+    "quantity": "Quantity",
+    "addToCart": "Add to Cart",
+    "addingToCart": "Adding to Cart...",
+    "errors": {
+      "loginRequired": "Please log in to add items to cart",
+      "sizeRequired": "Please select a size",
+      "authTokenMissing": "Authentication token not found",
+      "addToCartFailed": "Failed to add item to cart. Please try again."
+    }
+  },
+  "product": {
+    "loading": "Loading product...",
+    "notFound": "Product not found",
+    "fetchError": "Failed to load product details",
+    "similarProducts": "Similar Products",
+    "viewAllProducts": "View All {{brand}} Products",
+    "fetchSimilarError": "Failed to fetch similar products"
+  }
+}

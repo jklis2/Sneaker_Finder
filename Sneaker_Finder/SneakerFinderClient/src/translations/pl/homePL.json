@@ -1,0 +1,24 @@
+{
+    "hero": {
+      "caption1": "Bądź na bieżąco w świecie butów",
+      "caption2": "Dodawaj rzeczy do swoich kolekcji",
+      "caption3": "Obserwuj ceny butów"
+    },
+    "bestsellers": {
+      "title": "Bestsellery",
+      "error": "Błąd podczas ładowania bestsellerów"
+    },
+    "latestProduct": {
+      "title": "Najnowsze produkty",
+      "error": "Błąd podczas ładowania najnowszych produktów"
+    },
+    "promotions": {
+      "title": "Promocje",
+      "error": "Błąd podczas ładowania promocji"
+    },
+    "popularBrands": {
+      "title": "Popularne Marki",
+      "previousButton": "Poprzednie marki",
+      "nextButton": "Następne marki"
+    }
+}

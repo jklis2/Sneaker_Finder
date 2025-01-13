@@ -3,16 +3,18 @@ import SearchForm from "./SearchForm";
 import hero1 from "../assets/hero1.png";
 import hero2 from "../assets/hero2.png";
 import hero3 from "../assets/hero3.png";
+import { useTranslation } from "react-i18next";
 
 export default function HeroCarousel() {
+  const { t } = useTranslation('home');
   const [currentImage, setCurrentImage] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const images = [hero1, hero2, hero3];
   const captions = [
-    "Bądź na bieżąco w świecie butów",
-    "Dodawaj rzeczy do swoich kolekcji",
-    "Obserwuj ceny butów",
+    t("hero.caption1"),
+    t("hero.caption2"),
+    t("hero.caption3"),
   ];
 
   const changeImage = useCallback(

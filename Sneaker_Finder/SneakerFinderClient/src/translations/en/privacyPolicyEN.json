@@ -1,6 +1,5 @@
 {
   "title": "Privacy Policy",
-  "backToRegistration": "Back to Registration",
   "sections": {
     "introduction": {
       "title": "Introduction",
@@ -37,5 +36,8 @@
       "title": "Contact Us",
       "content": "If you have any questions about our Privacy Policy, please contact us at privacy@sneakerfinder.com"
     }
+  },
+  "button": {
+    "backToRegistration": "Back to Registration"
   }
 }
