@@ -1,0 +1,17 @@
+{
+  "loading": "Ładowanie koszyka...",
+  "loginRequired": "Zaloguj się, aby zobaczyć swój koszyk",
+  "emptyCart": "Twój koszyk jest pusty",
+  "continueShoppingButton": "Kontynuuj zakupy",
+  "size": "Rozmiar",
+  "removeButton": "Usuń",
+  "total": "Łącznie",
+  "checkoutButton": "Do kasy",
+  "errors": {
+    "userNotFound": "Nie znaleziono użytkownika",
+    "tokenNotFound": "Nie znaleziono tokenu uwierzytelniającego",
+    "fetchCartFailed": "Nie udało się załadować koszyka",
+    "updateCartFailed": "Nie udało się zaktualizować koszyka",
+    "removeItemFailed": "Nie udało się usunąć produktu"
+  }
+}

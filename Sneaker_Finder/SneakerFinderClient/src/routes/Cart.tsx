@@ -4,6 +4,7 @@ import Navbar from "../layouts/Navbar";
 import Footer from "../layouts/Footer";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
+import { useTranslation } from "react-i18next";
 
 interface Product {
   _id: string;
@@ -33,6 +34,7 @@ export default function Cart() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const { addItem, removeItem: removeContextItem, clearItems } = useCart();
+  const { t } = useTranslation('cart');
 
   const fetchProductDetails = async (productId: string): Promise<Product | null> => {
     try {
@@ -51,7 +53,7 @@ export default function Cart() {
     if (isAuthenticated && userData) {
       fetchCart();
     } else {
-      setError("Please log in to view your cart");
+      setError(t('errors.pleaseLogin'));
       setIsLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -60,12 +62,12 @@ export default function Cart() {
   const fetchCart = async () => {
     try {
       if (!userData?._id) {
-        throw new Error("User ID not found");
+        throw new Error(t('errors.userNotFound'));
       }
 
       const token = localStorage.getItem("token");
       if (!token) {
-        throw new Error("Authentication token not found");
+        throw new Error(t('errors.tokenNotFound'));
       }
 
       const response = await fetch(
@@ -81,7 +83,7 @@ export default function Cart() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Failed to fetch cart");
+        throw new Error(errorData.message || t('errors.fetchCartFailed'));
       }
 
       const data: CartData = await response.json();
@@ -111,7 +113,7 @@ export default function Cart() {
       setError("");
     } catch (error) {
       console.error("Error fetching cart:", error);
-      setError(error instanceof Error ? error.message : "Failed to load cart");
+      setError(error instanceof Error ? error.message : t('errors.fetchCartFailed'));
       setCart({ items: [], total: 0 });
     } finally {
       setIsLoading(false);
@@ -121,12 +123,12 @@ export default function Cart() {
   const updateQuantity = async (productId: string, quantity: number) => {
     try {
       if (!userData?._id) {
-        throw new Error("User ID not found");
+        throw new Error(t('errors.userNotFound'));
       }
 
       const token = localStorage.getItem("token");
       if (!token) {
-        throw new Error("Authentication token not found");
+        throw new Error(t('errors.tokenNotFound'));
       }
 
       const currentItem = cart.items.find((item) => item.productId === productId);
@@ -151,7 +153,7 @@ export default function Cart() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Failed to update cart");
+        throw new Error(errorData.message || t('errors.updateCartFailed'));
       }
 
       const data: CartData = await response.json();
@@ -170,19 +172,19 @@ export default function Cart() {
       setError("");
     } catch (error) {
       console.error("Error updating cart:", error);
-      setError(error instanceof Error ? error.message : "Failed to update cart");
+      setError(error instanceof Error ? error.message : t('errors.updateCartFailed'));
     }
   };
 
   const removeItem = async (productId: string) => {
     try {
       if (!userData?._id) {
-        throw new Error("User ID not found");
+        throw new Error(t('errors.userNotFound'));
       }
 
       const token = localStorage.getItem("token");
       if (!token) {
-        throw new Error("Authentication token not found");
+        throw new Error(t('errors.tokenNotFound'));
       }
 
       const currentItem = cart.items.find((item) => item.productId === productId);
@@ -206,7 +208,7 @@ export default function Cart() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Failed to remove item");
+        throw new Error(errorData.message || t('errors.removeItemFailed'));
       }
 
       const data: CartData = await response.json();
@@ -219,7 +221,7 @@ export default function Cart() {
       setError("");
     } catch (error) {
       console.error("Error removing item:", error);
-      setError(error instanceof Error ? error.message : "Failed to remove item");
+      setError(error instanceof Error ? error.message : t('errors.removeItemFailed'));
     }
   };
 
@@ -228,7 +230,7 @@ export default function Cart() {
       <div className="min-h-screen flex flex-col">
         <Navbar />
         <div className="flex-grow container mx-auto px-4 py-8">
-          <div className="text-center">Loading cart...</div>
+          <div className="text-center">{t('loading')}</div>
         </div>
         <Footer />
       </div>
@@ -243,12 +245,12 @@ export default function Cart() {
           <div className="text-red-500 text-center mb-4">{error}</div>
         ) : cart.items.length === 0 ? (
           <div className="text-center">
-            <p className="text-gray-600 mb-4">Your cart is empty</p>
+            <p className="text-gray-600 mb-4">{t('emptyCart')}</p>
             <button
               onClick={() => navigate("/")}
               className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800"
             >
-              Continue Shopping
+              {t('continueShoppingButton')}
             </button>
           </div>
         ) : (
@@ -270,7 +272,7 @@ export default function Cart() {
                     <h3 className="font-semibold">{item.name}</h3>
                     <p className="text-gray-600">${item.price.toFixed(2)}</p>
                     {item.size && (
-                      <p className="text-gray-500 text-sm">Size: {item.size}</p>
+                      <p className="text-gray-500 text-sm">{t('size')}: {item.size}</p>
                     )}
                   </div>
                 </div>
@@ -298,19 +300,19 @@ export default function Cart() {
                     onClick={() => removeItem(item.productId)}
                     className="text-red-500 hover:text-red-700"
                   >
-                    Remove
+                    {t('removeButton')}
                   </button>
                 </div>
               </div>
             ))}
             <div className="text-right text-xl font-bold">
-              Total: ${cart.total.toFixed(2)}
+              {t('total')}: ${cart.total.toFixed(2)}
             </div>
             <button
               onClick={() => navigate("/checkout")}
               className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800"
             >
-              Checkout
+              {t('checkoutButton')}
             </button>
           </div>
         )}

@@ -1,0 +1,19 @@
+{
+  "header": {
+    "title": "Style Advisor",
+    "description": "Get personalized sneaker recommendations and style advice from our AI fashion expert. Whether you're looking for the perfect pair or need outfit suggestions, we're here to help.",
+    "features": {
+      "instant": "Instant responses",
+      "available": "Available 24/7",
+      "aiPowered": "AI-powered advice"
+    }
+  },
+  "chat": {
+    "title": "Style Advisor",
+    "subtitle": "AI-powered fashion assistant",
+    "welcome": "Welcome to Style Advisor",
+    "askMe": "Ask me anything about sneaker styles and fashion advice!",
+    "placeholder": "Ask about ...",
+    "send": "Send"
+  }
+}

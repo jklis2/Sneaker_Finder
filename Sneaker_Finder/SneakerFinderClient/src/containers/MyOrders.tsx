@@ -1,6 +1,7 @@
 import OrderCard from "../components/OrderCard";
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 interface Product {
   name: string;
@@ -20,13 +21,14 @@ interface Order {
 export default function MyOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [error, setError] = useState('');
+  const { t } = useTranslation('myOrders');
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
-          setError('Please log in to view orders');
+          setError(t('loginRequired'));
           return;
         }
 
@@ -40,13 +42,13 @@ export default function MyOrders() {
         setOrders(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
         console.error('Error fetching orders:', error);
-        setError('Failed to load orders');
+        setError(t('loadError'));
         setOrders([]);
       }
     };
 
     fetchOrders();
-  }, []);
+  }, [t]);
 
   if (error) {
     return (
@@ -59,11 +61,11 @@ export default function MyOrders() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-gray-800 mb-8 text-center">
-        Moje zamówienia
+        {t('title')}
       </h1>
       <div className="max-w-4xl mx-auto">
         {orders.length === 0 ? (
-          <p className="text-center text-gray-500">No orders found</p>
+          <p className="text-center text-gray-500">{t('noOrders')}</p>
         ) : (
           orders.map((order) => (
             <OrderCard

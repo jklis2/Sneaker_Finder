@@ -1,0 +1,31 @@
+{
+  "title": "Potwierdzenie zamówienia",
+  "thankYou": "Dziękujemy za złożenie zamówienia!",
+  "orderNumber": "Numer zamówienia",
+  "orderDetails": "Szczegóły zamówienia",
+  "orderDate": "Data zamówienia",
+  "deliveryAddress": "Adres dostawy",
+  "paymentMethod": "Metoda płatności",
+  "orderSummary": {
+    "title": "Podsumowanie zamówienia",
+    "subtotal": "Suma częściowa",
+    "shipping": "Dostawa",
+    "total": "Razem"
+  },
+  "items": {
+    "title": "Produkty",
+    "size": "Rozmiar",
+    "quantity": "Ilość",
+    "price": "Cena"
+  },
+  "buttons": {
+    "continueShopping": "Kontynuuj zakupy",
+    "viewOrders": "Zobacz zamówienia"
+  },
+  "status": {
+    "processing": "W trakcie realizacji",
+    "confirmed": "Potwierdzone",
+    "shipped": "Wysłane",
+    "delivered": "Dostarczone"
+  }
+}

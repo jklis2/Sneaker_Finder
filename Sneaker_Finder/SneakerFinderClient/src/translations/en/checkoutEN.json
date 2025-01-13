@@ -1,0 +1,63 @@
+{
+  "loading": "Loading checkout...",
+  "checkout": "Checkout",
+  "contactInfo": {
+    "title": "Contact Information",
+    "email": "Email"
+  },
+  "shippingAddress": {
+    "title": "Shipping Address",
+    "addNew": "Add New Address",
+    "street": "Street Address",
+    "apartment": "Apartment, suite, etc. (optional)",
+    "city": "City",
+    "state": "State/Province",
+    "zipCode": "ZIP/Postal Code",
+    "phone": "Phone"
+  },
+  "shippingInfo": {
+    "title": "Shipping Information",
+    "firstName": "First Name",
+    "lastName": "Last Name"
+  },
+  "shippingMethod": {
+    "title": "Shipping Method",
+    "standard": {
+      "name": "Standard Shipping",
+      "time": "3-5 business days"
+    },
+    "express": {
+      "name": "Express Shipping",
+      "time": "1-2 business days"
+    },
+    "overnight": {
+      "name": "Overnight Shipping",
+      "time": "Next business day"
+    }
+  },
+  "paymentMethod": {
+    "title": "Payment Method",
+    "card": "Credit/Debit Card",
+    "paypal": "PayPal",
+    "applepay": "Apple Pay"
+  },
+  "orderSummary": {
+    "title": "Order Summary",
+    "quantity": "Quantity",
+    "size": "Size",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "total": "Total"
+  },
+  "buttons": {
+    "placeOrder": "Place Order",
+    "processing": "Processing...",
+    "goToLogin": "Go to Login"
+  },
+  "errors": {
+    "loginRequired": "Please log in to complete checkout",
+    "tokenNotFound": "Authentication token not found",
+    "checkoutFailed": "Failed to create checkout session",
+    "loadAddressesFailed": "Failed to load saved addresses"
+  }
+}

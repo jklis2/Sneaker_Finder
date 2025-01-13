@@ -8,6 +8,7 @@ import settingsIcon from "../assets/icons/settings.svg";
 import logoutIcon from "../assets/icons/logout.svg";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
+import { useTranslation } from "react-i18next";
 
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -18,6 +19,7 @@ export default function Navbar() {
   const location = useLocation();
   const { userData, logout } = useAuth();
   const { getCartItemsCount } = useCart();
+  const { t } = useTranslation('navbar');
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -73,25 +75,25 @@ export default function Navbar() {
         onClick={() => handleSectionClick('latest-products')} 
         className="text-gray-600 hover:text-gray-800 w-full text-center"
       >
-        Nowości
+        {t('menu.latestProducts')}
       </button>
       <button 
         onClick={() => handleSectionClick('promotions')} 
         className="text-gray-600 hover:text-gray-800 w-full text-center"
       >
-        Promocje
+        {t('menu.promotions')}
       </button>
       <Link to="/brands" className="text-gray-600 hover:text-gray-800 w-full text-center">
-        Marki
+        {t('menu.allBrands')}
       </Link>
       <Link to="/products" className="text-gray-600 hover:text-gray-800 w-full text-center">
-        Produkty
+        {t('menu.allProducts')}
       </Link>
       <Link to="/styleAdvisor" className="text-gray-600 hover:text-gray-800 w-full text-center">
-        Asystent modowy
+        {t('menu.styleAdvisor')}
       </Link>
       <Link to="/contact" className="text-gray-600 hover:text-gray-800 w-full text-center">
-        Kontakt
+        {t('menu.contact')}
       </Link>
     </>
   );
@@ -147,7 +149,7 @@ export default function Navbar() {
                             className="w-5 h-5 mr-2"
                             aria-hidden="true"
                           />
-                          <span className="flex-grow">Koszyk</span>
+                          <span className="flex-grow">{t('menu.cart')}</span>
                           {getCartItemsCount() > 0 && (
                             <span className="bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                               {getCartItemsCount()}
@@ -167,7 +169,7 @@ export default function Navbar() {
                             className="w-5 h-5 mr-2"
                             aria-hidden="true"
                           />
-                          Moje zamówienia
+                          {t('menu.myOrders')}
                         </Link>
                       </li>
                       <li>
@@ -182,7 +184,7 @@ export default function Navbar() {
                             className="w-5 h-5 mr-2"
                             aria-hidden="true"
                           />
-                          Ustawienia
+                          {t('menu.settings')}
                         </Link>
                       </li>
                       <li>
@@ -197,7 +199,7 @@ export default function Navbar() {
                             className="w-5 h-5 mr-2"
                             aria-hidden="true"
                           />
-                          Wyloguj
+                          {t('auth.logout')}
                         </button>
                       </li>
                     </ul>
@@ -218,7 +220,7 @@ export default function Navbar() {
           ) : (
             <div className="relative flex items-center">
               <Link to="/auth/login">
-                <Button name="Zaloguj się" />
+                <Button name={t('auth.login')} />
               </Link>
               <button
                 className="lg:hidden p-2 ml-4"

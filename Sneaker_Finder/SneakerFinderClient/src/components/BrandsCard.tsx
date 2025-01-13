@@ -1,5 +1,6 @@
-import Button from "./Button";
 import { useNavigate } from "react-router-dom";
+import Button from "./Button";
+import { useTranslation } from "react-i18next";
 
 type BrandsCardProps = {
   photo?: string;
@@ -8,8 +9,9 @@ type BrandsCardProps = {
   variant?: 'default' | 'large';
 };
 
-export default function BrandsCard({ name, variant = 'default' }: BrandsCardProps) {
+export default function BrandsCard({ name, variant = 'default', photo }: BrandsCardProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation('allBrands');
 
   const handleClick = () => {
     const urlBrandName = name.toLowerCase().replace(/\s+/g, '-');
@@ -35,13 +37,17 @@ export default function BrandsCard({ name, variant = 'default' }: BrandsCardProp
   return (
     <div className={cardClasses}>
       <div className={imageClasses}>
-        <span className="text-white text-sm">Image placeholder</span>
+        {photo ? (
+          <img src={photo} alt={name} className="w-full h-full object-contain" />
+        ) : (
+          <span className="text-white text-sm">Image placeholder</span>
+        )}
       </div>
       <div className={variant === 'large' ? "w-full text-center" : "w-full flex justify-between items-center mt-2"}>
         <span className={textClasses}>{name}</span>
         {variant !== 'large' && (
           <Button 
-            name="View" 
+            name={t('viewProducts')}
             type="button"
             className={buttonClasses}
             onClick={handleClick}
@@ -50,7 +56,7 @@ export default function BrandsCard({ name, variant = 'default' }: BrandsCardProp
       </div>
       {variant === 'large' && (
         <Button 
-          name="View Products" 
+          name={t('viewProducts')}
           type="button"
           className={buttonClasses}
           onClick={handleClick}

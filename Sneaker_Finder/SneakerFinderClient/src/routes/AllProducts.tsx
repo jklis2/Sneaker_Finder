@@ -5,6 +5,7 @@ import Footer from "../layouts/Footer";
 import ProductCard from "../components/ProductCard";
 import SearchProduct from "../components/SearchProduct";
 import Pagination from "../components/Pagination";
+import { useTranslation } from "react-i18next";
 
 interface StockXProduct {
   _id: string;
@@ -29,6 +30,8 @@ export default function AllProducts() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const productsPerPage = 20;
+
+  const { t } = useTranslation('allProducts');
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -114,7 +117,7 @@ export default function AllProducts() {
         <Navbar />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center text-red-600">
-            <h2 className="text-xl font-bold mb-2">Error Loading Products</h2>
+            <h2 className="text-xl font-bold mb-2">{t('error.title')}</h2>
             <p>{error}</p>
           </div>
         </div>
@@ -127,15 +130,15 @@ export default function AllProducts() {
     <main>
       <Navbar />
       <div className="container mx-auto px-4 py-8 flex flex-col items-center">
-        <h1 className="text-3xl font-bold mb-8 text-center">All Products</h1>
+        <h1 className="text-3xl font-bold mb-8 text-center">{t('title')}</h1>
 
         <SearchProduct onSearch={handleSearch} />
 
         {currentProducts.length === 0 ? (
           <div className="text-center text-gray-500 mt-8">
             {searchTerm
-              ? "No products found matching your search"
-              : "No products found"}
+              ? t('noProductsFound')
+              : t('noProducts')}
           </div>
         ) : (
           <div className="flex flex-wrap gap-3 justify-between items-start w-full max-w-[1280px] mx-auto px-2">

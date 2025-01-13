@@ -1,0 +1,63 @@
+{
+  "loading": "Ładowanie płatności...",
+  "checkout": "Płatność",
+  "contactInfo": {
+    "title": "Dane kontaktowe",
+    "email": "Email"
+  },
+  "shippingAddress": {
+    "title": "Adres dostawy",
+    "addNew": "Dodaj nowy adres",
+    "street": "Ulica",
+    "apartment": "Mieszkanie, lokal itp. (opcjonalnie)",
+    "city": "Miasto",
+    "state": "Województwo",
+    "zipCode": "Kod pocztowy",
+    "phone": "Telefon"
+  },
+  "shippingInfo": {
+    "title": "Dane do wysyłki",
+    "firstName": "Imię",
+    "lastName": "Nazwisko"
+  },
+  "shippingMethod": {
+    "title": "Sposób dostawy",
+    "standard": {
+      "name": "Dostawa standardowa",
+      "time": "3-5 dni roboczych"
+    },
+    "express": {
+      "name": "Dostawa ekspresowa",
+      "time": "1-2 dni robocze"
+    },
+    "overnight": {
+      "name": "Dostawa na następny dzień",
+      "time": "Następny dzień roboczy"
+    }
+  },
+  "paymentMethod": {
+    "title": "Metoda płatności",
+    "card": "Karta kredytowa/debetowa",
+    "paypal": "PayPal",
+    "applepay": "Apple Pay"
+  },
+  "orderSummary": {
+    "title": "Podsumowanie zamówienia",
+    "quantity": "Ilość",
+    "size": "Rozmiar",
+    "subtotal": "Suma częściowa",
+    "shipping": "Dostawa",
+    "total": "Łącznie"
+  },
+  "buttons": {
+    "placeOrder": "Złóż zamówienie",
+    "processing": "Przetwarzanie...",
+    "goToLogin": "Przejdź do logowania"
+  },
+  "errors": {
+    "loginRequired": "Zaloguj się, aby dokończyć zamówienie",
+    "tokenNotFound": "Nie znaleziono tokenu uwierzytelniającego",
+    "checkoutFailed": "Nie udało się utworzyć sesji płatności",
+    "loadAddressesFailed": "Nie udało się załadować zapisanych adresów"
+  }
+}

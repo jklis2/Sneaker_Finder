@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AddToCartConfirmation from "./AddToCartConfirmation";
 import { useAuth } from "../context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 interface ProductCardProps {
   _id: string;
@@ -26,10 +27,11 @@ export default function ProductCard({
   const [selectedSize, setSelectedSize] = useState<string>("");
   const navigate = useNavigate();
   const { isAuthenticated, userData } = useAuth();
+  const { t } = useTranslation('allProducts');
 
   const handleAddToCart = async () => {
     if (availableSizes && availableSizes.length > 0 && !selectedSize) {
-      setError("Please select a size");
+      setError(t('error.selectSize'));
       return;
     }
 
@@ -37,13 +39,13 @@ export default function ProductCard({
     setError("");
     try {
       if (!isAuthenticated || !userData) {
-        setError("Please log in to add items to cart");
+        setError(t('error.loginToAddToCart'));
         return;
       }
 
       const token = localStorage.getItem('token');
       if (!token) {
-        setError("Authentication token not found");
+        setError(t('error.authenticationTokenNotFound'));
         return;
       }
 
@@ -73,7 +75,7 @@ export default function ProductCard({
       console.log('Server response:', responseData);
 
       if (!response.ok) {
-        throw new Error(responseData.message || "Failed to add item to cart");
+        throw new Error(responseData.message || t('error.failedToAddToCart'));
       }
 
       setShowConfirmation(true);
@@ -83,7 +85,7 @@ export default function ProductCard({
       if (error instanceof Error) {
         setError(error.message);
       } else {
-        setError("Failed to add item to cart");
+        setError(t('error.failedToAddToCart'));
       }
     } finally {
       setIsLoading(false);
@@ -119,7 +121,9 @@ export default function ProductCard({
             {name}
           </h3>
           <div className="mt-auto">
-            <p className="text-lg md:text-xl font-bold mb-3">${price}</p>
+            <p className="text-lg md:text-xl font-bold mb-3">
+              {price} {t('product.currency')}
+            </p>
             {availableSizes && availableSizes.length > 0 && (
               <div className="mb-3">
                 <select
@@ -130,7 +134,7 @@ export default function ProductCard({
                   }}
                   className="w-full p-2 border rounded"
                 >
-                  <option value="">Select Size</option>
+                  <option value="">{t('product.selectSize')}</option>
                   {availableSizes.map((size) => (
                     <option key={size} value={size}>
                       {size}
@@ -148,13 +152,13 @@ export default function ProductCard({
                 disabled={isLoading}
                 className="flex-1 bg-black text-white py-2 rounded hover:bg-gray-800 transition-colors disabled:bg-gray-400"
               >
-                {isLoading ? "Adding..." : "Add to Cart"}
+                {isLoading ? t('product.adding') : t('product.addToCart')}
               </button>
               <button
                 onClick={handleDetails}
                 className="flex-1 border border-black text-black py-2 rounded hover:bg-gray-100 transition-colors"
               >
-                Details
+                {t('product.details')}
               </button>
             </div>
           </div>

@@ -1,0 +1,12 @@
+{
+  "title": "My Orders",
+  "noOrders": "No orders found",
+  "loginRequired": "Please log in to view orders",
+  "loadError": "Failed to load orders",
+  "orderDetails": {
+    "orderNumber": "Order Number",
+    "date": "Date",
+    "status": "Status",
+    "totalAmount": "Total Amount"
+  }
+}

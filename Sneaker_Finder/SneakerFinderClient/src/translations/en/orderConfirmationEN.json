@@ -1,0 +1,31 @@
+{
+  "title": "Order Confirmation",
+  "thankYou": "Thank you for your order!",
+  "orderNumber": "Order number",
+  "orderDetails": "Order Details",
+  "orderDate": "Order Date",
+  "deliveryAddress": "Delivery Address",
+  "paymentMethod": "Payment Method",
+  "orderSummary": {
+    "title": "Order Summary",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "total": "Total"
+  },
+  "items": {
+    "title": "Items",
+    "size": "Size",
+    "quantity": "Quantity",
+    "price": "Price"
+  },
+  "buttons": {
+    "continueShopping": "Continue Shopping",
+    "viewOrders": "View Orders"
+  },
+  "status": {
+    "processing": "Processing",
+    "confirmed": "Confirmed",
+    "shipped": "Shipped",
+    "delivered": "Delivered"
+  }
+}

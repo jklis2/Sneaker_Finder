@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 import Navbar from "../layouts/Navbar";
 import Footer from "../layouts/Footer";
+import { useTranslation } from "react-i18next";
 
 export default function OrderConfirmation() {
+  const { t } = useTranslation('orderConfirmation');
+
   return (
     <main>
       <Navbar />
@@ -23,23 +26,22 @@ export default function OrderConfirmation() {
               />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold mb-4">Thank You for Your Order!</h1>
+          <h1 className="text-3xl font-bold mb-4">{t('thankYouForYourOrder')}</h1>
           <p className="text-gray-600 mb-8">
-            We've received your order and will begin processing it right away.
-            You'll receive a confirmation email shortly with your order details.
+            {t('weveReceivedYourOrderAndWillBeginProcessingItRightAwayYoullReceiveAConfirmationEmailShortlyWithYourOrderDetails')}
           </p>
           <div className="space-y-4">
             <Link
               to="/my-orders"
               className="block w-full sm:w-auto sm:inline-block bg-black text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
             >
-              View My Orders
+              {t('viewMyOrders')}
             </Link>
             <Link
               to="/"
               className="block w-full sm:w-auto sm:inline-block ml-0 sm:ml-4 border border-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
             >
-              Continue Shopping
+              {t('continueShopping')}
             </Link>
           </div>
         </div>

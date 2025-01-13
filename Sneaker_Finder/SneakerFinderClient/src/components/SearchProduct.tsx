@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import searchIcon from "../assets/icons/search.svg";
 
 interface SearchProductProps {
@@ -7,6 +8,7 @@ interface SearchProductProps {
 
 export default function SearchProduct({ onSearch }: SearchProductProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const { t } = useTranslation('allProducts');
 
   useEffect(() => {
     const minLength = 2;
@@ -34,7 +36,7 @@ export default function SearchProduct({ onSearch }: SearchProductProps) {
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search for sneakers..."
+          placeholder={t('search.placeholder')}
           className="w-full px-4 py-3 pl-12 pr-10 text-gray-900 bg-white border border-gray-300 rounded-lg 
                      focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
                      transition-all duration-300 shadow-sm"
@@ -42,7 +44,7 @@ export default function SearchProduct({ onSearch }: SearchProductProps) {
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <img
             src={searchIcon}
-            alt="Search"
+            alt={t('search.button')}
             className="h-5 w-5 text-gray-400"
           />
         </div>

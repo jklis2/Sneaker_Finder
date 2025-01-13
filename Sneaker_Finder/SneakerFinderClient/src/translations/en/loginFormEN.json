@@ -1,0 +1,16 @@
+{
+  "title": "Login to your account",
+  "email": {
+    "label": "Email"
+  },
+  "password": {
+    "label": "Password"
+  },
+  "loginButton": "Login",
+  "loginButton.loading": "Logging in...",
+  "noAccount": "Don't have an account yet?",
+  "register": "Register",
+  "errors": {
+    "invalidCredentials": "An error occurred during login"
+  }
+}

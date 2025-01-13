@@ -1,0 +1,15 @@
+{
+  "title": "All Brands",
+  "description": "Discover all the brands available in our store",
+  "error": {
+    "title": "Error Loading Brands",
+    "message": "An error occurred while loading brands"
+  },
+  "loading": "Loading brands...",
+  "noBrands": "No brands found",
+  "viewProducts": "View Products",
+  "productsCount": {
+    "one": "{{count}} product",
+    "other": "{{count}} products"
+  }
+}

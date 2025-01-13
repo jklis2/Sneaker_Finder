@@ -1,0 +1,18 @@
+{
+  "aboutUs": "About Us",
+  "authenticity": "Authenticity",
+  "faq": "FAQ",
+  "returnsAndExchanges": "Returns & Exchanges",
+  "privacyPolicy": "Privacy Policy",
+  "termsAndConditions": "Terms & Conditions",
+  "complaints": "Complaints",
+  "contact": "Contact",
+  "workingHours": "Monday - Friday from 9:00 to 18:00",
+  "allRightsReserved": "All rights reserved",
+  "newsletter": {
+    "title": "Subscribe to our newsletter",
+    "description": "Get updates on new releases and special offers",
+    "placeholder": "Enter your email",
+    "button": "Subscribe"
+  }
+}

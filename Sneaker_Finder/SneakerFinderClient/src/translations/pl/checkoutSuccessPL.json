@@ -1,0 +1,14 @@
+{
+  "title": "Potwierdzenie zamówienia",
+  "thankYou": "Dziękujemy za złożenie zamówienia!",
+  "orderNumber": "Numer zamówienia: {{orderNumber}}",
+  "emailConfirmation": "Wyślemy Ci e-mail z potwierdzeniem i szczegółami zamówienia.",
+  "buttons": {
+    "continueShopping": "Kontynuuj zakupy",
+    "viewOrder": "Zobacz zamówienie"
+  },
+  "errors": {
+    "noOrderId": "Nie znaleziono numeru zamówienia",
+    "fetchFailed": "Nie udało się pobrać szczegółów zamówienia"
+  }
+}

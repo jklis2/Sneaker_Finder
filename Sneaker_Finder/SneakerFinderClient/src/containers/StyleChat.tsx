@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import ReactMarkdown from "react-markdown";
+import { useTranslation } from "react-i18next";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -10,6 +11,7 @@ export default function StyleChat() {
   );
   const [userInput, setUserInput] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { t } = useTranslation('styleAdvisor');
 
   const handleSend = async () => {
     if (!userInput.trim()) return;
@@ -81,10 +83,10 @@ export default function StyleChat() {
             </div>
             <div className="ml-4">
               <h2 className="text-lg font-semibold text-gray-800">
-                Style Advisor
+                {t('chat.title')}
               </h2>
               <p className="text-sm text-gray-500">
-                Asystent modowy wspierany przez AI
+                {t('chat.subtitle')}
               </p>
             </div>
           </div>
@@ -110,10 +112,9 @@ export default function StyleChat() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-lg font-medium">Witamy w Style Advisor</p>
+                  <p className="text-lg font-medium">{t('chat.welcome')}</p>
                   <p className="text-sm">
-                    Zapytaj mnie o wszystko, co dotyczy stylów sneakersów i
-                    porad modowych!
+                    {t('chat.askMe')}
                   </p>
                 </div>
               </div>
@@ -144,51 +145,18 @@ export default function StyleChat() {
                   </div>
                 )}
                 <div
-                  className={`group relative max-w-[80%] px-6 py-4 rounded-2xl ${
+                  className={`bg-white rounded-2xl ${
                     message.role === "user"
-                      ? "bg-gray-800 text-white rounded-tr-none"
-                      : "bg-white text-gray-800 rounded-tl-none shadow-md"
-                  }`}
+                      ? "rounded-tr-none bg-gray-800 text-white"
+                      : "rounded-tl-none"
+                  } shadow-md px-6 py-4 max-w-[80%]`}
                 >
                   {message.role === "assistant" ? (
-                    <ReactMarkdown className="prose">
-                      {message.content}
-                    </ReactMarkdown>
+                    <ReactMarkdown>{message.content}</ReactMarkdown>
                   ) : (
-                    <div className="relative z-10">{message.content}</div>
+                    message.content
                   )}
-                  <div
-                    className={`absolute top-0 ${
-                      message.role === "user" ? "-right-2" : "-left-2"
-                    } w-4 h-4 transform rotate-45 ${
-                      message.role === "user" ? "bg-gray-800" : "bg-white"
-                    }`}
-                  />
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-1 right-2 text-xs text-gray-400">
-                    {new Date().toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </div>
                 </div>
-                {message.role === "user" && (
-                  <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center ml-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5 text-white"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                      />
-                    </svg>
-                  </div>
-                )}
               </div>
             ))}
             {isLoading && (
@@ -225,7 +193,7 @@ export default function StyleChat() {
             <input
               type="text"
               className="flex-grow px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent transition-all duration-200 placeholder-gray-400"
-              placeholder="Zapytaj o ..."
+              placeholder={t('chat.placeholder')}
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
               disabled={isLoading}
@@ -242,7 +210,7 @@ export default function StyleChat() {
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
               ) : (
                 <span className="flex items-center">
-                  Wyślij
+                  {t('chat.send')}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-4 w-4 ml-2"

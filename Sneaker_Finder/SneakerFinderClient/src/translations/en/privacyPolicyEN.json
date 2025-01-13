@@ -1,0 +1,41 @@
+{
+  "title": "Privacy Policy",
+  "backToRegistration": "Back to Registration",
+  "sections": {
+    "introduction": {
+      "title": "Introduction",
+      "content": "At Sneaker Finder, we value your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and safeguard your data when you use our website."
+    },
+    "dataCollection": {
+      "title": "Information We Collect",
+      "content": "We collect the following information when you use our application:",
+      "items": {
+        "0": "Registration data: name, surname, email address, password",
+        "1": "Technical data: IP address, device type, operating system",
+        "2": "Usage data: search history, user preferences"
+      }
+    },
+    "dataUse": {
+      "title": "How We Use Your Information",
+      "content": "Your personal data is processed for the following purposes:",
+      "items": {
+        "0": "Enabling the use of Sneaker Finder application",
+        "1": "Customizing content and features to your preferences",
+        "2": "Handling user requests and providing technical support",
+        "3": "Conducting statistical analysis and improving application performance"
+      }
+    },
+    "dataSecurity": {
+      "title": "Data Security",
+      "content": "We implement appropriate security measures to protect your personal information from unauthorized access, alteration, or disclosure."
+    },
+    "cookies": {
+      "title": "Cookies",
+      "content": "We use cookies to enhance your browsing experience and analyze website traffic. You can control cookie settings through your browser preferences."
+    },
+    "contact": {
+      "title": "Contact Us",
+      "content": "If you have any questions about our Privacy Policy, please contact us at privacy@sneakerfinder.com"
+    }
+  }
+}

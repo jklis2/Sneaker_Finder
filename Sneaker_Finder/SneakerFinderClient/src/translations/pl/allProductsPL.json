@@ -1,0 +1,52 @@
+{
+  "title": "Wszystkie Produkty",
+  "filters": {
+    "title": "Filtry",
+    "price": {
+      "title": "Cena",
+      "min": "Cena minimalna",
+      "max": "Cena maksymalna"
+    },
+    "brand": "Marka",
+    "size": "Rozmiar",
+    "color": "Kolor",
+    "apply": "Zastosuj filtry",
+    "clear": "Wyczyść filtry"
+  },
+  "sort": {
+    "title": "Sortuj według",
+    "options": {
+      "priceAsc": "Cena: od najniższej",
+      "priceDesc": "Cena: od najwyższej",
+      "nameAsc": "Nazwa: A do Z",
+      "nameDesc": "Nazwa: Z do A"
+    }
+  },
+  "search": {
+    "placeholder": "Szukaj produktów...",
+    "button": "Szukaj"
+  },
+  "product": {
+    "brand": "Marka",
+    "size": "Rozmiar",
+    "color": "Kolor",
+    "price": "Cena",
+    "addToCart": "Dodaj do koszyka",
+    "adding": "Dodawanie...",
+    "addedToCart": "Dodano do koszyka",
+    "details": "Szczegóły",
+    "selectSize": "Wybierz rozmiar",
+    "outOfStock": "Brak w magazynie",
+    "currency": "zł"
+  },
+  "error": {
+    "selectSize": "Proszę wybrać rozmiar",
+    "loginToAddToCart": "Zaloguj się, aby dodać do koszyka",
+    "authenticationTokenNotFound": "Nie znaleziono tokenu uwierzytelniającego",
+    "failedToAddToCart": "Nie udało się dodać do koszyka",
+    "title": "Błąd podczas ładowania produktów"
+  },
+  "noProducts": "Nie znaleziono produktów",
+  "noProductsFound": "Nie znaleziono produktów pasujących do wyszukiwania",
+  "loading": "Ładowanie produktów..."
+}

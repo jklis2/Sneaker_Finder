@@ -1,0 +1,11 @@
+{
+  "orderNumber": "Order #",
+  "size": "Size",
+  "quantity": "x",
+  "totalAmount": "Total Amount",
+  "status": {
+    "delivered": "Delivered",
+    "processing": "Processing",
+    "pending": "Pending"
+  }
+}

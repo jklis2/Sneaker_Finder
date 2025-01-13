@@ -1,0 +1,16 @@
+{
+  "title": "Wszystkie Marki",
+  "description": "Odkryj wszystkie marki dostępne w naszym sklepie",
+  "error": {
+    "title": "Błąd Ładowania Marek",
+    "message": "Wystąpił błąd podczas ładowania marek"
+  },
+  "loading": "Ładowanie marek...",
+  "noBrands": "Nie znaleziono marek",
+  "viewProducts": "Zobacz Produkty",
+  "productsCount": {
+    "one": "{{count}} produkt",
+    "few": "{{count}} produkty",
+    "many": "{{count}} produktów"
+  }
+}

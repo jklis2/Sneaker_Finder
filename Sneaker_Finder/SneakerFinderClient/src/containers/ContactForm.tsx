@@ -1,8 +1,10 @@
 import { useState } from "react";
 import Input from "../components/Input";
 import Button from "../components/Button";
+import { useTranslation } from "react-i18next";
 
 export default function ContactForm() {
+  const { t } = useTranslation('contactForm');
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -23,55 +25,54 @@ export default function ContactForm() {
   return (
     <div className="max-w-[600px] mx-4 sm:mx-auto p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">
-        Skontaktuj się z nami
+        {t('title')}
       </h2>
       <p className="text-gray-600 mb-8 text-center">
-        Masz pytania? Chętnie na nie odpowiemy. Wyślij nam wiadomość, a my
-        skontaktujemy się z Tobą tak szybko, jak to możliwe.
+        {t('description')}
       </p>
 
       <form className="space-y-6">
         <Input
-          label="Imię i nazwisko"
+          label={t('form.name.label')}
           id="name"
           name="name"
           value={formData.name}
           onChange={handleChange}
-          placeholder="Jan Kowalski"
+          placeholder={t('form.name.placeholder')}
         />
 
         <Input
-          label="Adres email"
+          label={t('form.email.label')}
           id="email"
           name="email"
           type="email"
           value={formData.email}
           onChange={handleChange}
-          placeholder="jan.kowalski@example.com"
+          placeholder={t('form.email.placeholder')}
         />
 
         <Input
-          label="Temat"
+          label={t('form.subject.label')}
           id="subject"
           name="subject"
           value={formData.subject}
           onChange={handleChange}
-          placeholder="W czym możemy pomóc?"
+          placeholder={t('form.subject.placeholder')}
         />
 
         <Input
-          label="Wiadomość"
+          label={t('form.message.label')}
           id="message"
           name="message"
           type="textarea"
           value={formData.message}
           onChange={handleChange}
-          placeholder="Twoja wiadomość..."
+          placeholder={t('form.message.placeholder')}
           rows={5}
         />
 
         <div>
-          <Button name="Wyślij wiadomość" />
+          <Button name={t('buttons.submit')} />
         </div>
       </form>
     </div>

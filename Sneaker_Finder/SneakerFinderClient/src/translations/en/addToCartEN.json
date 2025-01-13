@@ -1,0 +1,12 @@
+{
+  "title": "Added to Cart!",
+  "productDetails": {
+    "size": "Size",
+    "quantity": "Quantity",
+    "price": "Price"
+  },
+  "buttons": {
+    "viewCart": "View Cart",
+    "continueShopping": "Continue Shopping"
+  }
+}

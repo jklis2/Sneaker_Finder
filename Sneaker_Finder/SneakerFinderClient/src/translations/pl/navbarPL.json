@@ -1,0 +1,32 @@
+{
+  "menu": {
+    "latestProducts": "Nowości",
+    "promotions": "Promocje",
+    "allBrands": "Marki",
+    "allProducts": "Produkty",
+    "styleAdvisor": "Asystent modowy",
+    "contact": "Kontakt",
+    "cart": "Koszyk",
+    "myOrders": "Moje zamówienia",
+    "settings": "Ustawienia"
+  },
+  "search": {
+    "placeholder": "Szukaj produktów..."
+  },
+  "auth": {
+    "login": "Zaloguj się",
+    "logout": "Wyloguj",
+    "register": "Zarejestruj się"
+  },
+  "cart": {
+    "title": "Koszyk",
+    "empty": "Twój koszyk jest pusty",
+    "item": "produkt",
+    "items": "produktów"
+  },
+  "profile": {
+    "myProfile": "Mój profil",
+    "myOrders": "Moje zamówienia",
+    "settings": "Ustawienia"
+  }
+}

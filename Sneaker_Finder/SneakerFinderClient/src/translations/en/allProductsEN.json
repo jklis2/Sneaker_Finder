@@ -1,0 +1,52 @@
+{
+  "title": "All Products",
+  "filters": {
+    "title": "Filters",
+    "price": {
+      "title": "Price",
+      "min": "Min Price",
+      "max": "Max Price"
+    },
+    "brand": "Brand",
+    "size": "Size",
+    "color": "Color",
+    "apply": "Apply Filters",
+    "clear": "Clear Filters"
+  },
+  "sort": {
+    "title": "Sort by",
+    "options": {
+      "priceAsc": "Price: Low to High",
+      "priceDesc": "Price: High to Low",
+      "nameAsc": "Name: A to Z",
+      "nameDesc": "Name: Z to A"
+    }
+  },
+  "search": {
+    "placeholder": "Search for products...",
+    "button": "Search"
+  },
+  "product": {
+    "brand": "Brand",
+    "size": "Size",
+    "color": "Color",
+    "price": "Price",
+    "addToCart": "Add to Cart",
+    "adding": "Adding...",
+    "addedToCart": "Added to Cart",
+    "details": "Details",
+    "selectSize": "Select Size",
+    "outOfStock": "Out of Stock",
+    "currency": "$"
+  },
+  "error": {
+    "selectSize": "Please select a size",
+    "loginToAddToCart": "Please log in to add items to cart",
+    "authenticationTokenNotFound": "Authentication token not found",
+    "failedToAddToCart": "Failed to add item to cart",
+    "title": "Error Loading Products"
+  },
+  "noProducts": "No products found",
+  "noProductsFound": "No products found matching your search",
+  "loading": "Loading products..."
+}

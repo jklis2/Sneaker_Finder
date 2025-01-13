@@ -1,0 +1,46 @@
+{
+  "title": "Utwórz konto",
+  "subtitle": "Zarejestruj się, aby kontynuować",
+  "orCreateAccount": "Lub utwórz konto Sneaker Finder",
+  "firstName": {
+    "label": "Imię",
+    "placeholder": "Wprowadź swoje imię"
+  },
+  "lastName": {
+    "label": "Nazwisko",
+    "placeholder": "Wprowadź swoje nazwisko"
+  },
+  "email": {
+    "label": "Adres Email",
+    "placeholder": "Wprowadź swój email"
+  },
+  "gender": {
+    "label": "Płeć",
+    "placeholder": "Wprowadź 'Male' lub 'Female'"
+  },
+  "birthDate": {
+    "label": "Data urodzenia",
+    "placeholder": "Data urodzenia"
+  },
+  "password": {
+    "label": "Hasło",
+    "placeholder": "Wprowadź hasło"
+  },
+  "confirmPassword": {
+    "label": "Potwierdź hasło",
+    "placeholder": "Potwierdź hasło"
+  },
+  "acceptTerms": {
+    "label": "Akceptuję",
+    "link": "regulamin i politykę prywatności"
+  },
+  "registerButton": "Zarejestruj się",
+  "registerButton.loading": "Rejestracja...",
+  "hasAccount": "Masz już konto? Zaloguj się",
+  "errors": {
+    "registrationFailed": "Wystąpił błąd podczas rejestracji",
+    "invalidGender": "Płeć musi być 'Male' lub 'Female'",
+    "acceptTerms": "Proszę zaakceptować regulamin",
+    "passwordMismatch": "Hasła nie są identyczne"
+  }
+}

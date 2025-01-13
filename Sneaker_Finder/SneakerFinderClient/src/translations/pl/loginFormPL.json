@@ -1,0 +1,23 @@
+{
+  "title": "Zaloguj się do swojego konta",
+  "email": {
+    "label": "Email",
+    "placeholder": "Wprowadź swój email"
+  },
+  "password": {
+    "label": "Hasło",
+    "placeholder": "Wprowadź swoje hasło"
+  },
+  "rememberMe": "Zapamiętaj mnie",
+  "forgotPassword": "Zapomniałeś hasła?",
+  "loginButton": "Zaloguj się",
+  "loginButton.loading": "Logowanie...",
+  "noAccount": "Nie masz jeszcze konta?",
+  "register": "Zarejestruj się",
+  "errors": {
+    "invalidCredentials": "Wystąpił błąd podczas logowania",
+    "emailRequired": "Email jest wymagany",
+    "passwordRequired": "Hasło jest wymagane",
+    "invalidEmail": "Wprowadź prawidłowy adres email"
+  }
+}

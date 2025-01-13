@@ -4,6 +4,7 @@ import Navbar from "../layouts/Navbar";
 import Footer from "../layouts/Footer";
 import { useAuth } from "../context/AuthContext";
 import { getShippingAddresses } from "../services/userService";
+import { useTranslation } from "react-i18next";
 
 interface ShippingMethod {
   id: string;
@@ -94,6 +95,7 @@ export default function Checkout() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [cart, setCart] = useState<CartData>({ items: [], total: 0 });
+  const { t } = useTranslation('checkout');
 
   // Form states
   const [formData, setFormData] = useState({
@@ -148,12 +150,12 @@ export default function Checkout() {
       setError("");
 
       if (!isAuthenticated || !userData?._id) {
-        throw new Error("Please log in to view your cart");
+        throw new Error(t('errors.loginRequired'));
       }
 
       const token = localStorage.getItem('token');
       if (!token) {
-        throw new Error("Authentication token not found");
+        throw new Error(t('errors.tokenNotFound'));
       }
 
       const response = await fetch(
@@ -167,7 +169,7 @@ export default function Checkout() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Failed to fetch cart");
+        throw new Error(errorData.message || t('errors.checkoutFailed'));
       }
 
       const data: CartData = await response.json();
@@ -186,7 +188,7 @@ export default function Checkout() {
       setCart({ ...data, items: itemsWithDetails });
     } catch (error) {
       console.error("Error fetching cart:", error);
-      setError(error instanceof Error ? error.message : "Failed to load cart");
+      setError(error instanceof Error ? error.message : t('errors.checkoutFailed'));
       if (error instanceof Error && error.message.includes("Please log in")) {
         navigate("/login");
       }
@@ -216,7 +218,7 @@ export default function Checkout() {
       }
     } catch (error) {
       console.error("Error fetching addresses:", error);
-      setError("Failed to load saved addresses");
+      setError(t('errors.loadAddressesFailed'));
     }
   };
 
@@ -256,12 +258,12 @@ export default function Checkout() {
 
     try {
       if (!isAuthenticated || !userData?._id) {
-        throw new Error("Please log in to complete checkout");
+        throw new Error(t('errors.loginRequired'));
       }
 
       const token = localStorage.getItem('token');
       if (!token) {
-        throw new Error("Authentication token not found");
+        throw new Error(t('errors.tokenNotFound'));
       }
 
       // Create Stripe checkout session
@@ -274,7 +276,7 @@ export default function Checkout() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Failed to create checkout session");
+        throw new Error(errorData.message || t('errors.checkoutFailed'));
       }
 
       const { url } = await response.json();
@@ -283,7 +285,7 @@ export default function Checkout() {
       window.location.href = url;
     } catch (error) {
       console.error("Checkout error:", error);
-      setError(error instanceof Error ? error.message : "Failed to process checkout");
+      setError(error instanceof Error ? error.message : t('errors.checkoutFailed'));
       if (error instanceof Error && error.message.includes("Please log in")) {
         navigate("/login");
       }
@@ -297,7 +299,7 @@ export default function Checkout() {
       <div className="min-h-screen flex flex-col">
         <Navbar />
         <div className="flex-grow container mx-auto px-4 py-8">
-          <div className="text-center">Loading checkout...</div>
+          <div className="text-center">{t('loading')}</div>
         </div>
         <Footer />
       </div>
@@ -331,11 +333,11 @@ export default function Checkout() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Checkout Form */}
           <div className="space-y-8">
-            <h2 className="text-2xl font-bold">Checkout</h2>
+            <h2 className="text-2xl font-bold">{t('checkout')}</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Contact Information */}
               <div>
-                <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
+                <h3 className="text-lg font-semibold mb-4">{t('contactInfo.title')}</h3>
                 <div className="space-y-4">
                   <input
                     type="email"
@@ -343,7 +345,7 @@ export default function Checkout() {
                     onChange={(e) =>
                       setFormData({ ...formData, email: e.target.value })
                     }
-                    placeholder="Email"
+                    placeholder={t('contactInfo.email')}
                     required
                     className="w-full p-2 border rounded"
                   />
@@ -352,7 +354,7 @@ export default function Checkout() {
 
               {/* Shipping Address Section */}
               <div className="mt-8">
-                <h3 className="text-lg font-semibold mb-4">Shipping Address</h3>
+                <h3 className="text-lg font-semibold mb-4">{t('shippingAddress.title')}</h3>
                 
                 {savedAddresses.length > 0 && (
                   <div className="mb-6">
@@ -378,7 +380,7 @@ export default function Checkout() {
                       onClick={handleAddNewAddress}
                       className="mt-4 text-black underline hover:text-gray-700"
                     >
-                      Add New Address
+                      {t('shippingAddress.addNew')}
                     </button>
                   </div>
                 )}
@@ -392,7 +394,7 @@ export default function Checkout() {
                         onChange={(e) =>
                           setFormData({ ...formData, address: e.target.value })
                         }
-                        placeholder="Street Address"
+                        placeholder={t('shippingAddress.street')}
                         required
                         className="w-full p-2 border rounded"
                       />
@@ -404,7 +406,7 @@ export default function Checkout() {
                         onChange={(e) =>
                           setFormData({ ...formData, apartment: e.target.value })
                         }
-                        placeholder="Apartment, suite, etc. (optional)"
+                        placeholder={t('shippingAddress.apartment')}
                         className="w-full p-2 border rounded"
                       />
                     </div>
@@ -415,7 +417,7 @@ export default function Checkout() {
                         onChange={(e) =>
                           setFormData({ ...formData, city: e.target.value })
                         }
-                        placeholder="City"
+                        placeholder={t('shippingAddress.city')}
                         required
                         className="w-full p-2 border rounded"
                       />
@@ -427,7 +429,7 @@ export default function Checkout() {
                         onChange={(e) =>
                           setFormData({ ...formData, state: e.target.value })
                         }
-                        placeholder="State/Province"
+                        placeholder={t('shippingAddress.state')}
                         required
                         className="w-full p-2 border rounded"
                       />
@@ -439,7 +441,7 @@ export default function Checkout() {
                         onChange={(e) =>
                           setFormData({ ...formData, zipCode: e.target.value })
                         }
-                        placeholder="ZIP/Postal Code"
+                        placeholder={t('shippingAddress.zipCode')}
                         required
                         className="w-full p-2 border rounded"
                       />
@@ -451,7 +453,7 @@ export default function Checkout() {
                         onChange={(e) =>
                           setFormData({ ...formData, phone: e.target.value })
                         }
-                        placeholder="Phone"
+                        placeholder={t('shippingAddress.phone')}
                         required
                         className="w-full p-2 border rounded"
                       />
@@ -462,7 +464,7 @@ export default function Checkout() {
 
               {/* Shipping Information */}
               <div>
-                <h3 className="text-lg font-semibold mb-4">Shipping Information</h3>
+                <h3 className="text-lg font-semibold mb-4">{t('shippingInfo.title')}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <input
                     type="text"
@@ -470,7 +472,7 @@ export default function Checkout() {
                     onChange={(e) =>
                       setFormData({ ...formData, firstName: e.target.value })
                     }
-                    placeholder="First Name"
+                    placeholder={t('shippingInfo.firstName')}
                     required
                     className="w-full p-2 border rounded"
                   />
@@ -480,7 +482,7 @@ export default function Checkout() {
                     onChange={(e) =>
                       setFormData({ ...formData, lastName: e.target.value })
                     }
-                    placeholder="Last Name"
+                    placeholder={t('shippingInfo.lastName')}
                     required
                     className="w-full p-2 border rounded"
                   />
@@ -489,7 +491,7 @@ export default function Checkout() {
 
               {/* Shipping Method */}
               <div>
-                <h3 className="text-lg font-semibold mb-4">Shipping Method</h3>
+                <h3 className="text-lg font-semibold mb-4">{t('shippingMethod.title')}</h3>
                 <div className="space-y-4">
                   {shippingMethods.map((method) => (
                     <label
@@ -506,9 +508,9 @@ export default function Checkout() {
                           className="mr-3"
                         />
                         <div>
-                          <div className="font-medium">{method.name}</div>
+                          <div className="font-medium">{t(`shippingMethod.${method.id}.name`)}</div>
                           <div className="text-sm text-gray-500">
-                            {method.estimatedDays}
+                            {t(`shippingMethod.${method.id}.time`)}
                           </div>
                         </div>
                       </div>
@@ -520,7 +522,7 @@ export default function Checkout() {
 
               {/* Payment Method */}
               <div>
-                <h3 className="text-lg font-semibold mb-4">Payment Method</h3>
+                <h3 className="text-lg font-semibold mb-4">{t('paymentMethod.title')}</h3>
                 <div className="space-y-4">
                   {paymentMethods.map((method) => (
                     <label
@@ -535,7 +537,7 @@ export default function Checkout() {
                         onChange={(e) => setSelectedPayment(e.target.value)}
                         className="mr-3"
                       />
-                      <div className="font-medium">{method.name}</div>
+                      <div className="font-medium">{t(`paymentMethod.${method.id}`)}</div>
                     </label>
                   ))}
                 </div>
@@ -546,14 +548,14 @@ export default function Checkout() {
                 disabled={isLoading || cart.items.length === 0}
                 className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition-colors disabled:bg-gray-400"
               >
-                {isLoading ? "Processing..." : "Place Order"}
+                {isLoading ? t('buttons.processing') : t('buttons.placeOrder')}
               </button>
             </form>
           </div>
 
           {/* Order Summary */}
           <div className="bg-gray-50 p-6 rounded-lg">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Order Summary</h2>
+            <h2 className="text-lg font-medium text-gray-900 mb-4">{t('orderSummary.title')}</h2>
             <div className="space-y-4">
               {cart.items.map((item) => (
                 <div key={item.productId} className="flex items-center justify-between">
@@ -567,9 +569,9 @@ export default function Checkout() {
                     </div>
                     <div>
                       <h3 className="text-sm font-medium text-gray-900">{item.name}</h3>
-                      <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
+                      <p className="text-sm text-gray-500">{t('orderSummary.quantity')}: {item.quantity}</p>
                       {item.size && (
-                        <p className="text-sm text-gray-500">Size: {item.size}</p>
+                        <p className="text-sm text-gray-500">{t('orderSummary.size')}: {item.size}</p>
                       )}
                     </div>
                   </div>
@@ -580,11 +582,11 @@ export default function Checkout() {
               ))}
               <div className="border-t pt-4">
                 <div className="flex justify-between mb-2">
-                  <div>Subtotal</div>
+                  <div>{t('orderSummary.subtotal')}</div>
                   <div>${cart.total.toFixed(2)}</div>
                 </div>
                 <div className="flex justify-between mb-2">
-                  <div>Shipping</div>
+                  <div>{t('orderSummary.shipping')}</div>
                   <div>
                     $
                     {(
@@ -594,7 +596,7 @@ export default function Checkout() {
                   </div>
                 </div>
                 <div className="flex justify-between font-bold text-lg">
-                  <div>Total</div>
+                  <div>{t('orderSummary.total')}</div>
                   <div>
                     $
                     {(

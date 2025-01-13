@@ -1,0 +1,12 @@
+{
+  "title": "Dodano do koszyka!",
+  "productDetails": {
+    "size": "Rozmiar",
+    "quantity": "Ilość",
+    "price": "Cena"
+  },
+  "buttons": {
+    "viewCart": "Zobacz koszyk",
+    "continueShopping": "Kontynuuj zakupy"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "header": {
+    "title": "Style Advisor",
+    "description": "Uzyskaj spersonalizowane rekomendacje sneakersów i porady dotyczące stylu od naszego modowego eksperta AI. Niezależnie od tego, czy szukasz idealnej pary, czy potrzebujesz sugestii dotyczących stroju, jesteśmy tutaj, aby pomóc.",
+    "features": {
+      "instant": "Natychmiastowe odpowiedzi",
+      "available": "Dostępny 24/7",
+      "aiPowered": "Porady wspierane przez AI"
+    }
+  },
+  "chat": {
+    "title": "Style Advisor",
+    "subtitle": "Asystent modowy wspierany przez AI",
+    "welcome": "Witamy w Style Advisor",
+    "askMe": "Zapytaj mnie o wszystko, co dotyczy stylów sneakersów i porad modowych!",
+    "placeholder": "Zapytaj o ...",
+    "send": "Wyślij"
+  }
+}

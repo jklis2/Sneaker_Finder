@@ -1,0 +1,14 @@
+{
+  "title": "Order Confirmation",
+  "thankYou": "Thank you for your order!",
+  "orderNumber": "Order number: {{orderNumber}}",
+  "emailConfirmation": "We'll send you a confirmation email with your order details.",
+  "buttons": {
+    "continueShopping": "Continue Shopping",
+    "viewOrder": "View Order"
+  },
+  "errors": {
+    "noOrderId": "No order ID found",
+    "fetchFailed": "Failed to fetch order details"
+  }
+}

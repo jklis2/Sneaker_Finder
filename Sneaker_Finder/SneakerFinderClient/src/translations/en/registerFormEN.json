@@ -1,0 +1,46 @@
+{
+  "title": "Create your account",
+  "subtitle": "Please sign up to continue",
+  "orCreateAccount": "Or create Sneaker Finder account",
+  "firstName": {
+    "label": "First Name",
+    "placeholder": "Enter your First Name"
+  },
+  "lastName": {
+    "label": "Last Name",
+    "placeholder": "Enter your Last Name"
+  },
+  "email": {
+    "label": "Email Address",
+    "placeholder": "Enter your email"
+  },
+  "gender": {
+    "label": "Gender",
+    "placeholder": "Enter 'Male' or 'Female'"
+  },
+  "birthDate": {
+    "label": "Birth date",
+    "placeholder": "Birth Date"
+  },
+  "password": {
+    "label": "Password",
+    "placeholder": "Enter your password"
+  },
+  "confirmPassword": {
+    "label": "Confirm Password",
+    "placeholder": "Confirm Password"
+  },
+  "acceptTerms": {
+    "label": "I accept",
+    "link": "the regulations and privacy policy"
+  },
+  "registerButton": "Sign up",
+  "registerButton.loading": "Signing up...",
+  "hasAccount": "Already have an account? Sign in",
+  "errors": {
+    "registrationFailed": "An error occurred during registration",
+    "invalidGender": "Gender must be either 'Male' or 'Female'",
+    "acceptTerms": "Please accept the terms and conditions",
+    "passwordMismatch": "Passwords do not match"
+  }
+}

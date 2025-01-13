@@ -1,0 +1,12 @@
+{
+  "title": "Moje zamówienia",
+  "noOrders": "Nie znaleziono zamówień",
+  "loginRequired": "Zaloguj się, aby zobaczyć zamówienia",
+  "loadError": "Nie udało się załadować zamówień",
+  "orderDetails": {
+    "orderNumber": "Numer zamówienia",
+    "date": "Data",
+    "status": "Status",
+    "totalAmount": "Łączna kwota"
+  }
+}

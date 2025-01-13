@@ -1,0 +1,42 @@
+{
+  "title": "Polityka Prywatności",
+  "backToRegistration": "Powrót do Rejestracji",
+  "lastUpdated": "Ostatnia Aktualizacja",
+  "sections": {
+    "introduction": {
+      "title": "Wprowadzenie",
+      "content": "W Sneaker Finder cenimy Twoją prywatność i zobowiązujemy się do ochrony Twoich danych osobowych. Ta Polityka Prywatności wyjaśnia, w jaki sposób zbieramy, wykorzystujemy i chronimy Twoje dane podczas korzystania z naszej strony internetowej."
+    },
+    "dataCollection": {
+      "title": "Informacje, Które Zbieramy",
+      "content": "Podczas korzystania z naszej aplikacji zbieramy następujące dane:",
+      "items": {
+        "0": "Dane rejestracyjne: imię, nazwisko, adres e-mail, hasło",
+        "1": "Dane techniczne: adres IP, typ urządzenia, system operacyjny",
+        "2": "Dane dotyczące korzystania z aplikacji: historia wyszukiwań, preferencje użytkownika"
+      }
+    },
+    "dataUse": {
+      "title": "Jak Wykorzystujemy Twoje Informacje",
+      "content": "Twoje dane osobowe są przetwarzane w następujących celach:",
+      "items": {
+        "0": "Umożliwienia korzystania z aplikacji Sneaker Finder",
+        "1": "Dostosowania treści i funkcji do Twoich preferencji",
+        "2": "Obsługi zgłoszeń użytkowników i udzielania wsparcia technicznego",
+        "3": "Przeprowadzania analiz statystycznych i poprawy działania aplikacji"
+      }
+    },
+    "dataSecurity": {
+      "title": "Bezpieczeństwo Danych",
+      "content": "Wdrażamy odpowiednie środki bezpieczeństwa, aby chronić Twoje dane osobowe przed nieautoryzowanym dostępem, zmianą lub ujawnieniem."
+    },
+    "cookies": {
+      "title": "Pliki Cookie",
+      "content": "Używamy plików cookie, aby ulepszyć Twoje doświadczenia podczas przeglądania i analizować ruch na stronie. Możesz kontrolować ustawienia plików cookie poprzez preferencje przeglądarki."
+    },
+    "contact": {
+      "title": "Kontakt",
+      "content": "Jeśli masz pytania dotyczące naszej Polityki Prywatności, skontaktuj się z nami pod adresem privacy@sneakerfinder.com"
+    }
+  }
+}

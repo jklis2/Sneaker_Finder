@@ -1,0 +1,31 @@
+{
+  "menu": {
+    "latestProducts": "Latest Products",
+    "promotions": "Promotions",
+    "allBrands": "All Brands",
+    "allProducts": "All Products",
+    "styleAdvisor": "Style Advisor",
+    "contact": "Contact",
+    "cart": "Cart",
+    "myOrders": "My Orders",
+    "settings": "Settings"
+  },
+  "search": {
+    "placeholder": "Search for products..."
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty",
+    "item": "item",
+    "items": "items"
+  },
+  "profile": {
+    "myProfile": "My Profile",
+    "myOrders": "My Orders",
+    "settings": "Settings"
+  }
+}

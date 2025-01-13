@@ -1,5 +1,6 @@
 import { useState, ChangeEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import Input from "../components/Input";
 import Button from "../components/Button";
@@ -7,6 +8,8 @@ import Button from "../components/Button";
 export default function LoginForm() {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { t } = useTranslation('loginForm');
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -28,12 +31,12 @@ export default function LoginForm() {
       setIsLoading(true);
       setError(null);
       await login(formData.email, formData.password);
-      navigate("/settings");
+      navigate("/");
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("Wystąpił błąd podczas logowania");
+        setError(t('errors.invalidCredentials'));
       }
       console.error(err);
     } finally {
@@ -45,7 +48,7 @@ export default function LoginForm() {
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Zaloguj się do swojego konta
+          {t('title')}
         </h2>
       </div>
 
@@ -59,7 +62,7 @@ export default function LoginForm() {
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <Input
-              label="Email"
+              label={t('email.label')}
               id="email"
               name="email"
               type="email"
@@ -69,7 +72,7 @@ export default function LoginForm() {
             />
 
             <Input
-              label="Hasło"
+              label={t('password.label')}
               id="password"
               name="password"
               type="password"
@@ -81,7 +84,7 @@ export default function LoginForm() {
             <div>
               <Button
                 type="submit"
-                name={isLoading ? "Logowanie..." : "Zaloguj się"}
+                name={isLoading ? t('loginButton.loading') : t('loginButton')}
                 disabled={isLoading}
                 className="w-full"
               />
@@ -95,18 +98,18 @@ export default function LoginForm() {
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="px-2 bg-white text-gray-500">
-                  Nie masz jeszcze konta?
+                  {t('noAccount')}
                 </span>
               </div>
             </div>
 
             <div className="mt-6">
-              <button
-                onClick={() => navigate('/auth/register')}
+              <Link
+                to="/auth/register"
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
-                Zarejestruj się
-              </button>
+                {t('register')}
+              </Link>
             </div>
           </div>
         </div>

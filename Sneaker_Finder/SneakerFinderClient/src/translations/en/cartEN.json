@@ -1,0 +1,17 @@
+{
+  "loading": "Loading cart...",
+  "loginRequired": "Please log in to view your cart",
+  "emptyCart": "Your cart is empty",
+  "continueShoppingButton": "Continue Shopping",
+  "size": "Size",
+  "removeButton": "Remove",
+  "total": "Total",
+  "checkoutButton": "Checkout",
+  "errors": {
+    "userNotFound": "User ID not found",
+    "tokenNotFound": "Authentication token not found",
+    "fetchCartFailed": "Failed to load cart",
+    "updateCartFailed": "Failed to update cart",
+    "removeItemFailed": "Failed to remove item"
+  }
+}

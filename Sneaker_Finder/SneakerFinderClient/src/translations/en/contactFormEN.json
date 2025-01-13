@@ -1,0 +1,25 @@
+{
+  "title": "Contact Us",
+  "description": "Have questions? We'd love to answer them. Send us a message and we'll get back to you as soon as possible.",
+  "form": {
+    "name": {
+      "label": "Full Name",
+      "placeholder": "John Smith"
+    },
+    "email": {
+      "label": "Email Address",
+      "placeholder": "john.smith@example.com"
+    },
+    "subject": {
+      "label": "Subject",
+      "placeholder": "How can we help?"
+    },
+    "message": {
+      "label": "Message",
+      "placeholder": "Your message..."
+    }
+  },
+  "buttons": {
+    "submit": "Send Message"
+  }
+}

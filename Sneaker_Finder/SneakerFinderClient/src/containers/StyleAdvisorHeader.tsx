@@ -1,19 +1,20 @@
+import { useTranslation } from "react-i18next";
+
 export default function StyleAdvisorHeader() {
+  const { t } = useTranslation('styleAdvisor');
+
   return (
     <div>
       {/* Page Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-4 py-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Style Advisor
+            {t('header.title')}
           </h1>
           <div className="flex items-start space-x-8">
             <div className="flex-grow">
               <p className="text-lg text-gray-600 mb-6">
-                Uzyskaj spersonalizowane rekomendacje sneakersów i porady
-                dotyczące stylu od naszego modowego eksperta AI. Niezależnie od
-                tego, czy szukasz idealnej pary, czy potrzebujesz sugestii
-                dotyczących stroju, jesteśmy tutaj, aby pomóc.
+                {t('header.description')}
               </p>
               <div className="flex flex-wrap gap-4">
                 <div className="flex items-center bg-gray-50 rounded-lg px-4 py-2">
@@ -32,7 +33,7 @@ export default function StyleAdvisorHeader() {
                     />
                   </svg>
                   <span className="text-sm text-gray-600">
-                    Natychmiastowe odpowiedzi
+                    {t('header.features.instant')}
                   </span>
                 </div>
                 <div className="flex items-center bg-gray-50 rounded-lg px-4 py-2">
@@ -50,7 +51,7 @@ export default function StyleAdvisorHeader() {
                       d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                   </svg>
-                  <span className="text-sm text-gray-600">Dostępny 24/7</span>
+                  <span className="text-sm text-gray-600">{t('header.features.available')}</span>
                 </div>
                 <div className="flex items-center bg-gray-50 rounded-lg px-4 py-2">
                   <svg
@@ -68,7 +69,7 @@ export default function StyleAdvisorHeader() {
                     />
                   </svg>
                   <span className="text-sm text-gray-600">
-                    Porady wspierane przez AI
+                    {t('header.features.aiPowered')}
                   </span>
                 </div>
               </div>

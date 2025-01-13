@@ -1,0 +1,25 @@
+{
+  "title": "Skontaktuj się z nami",
+  "description": "Masz pytania? Chętnie na nie odpowiemy. Wyślij nam wiadomość, a my skontaktujemy się z Tobą tak szybko, jak to możliwe.",
+  "form": {
+    "name": {
+      "label": "Imię i nazwisko",
+      "placeholder": "Jan Kowalski"
+    },
+    "email": {
+      "label": "Adres email",
+      "placeholder": "jan.kowalski@example.com"
+    },
+    "subject": {
+      "label": "Temat",
+      "placeholder": "W czym możemy pomóc?"
+    },
+    "message": {
+      "label": "Wiadomość",
+      "placeholder": "Twoja wiadomość..."
+    }
+  },
+  "buttons": {
+    "submit": "Wyślij wiadomość"
+  }
+}
