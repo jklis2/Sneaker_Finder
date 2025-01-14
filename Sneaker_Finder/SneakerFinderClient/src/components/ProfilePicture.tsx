@@ -11,7 +11,7 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({ onUploadSuccess }) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { userData } = useAuth();
+  const { userData, updateUserData } = useAuth();
 
   const handleFileChange = (file: File) => {
     if (file) {
@@ -58,6 +58,9 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({ onUploadSuccess }) => {
           },
         }
       );
+
+      // Update the user data in context with the new profile picture URL
+      updateUserData({ profilePicture: response.data.profilePicture });
 
       if (onUploadSuccess) {
         onUploadSuccess(response.data.profilePicture);
