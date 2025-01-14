@@ -9,6 +9,7 @@ import productsRoutes from "./routes/productsRoutes";
 import checkoutRoutes from "./routes/checkoutRoutes";
 import orderRoutes from "./routes/orderRoutes";
 import webhookRoutes from "./routes/webhookRoutes";
+import adminRoutes from "./routes/adminRoutes";
 import { scrapeAllProducts, saveData } from "./services/scrape";
 
 dotenv.config();
@@ -47,6 +48,7 @@ app.use("/api/products", productsRoutes);
 app.use("/api/checkout", checkoutRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/webhook", webhookRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

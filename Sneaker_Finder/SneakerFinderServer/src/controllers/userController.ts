@@ -59,40 +59,80 @@ export const registerUser = async (
   }
 };
 
-export const loginUser = async (req: AuthRequest, res: Response): Promise<void> => {
+export const registerAdmin = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  const { firstName, lastName, email, gender, birthDate, password, adminKey } = req.body;
+
+  try {
+    // Using a hardcoded admin key - you can change this value
+    const ADMIN_KEY = "sneakerfinder_admin_2024";
+    
+    if (adminKey !== ADMIN_KEY) {
+      res.status(401).json({ message: "Invalid admin registration key" });
+      return;
+    }
+
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      res.status(400).json({ message: "User already exists" });
+      return;
+    }
+
+    const user = await User.create({
+      firstName,
+      lastName,
+      email,
+      gender,
+      birthDate,
+      password,
+      role: "admin"
+    });
+
+    if (user) {
+      res.status(201).json({
+        _id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        token: generateToken(user._id),
+      });
+    } else {
+      res.status(400).json({ message: "Invalid user data" });
+    }
+  } catch (error) {
+    console.error("Error in registerAdmin:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const loginUser = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
   const { email, password } = req.body;
 
   try {
-    if (!email || !password) {
-      res.status(400).json({ message: "Please provide both email and password" });
-      return;
-    }
-
     const user = await User.findOne({ email });
-    
-    if (!user) {
-      res.status(401).json({ message: "User not found with this email" });
-      return;
-    }
 
-    const isMatch = await user.matchPassword(password);
-    
-    if (isMatch) {
-      const token = generateToken(user._id);
+    if (user && (await user.matchPassword(password))) {
       res.json({
         _id: user.id,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        token
+        profilePicture: user.profilePicture,
+        role: user.role,
+        token: generateToken(user._id),
       });
     } else {
-      res.status(401).json({ message: "Invalid password" });
+      res.status(401).json({ message: "Invalid email or password" });
     }
   } catch (error) {
-    console.error("Login error:", error);
-    const err = error as Error;
-    res.status(500).json({ message: err.message });
+    console.error("Error in loginUser:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 

@@ -10,7 +10,8 @@ import {
   deleteShippingAddress,
   updateUserEmail,
   updateUserPassword,
-  uploadProfilePicture
+  uploadProfilePicture,
+  registerAdmin
 } from "../controllers/userController";
 import { protect } from "../middleware/authMiddleware";
 import upload from "../middleware/uploadMiddleware";
@@ -20,6 +21,7 @@ const router = express.Router();
 
 // Public routes
 router.post("/register", asyncHandler(registerUser));
+router.post("/register-admin", asyncHandler(registerAdmin));
 router.post("/login", asyncHandler(loginUser));
 
 // Protected routes

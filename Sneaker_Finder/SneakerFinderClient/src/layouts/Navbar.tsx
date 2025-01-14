@@ -147,6 +147,23 @@ export default function Navbar() {
                     aria-orientation="vertical"
                   >
                     <ul className="py-2 text-gray-700">
+                      {userData.role === 'admin' && (
+                        <li>
+                          <Link
+                            to="/admin/orders"
+                            className="flex items-center px-4 py-2 hover:bg-gray-100"
+                            role="menuitem"
+                          >
+                            <img
+                              src={ordersIcon}
+                              alt=""
+                              className="w-5 h-5 mr-2"
+                              aria-hidden="true"
+                            />
+                            Manage Orders
+                          </Link>
+                        </li>
+                      )}
                       <li>
                         <Link
                           to="/cart"

@@ -15,6 +15,8 @@ import Contact from "./routes/Contact";
 import Checkout from "./routes/Checkout";
 import OrderConfirmation from "./routes/OrderConfirmation";
 import CheckoutSuccess from "./routes/CheckoutSuccess";
+import AdminOrders from "./routes/AdminOrders";
+import AdminRoute from "./components/AdminRoute";
 import { CartProvider } from "./context/CartContext";
 
 export default function App() {
@@ -37,6 +39,11 @@ export default function App() {
         <Route path="/settings" element={<Settings />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/products" element={<AllProducts />} />
+        
+        {/* Admin Routes */}
+        <Route element={<AdminRoute />}>
+          <Route path="/admin/orders" element={<AdminOrders />} />
+        </Route>
       </Routes>
     </CartProvider>
   );

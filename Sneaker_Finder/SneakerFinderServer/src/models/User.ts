@@ -21,6 +21,7 @@ export interface IUser extends Document {
   password: string;
   profilePicture?: string;
   shippingAddresses?: IShippingAddress[];
+  role: "admin" | "user";
   matchPassword: (enteredPassword: string) => Promise<boolean>;
 }
 
@@ -43,6 +44,7 @@ const UserSchema: Schema = new Schema(
     birthDate: { type: Date, required: true },
     password: { type: String, required: true },
     profilePicture: { type: String, required: false },
+    role: { type: String, enum: ["admin", "user"], default: "user" },
     shippingAddresses: { type: [ShippingAddressSchema], required: false, default: [] },
   },
   {

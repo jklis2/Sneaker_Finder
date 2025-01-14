@@ -17,6 +17,7 @@ interface UserData {
   lastName: string;
   email: string;
   profilePicture?: string;
+  role: 'admin' | 'user';
 }
 
 interface AuthContextType {
@@ -58,6 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         lastName: data.lastName,
         email: data.email,
         profilePicture: data.profilePicture,
+        role: data.role,
       });
       setIsAuthenticated(true);
       return true;
@@ -90,6 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         lastName: current.lastName,
         email: current.email,
         profilePicture: current.profilePicture,
+        role: current.role,
       });
       setIsAuthenticated(true);
     } catch (error) {
@@ -114,6 +117,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           lastName: newUser.lastName,
           email: newUser.email,
           profilePicture: completeUserData.profilePicture,
+          role: completeUserData.role,
         });
       }
     } catch (error) {
