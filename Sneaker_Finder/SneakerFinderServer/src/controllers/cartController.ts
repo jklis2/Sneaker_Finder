@@ -109,3 +109,25 @@ export const removeFromCart = async (req: Request, res: Response): Promise<void>
     res.status(500).json({ message: err.message });
   }
 };
+
+// Clear cart
+export const clearCart = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = req.query.userId as string;
+
+    if (!userId) {
+      res.status(400).json({ message: "User ID is required" });
+      return;
+    }
+
+    await Cart.findOneAndUpdate(
+      { userId },
+      { $set: { items: [], total: 0 } }
+    );
+
+    res.json({ message: "Cart cleared successfully" });
+  } catch (error) {
+    const err = error as Error;
+    res.status(500).json({ message: err.message });
+  }
+};

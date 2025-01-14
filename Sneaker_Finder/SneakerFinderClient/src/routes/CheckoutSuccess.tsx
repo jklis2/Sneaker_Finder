@@ -4,6 +4,7 @@ import Navbar from "../layouts/Navbar";
 import Footer from "../layouts/Footer";
 import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "react-i18next";
+import { useCart } from "../context/CartContext";
 
 interface Order {
   _id: string;
@@ -28,54 +29,61 @@ interface Order {
 
 export default function CheckoutSuccess() {
   const [searchParams] = useSearchParams();
-  const orderId = searchParams.get("orderId");
+  const sessionId = searchParams.get("session_id");
   const navigate = useNavigate();
-  const { isAuthenticated, userData } = useAuth();
+  useAuth();
+  const { clearItems } = useCart();
   const [order, setOrder] = useState<Order | null>(null);
   const [error, setError] = useState("");
-  const { t } = useTranslation('checkoutSuccess');
+  const { t } = useTranslation("checkoutSuccess");
 
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        if (!orderId) {
-          throw new Error(t('errors.noOrderId'));
-        }
-
-        if (!isAuthenticated || !userData?._id) {
-          navigate("/login");
-          return;
+        if (!sessionId) {
+          throw new Error(t("errors.noSessionId"));
         }
 
         const token = localStorage.getItem("token");
-        if (!token) {
-          navigate("/login");
-          return;
-        }
 
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/orders/${orderId}`,
+        const sessionResponse = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/orders/session/${sessionId}`,
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              ...(token && { Authorization: `Bearer ${token}` }),
             },
           }
         );
 
-        if (!response.ok) {
-          throw new Error(t('errors.fetchFailed'));
+        if (!sessionResponse.ok) {
+          throw new Error(t("errors.fetchingOrder"));
         }
 
-        const data = await response.json();
-        setOrder(data);
-      } catch (error) {
-        console.error("Error fetching order:", error);
-        setError(error instanceof Error ? error.message : t('errors.fetchFailed'));
+        const orderData = await sessionResponse.json();
+        setOrder(orderData);
+
+        clearItems();
+        localStorage.removeItem("cart");
+
+        if (token) {
+          const userId = orderData.userId;
+          await fetch(
+            `${import.meta.env.VITE_API_URL}/api/cart/clear?userId=${userId}`,
+            {
+              method: "DELETE",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : String(err));
       }
     };
 
     fetchOrder();
-  }, [orderId, isAuthenticated, userData, navigate, t]);
+  }, [clearItems, sessionId, t]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -83,27 +91,30 @@ export default function CheckoutSuccess() {
       <div className="flex-grow container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
           <div className="text-center space-y-4">
-            <h1 className="text-3xl font-bold">{t('title')}</h1>
-            <p className="text-xl">{t('thankYou')}</p>
-            {order && (
-              <p className="text-gray-600">
-                {t('orderNumber', { orderNumber: order._id })}
+            <h1 className="text-3xl font-bold">{t("title")}</h1>
+            <p className="text-xl">{t("thankYou")}</p>
+            {order ? (
+              <p className="text-green-600">
+                {t("orderNumber", { orderNumber: order._id })}
               </p>
+            ) : error ? (
+              <p className="text-red-500">{error}</p>
+            ) : (
+              <p className="text-gray-600">{t("loading")}</p>
             )}
-            <p className="text-gray-600">{t('emailConfirmation')}</p>
-            {error && <p className="text-red-500">{error}</p>}
+            <p className="text-gray-600">{t("emailConfirmation")}</p>
             <div className="flex justify-center space-x-4 mt-8">
               <button
                 onClick={() => navigate("/")}
                 className="bg-gray-200 text-gray-800 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors"
               >
-                {t('buttons.continueShopping')}
+                {t("buttons.continueShopping")}
               </button>
               <button
-                onClick={() => navigate("/my-orders")}
+                onClick={() => navigate("/orders")}
                 className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition-colors"
               >
-                {t('buttons.viewOrder')}
+                {t("buttons.viewOrder")}
               </button>
             </div>
           </div>

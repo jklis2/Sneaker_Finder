@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema, Types } from 'mongoose';
 
 interface IProduct {
   name: string;
@@ -7,8 +7,9 @@ interface IProduct {
   quantity: number;
 }
 
-interface IOrder extends Document {
-  userId: mongoose.Types.ObjectId;
+export interface IOrder extends Document {
+  _id: Types.ObjectId;
+  userId: Types.ObjectId;
   orderNumber: string;
   date: Date;
   status: string;
@@ -17,7 +18,7 @@ interface IOrder extends Document {
   paymentId: string;
 }
 
-const orderSchema = new Schema({
+const orderSchema = new Schema<IOrder>({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -35,13 +36,13 @@ const orderSchema = new Schema({
   status: {
     type: String,
     required: true,
-    default: 'completed'
+    default: 'pending'
   },
   products: [{
-    name: String,
-    size: String,
-    price: Number,
-    quantity: Number
+    name: { type: String, required: true },
+    size: { type: String, required: true, default: 'N/A' },
+    price: { type: Number, required: true },
+    quantity: { type: Number, required: true }
   }],
   totalAmount: {
     type: Number,

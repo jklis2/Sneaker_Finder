@@ -1,7 +1,14 @@
 import { Request, Response } from 'express';
-import Order from '../models/Order';
-import Cart from '../models/Cart';
+import Order, { IOrder } from '../models/Order';
 import mongoose from 'mongoose';
+import Stripe from 'stripe';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
+  apiVersion: '2024-12-18.acacia'
+});
 
 export const getUserOrders = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -22,6 +29,38 @@ export const getUserOrders = async (req: Request, res: Response): Promise<void> 
   }
 };
 
+export const getOrderBySessionId = async (req: Request, res: Response): Promise<void> => {
+  const { sessionId } = req.params;
+
+  if (!sessionId) {
+    res.status(400).json({ message: 'Session ID is required' });
+    return;
+  }
+
+  try {
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+    if (!session.metadata || !session.metadata.orderId) {
+      res.status(404).json({ message: 'Order ID not found in session metadata' });
+      return;
+    }
+
+    const orderId = session.metadata.orderId as string;
+
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      res.status(404).json({ message: 'Order not found' });
+      return;
+    }
+
+    res.json(order);
+  } catch (error) {
+    console.error('Error fetching session:', error);
+    res.status(500).json({ message: 'Error fetching session' });
+  }
+};
+
 export const createOrder = async (
   userId: string,
   paymentId: string,
@@ -31,13 +70,13 @@ export const createOrder = async (
   try {
     console.log('Creating order for user:', userId);
     const orderNumber = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-    
-    const order = new Order({
+
+    const order: IOrder = new Order({
       userId: new mongoose.Types.ObjectId(userId),
       orderNumber,
       date: new Date(),
-      status: 'completed',
-      products: cartItems.map(item => ({
+      status: 'pending',
+      products: cartItems.map((item: any) => ({
         name: item.name,
         size: item.size || 'N/A',
         price: item.price,
