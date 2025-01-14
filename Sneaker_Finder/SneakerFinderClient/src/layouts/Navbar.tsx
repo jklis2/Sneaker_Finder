@@ -124,12 +124,22 @@ export default function Navbar() {
               </span>
               <div className="relative" ref={dropdownRef}>
                 <button
-                  className="w-8 h-8 bg-green-500 rounded-full cursor-pointer ml-4"
                   onClick={toggleDropdown}
                   aria-expanded={isDropdownOpen}
                   aria-haspopup="true"
                   aria-label="User menu"
-                />
+                  className="w-8 h-8 rounded-full cursor-pointer ml-4 overflow-hidden"
+                >
+                  {userData.profilePicture ? (
+                    <img 
+                      src={userData.profilePicture} 
+                      alt="Profile" 
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-green-500" />
+                  )}
+                </button>
                 {isDropdownOpen && (
                   <div
                     className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50"
