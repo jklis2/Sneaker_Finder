@@ -7,15 +7,26 @@ interface IProduct {
   quantity: number;
 }
 
+interface IShippingAddress {
+  street: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+}
+
 export interface IOrder extends Document {
   _id: Types.ObjectId;
   userId: Types.ObjectId;
   orderNumber: string;
   date: Date;
-  status: string;
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   products: IProduct[];
   totalAmount: number;
   paymentId: string;
+  shippingAddress: IShippingAddress;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const orderSchema = new Schema<IOrder>({
@@ -35,6 +46,7 @@ const orderSchema = new Schema<IOrder>({
   },
   status: {
     type: String,
+    enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
     required: true,
     default: 'pending'
   },
@@ -51,7 +63,16 @@ const orderSchema = new Schema<IOrder>({
   paymentId: {
     type: String,
     required: true
+  },
+  shippingAddress: {
+    street: { type: String, required: true },
+    city: { type: String, required: true },
+    state: { type: String, required: true },
+    zipCode: { type: String, required: true },
+    country: { type: String, required: true }
   }
+}, {
+  timestamps: true
 });
 
 const Order = mongoose.model<IOrder>('Order', orderSchema);

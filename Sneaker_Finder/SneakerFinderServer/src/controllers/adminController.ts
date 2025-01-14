@@ -13,10 +13,12 @@ export const getAllOrders = async (
   res: Response
 ): Promise<void> => {
   try {
+    console.log('Fetching all orders...');
     const orders = await Order.find()
       .populate('userId', 'firstName lastName email')
       .sort({ createdAt: -1 });
 
+    console.log('Orders found:', orders);
     res.json(orders);
   } catch (error) {
     console.error('Error fetching orders:', error);

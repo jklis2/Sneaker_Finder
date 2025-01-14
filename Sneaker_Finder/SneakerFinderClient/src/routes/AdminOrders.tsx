@@ -37,6 +37,8 @@ const AdminOrders = () => {
   const fetchOrders = async () => {
     try {
       const token = localStorage.getItem('token');
+      console.log('Fetching orders with token:', token);
+      
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/admin/orders`,
         {
@@ -45,11 +47,21 @@ const AdminOrders = () => {
           },
         }
       );
+      
+      console.log('Orders response:', response.data);
+      
+      if (!Array.isArray(response.data)) {
+        console.error('Response data is not an array:', response.data);
+        setError('Invalid response format from server');
+        setOrders([]);
+        return;
+      }
+      
       setOrders(response.data);
       setError(null);
     } catch (err) {
-      setError('Failed to fetch orders. Please try again later.');
       console.error('Error fetching orders:', err);
+      setError('Failed to fetch orders. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -58,7 +70,9 @@ const AdminOrders = () => {
   const updateOrderStatus = async (orderId: string, newStatus: Order['status']) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.patch(
+      console.log('Updating order status with token:', token);
+      
+      const response = await axios.patch(
         `${import.meta.env.VITE_API_URL}/api/admin/orders/${orderId}`,
         { status: newStatus },
         {
@@ -67,6 +81,15 @@ const AdminOrders = () => {
           },
         }
       );
+      
+      console.log('Order status update response:', response.data);
+      
+      if (!response.data.success) {
+        console.error('Failed to update order status:', response.data);
+        setError('Failed to update order status. Please try again.');
+        return;
+      }
+      
       // Refresh orders after update
       fetchOrders();
     } catch (err) {
@@ -141,14 +164,18 @@ const AdminOrders = () => {
 
             <div>
               <h3 className="font-semibold mb-2">Shipping Address:</h3>
-              <p>
-                {order.shippingAddress.street}
-                <br />
-                {order.shippingAddress.city}, {order.shippingAddress.state}{' '}
-                {order.shippingAddress.zipCode}
-                <br />
-                {order.shippingAddress.country}
-              </p>
+              {order.shippingAddress ? (
+                <p>
+                  {order.shippingAddress.street}
+                  <br />
+                  {order.shippingAddress.city}, {order.shippingAddress.state}{' '}
+                  {order.shippingAddress.zipCode}
+                  <br />
+                  {order.shippingAddress.country}
+                </p>
+              ) : (
+                <p className="text-gray-500">No shipping address available</p>
+              )}
             </div>
           </div>
         ))}
