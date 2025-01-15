@@ -28,6 +28,7 @@ const AdminOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [updating, setUpdating] = useState<string | null>(null);
   const { userData } = useAuth();
 
   useEffect(() => {
@@ -69,8 +70,9 @@ const AdminOrders = () => {
 
   const updateOrderStatus = async (orderId: string, newStatus: Order['status']) => {
     try {
+      setUpdating(orderId);
+      setError(null);
       const token = localStorage.getItem('token');
-      console.log('Updating order status with token:', token);
       
       const response = await axios.patch(
         `${import.meta.env.VITE_API_URL}/api/admin/orders/${orderId}`,
@@ -81,20 +83,22 @@ const AdminOrders = () => {
           },
         }
       );
-      
-      console.log('Order status update response:', response.data);
-      
-      if (!response.data.success) {
-        console.error('Failed to update order status:', response.data);
-        setError('Failed to update order status. Please try again.');
-        return;
+
+      if (response.data.success) {
+        // Update the local state with the new order data
+        setOrders(prevOrders => 
+          prevOrders.map(order => 
+            order._id === orderId ? response.data.order : order
+          )
+        );
+      } else {
+        setError(response.data.message || 'Failed to update order status');
       }
-      
-      // Refresh orders after update
-      fetchOrders();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error updating order status:', err);
-      setError('Failed to update order status. Please try again.');
+      setError(err.response?.data?.message || 'Failed to update order status. Please try again.');
+    } finally {
+      setUpdating(null);
     }
   };
 
@@ -106,17 +110,14 @@ const AdminOrders = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-red-500">{error}</div>
-      </div>
-    );
-  }
-
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Order Management</h1>
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+          {error}
+        </div>
+      )}
       <div className="grid gap-6">
         {orders.map((order) => (
           <div
@@ -135,6 +136,7 @@ const AdminOrders = () => {
                   value={order.status}
                   onChange={(e) => updateOrderStatus(order._id, e.target.value as Order['status'])}
                   className="border rounded-md px-3 py-1 bg-white"
+                  disabled={updating === order._id}
                 >
                   <option value="pending">Pending</option>
                   <option value="processing">Processing</option>
@@ -142,6 +144,9 @@ const AdminOrders = () => {
                   <option value="delivered">Delivered</option>
                   <option value="cancelled">Cancelled</option>
                 </select>
+                {updating === order._id && (
+                  <div className="ml-2 animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
+                )}
               </div>
             </div>
 

@@ -34,24 +34,35 @@ export const updateOrderStatus = async (
     const { orderId } = req.params;
     const { status } = req.body;
 
+    console.log(`Updating order ${orderId} to status: ${status}`);
+
     const validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
     if (!validStatuses.includes(status)) {
-      res.status(400).json({ message: 'Invalid order status' });
+      res.status(400).json({ success: false, message: 'Invalid order status' });
       return;
     }
 
     const order = await Order.findById(orderId);
     if (!order) {
-      res.status(404).json({ message: 'Order not found' });
+      res.status(404).json({ success: false, message: 'Order not found' });
       return;
     }
 
     order.status = status;
     await order.save();
 
-    res.json({ message: 'Order status updated successfully', order });
+    const updatedOrder = await Order.findById(orderId).populate('userId', 'firstName lastName email');
+    
+    res.json({ 
+      success: true, 
+      message: 'Order status updated successfully', 
+      order: updatedOrder 
+    });
   } catch (error) {
     console.error('Error updating order status:', error);
-    res.status(500).json({ message: 'Error updating order status' });
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error updating order status' 
+    });
   }
 };
