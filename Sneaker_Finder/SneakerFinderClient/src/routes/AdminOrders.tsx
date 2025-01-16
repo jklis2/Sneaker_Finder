@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
 
 interface Order {
   _id: string;
@@ -29,7 +28,6 @@ const AdminOrders = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [updating, setUpdating] = useState<string | null>(null);
-  const { userData } = useAuth();
 
   useEffect(() => {
     fetchOrders();
@@ -60,9 +58,13 @@ const AdminOrders = () => {
       
       setOrders(response.data);
       setError(null);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Error fetching orders:', err);
-      setError('Failed to fetch orders. Please try again later.');
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message || 'Failed to fetch orders. Please try again later.');
+      } else {
+        setError('An unexpected error occurred while fetching orders.');
+      }
     } finally {
       setLoading(false);
     }
@@ -94,9 +96,13 @@ const AdminOrders = () => {
       } else {
         setError(response.data.message || 'Failed to update order status');
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error updating order status:', err);
-      setError(err.response?.data?.message || 'Failed to update order status. Please try again.');
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message || 'Failed to update order status. Please try again.');
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
     } finally {
       setUpdating(null);
     }
