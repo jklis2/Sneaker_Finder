@@ -92,7 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         lastName: current.lastName,
         email: current.email,
         profilePicture: current.profilePicture,
-        role: current.role,
+        role: current.role || 'user' // Set default role if not provided
       });
       setIsAuthenticated(true);
     } catch (error) {

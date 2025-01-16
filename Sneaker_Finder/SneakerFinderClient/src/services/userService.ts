@@ -32,6 +32,7 @@ export interface UserData {
   lastName: string;
   shippingAddresses?: ShippingAddress[];
   profilePicture?: string;
+  role: 'admin' | 'user';
 }
 
 interface LoginResponse {
@@ -40,6 +41,7 @@ interface LoginResponse {
   firstName: string;
   lastName: string;
   email: string;
+  role: 'admin' | 'user';
 }
 
 interface RegisterUserData {
