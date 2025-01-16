@@ -8,10 +8,21 @@ interface ICartItem {
   size?: string;
 }
 
+interface IShippingAddress {
+  street: string;
+  number: string;
+  apartmentNumber?: string;
+  city: string;
+  province: string;
+  postalCode: string;
+  phoneNumber: string;
+}
+
 interface ICart extends Document {
   userId: string;
   items: ICartItem[];
   total: number;
+  shippingAddress?: IShippingAddress;
 }
 
 const CartItemSchema = new Schema({
@@ -22,11 +33,22 @@ const CartItemSchema = new Schema({
   size: { type: String }
 });
 
+const ShippingAddressSchema = new Schema({
+  street: { type: String, required: true },
+  number: { type: String, required: true },
+  apartmentNumber: { type: String },
+  city: { type: String, required: true },
+  province: { type: String, required: true },
+  postalCode: { type: String, required: true },
+  phoneNumber: { type: String, required: true }
+});
+
 const CartSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     items: [CartItemSchema],
-    total: { type: Number, required: true, default: 0 }
+    total: { type: Number, required: true, default: 0 },
+    shippingAddress: { type: ShippingAddressSchema, required: false }
   },
   {
     timestamps: true,

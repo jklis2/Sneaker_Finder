@@ -255,33 +255,48 @@ export default function Checkout() {
     e.preventDefault();
     setError("");
     setIsLoading(true);
-
+  
     try {
       if (!isAuthenticated || !userData?._id) {
         throw new Error(t('errors.loginRequired'));
       }
-
+  
       const token = localStorage.getItem('token');
       if (!token) {
         throw new Error(t('errors.tokenNotFound'));
       }
-
-      // Create Stripe checkout session
+  
+// Validate and get shipping address
+if (selectedAddressIndex === null) {
+  throw new Error('Please select a shipping address');
+}
+const selectedAddress = savedAddresses[selectedAddressIndex];
+console.log('Selected address:', selectedAddress); // Debug log
+const mappedAddress = {
+  street: `${selectedAddress.street} ${selectedAddress.number}`,
+  city: selectedAddress.city,
+  state: selectedAddress.province,
+  zipCode: selectedAddress.postalCode,
+  country: "Poland"
+};
+console.log('Mapped address:', mappedAddress); // Debug log
+  
+      // Create Stripe checkout session with shipping address
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/checkout/create-checkout-session?userId=${userData._id}`, {
         method: "POST",
         headers: {
+          "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
         },
+        body: JSON.stringify({ shippingAddress: mappedAddress }),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.message || t('errors.checkoutFailed'));
       }
-
+  
       const { url } = await response.json();
-      
-      // Redirect to Stripe Checkout
       window.location.href = url;
     } catch (error) {
       console.error("Checkout error:", error);

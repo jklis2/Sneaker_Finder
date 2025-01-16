@@ -53,6 +53,13 @@ export const createCheckoutSession = async (req: Request, res: Response): Promis
 
     const totalAmount = cart.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
+    // Get user's shipping address from request body
+    const { shippingAddress } = req.body;
+    if (!shippingAddress) {
+      res.status(400).json({ message: "Shipping address is required" });
+      return;
+    }
+
     const orderNumber = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
     const order = new Order({
       userId: new mongoose.Types.ObjectId(userId),
@@ -66,7 +73,14 @@ export const createCheckoutSession = async (req: Request, res: Response): Promis
         quantity: item.quantity
       })),
       totalAmount,
-      paymentId: 'pending'
+      paymentId: 'pending',
+      shippingAddress: {
+        street: shippingAddress.street || '',
+        city: shippingAddress.city || '',
+        state: shippingAddress.state || shippingAddress.province || '',
+        zipCode: shippingAddress.zipCode || shippingAddress.postalCode || '',
+        country: shippingAddress.country || 'Poland'
+      }
     });
 
     await order.save();
