@@ -18,7 +18,7 @@ export default function AddToCartConfirmation({ item, onClose }: AddToCartConfir
   const { t } = useTranslation('addToCart');
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
       <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
         <div className="p-6">
           <h2 className="text-2xl font-bold text-center mb-4">

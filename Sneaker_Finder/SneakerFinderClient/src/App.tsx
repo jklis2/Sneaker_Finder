@@ -17,6 +17,8 @@ import OrderConfirmation from "./routes/OrderConfirmation";
 import CheckoutSuccess from "./routes/CheckoutSuccess";
 import AdminOrders from "./routes/AdminOrders";
 import AdminRoute from "./components/AdminRoute";
+import AddProduct from "./routes/AddProduct";
+import EditProduct from "./routes/EditProduct";
 import { CartProvider } from "./context/CartContext";
 
 export default function App() {
@@ -41,8 +43,10 @@ export default function App() {
         <Route path="/products" element={<AllProducts />} />
         
         {/* Admin Routes */}
-        <Route element={<AdminRoute />}>
-          <Route path="/admin/orders" element={<AdminOrders />} />
+        <Route path="/admin" element={<AdminRoute />}>
+          <Route path="orders" element={<AdminOrders />} />
+          <Route path="add-product" element={<AddProduct />} />
+          <Route path="edit-product/:id" element={<EditProduct />} />
         </Route>
       </Routes>
     </CartProvider>

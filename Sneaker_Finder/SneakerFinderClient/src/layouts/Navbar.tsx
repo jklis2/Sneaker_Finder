@@ -6,6 +6,7 @@ import cartIcon from "../assets/icons/cart.svg";
 import ordersIcon from "../assets/icons/orders.svg";
 import settingsIcon from "../assets/icons/settings.svg";
 import logoutIcon from "../assets/icons/logout.svg";
+import add from "../assets/icons/add.svg";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { useTranslation } from "react-i18next";
@@ -161,6 +162,23 @@ export default function Navbar() {
                               aria-hidden="true"
                             />
                             Manage Orders
+                          </Link>
+                        </li>
+                      )}
+                      {userData.role === 'admin' && (
+                        <li>
+                          <Link
+                            to="/admin/add-product"
+                            className="flex items-center px-4 py-2 hover:bg-gray-100"
+                            role="menuitem"
+                          >
+                            <img
+                              src={add}
+                              alt=""
+                              className="w-5 h-5 mr-2"
+                              aria-hidden="true"
+                            />
+                            Add product
                           </Link>
                         </li>
                       )}
