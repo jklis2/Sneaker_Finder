@@ -7,6 +7,7 @@ interface IStockx extends Document {
   color: string;
   imageUrl: string;
   availableSizes: string[];
+  availability: string;
 }
 
 const stocksSchema = new Schema({
@@ -33,6 +34,11 @@ const stocksSchema = new Schema({
   availableSizes: {
     type: [String],
     default: [],
+  },
+  availability: {
+    type: String,
+    enum: ['available', 'out_of_stock'],
+    default: 'available',
   },
 });
 

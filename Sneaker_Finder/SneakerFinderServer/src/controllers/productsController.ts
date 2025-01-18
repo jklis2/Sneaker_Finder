@@ -7,6 +7,7 @@ export const getAllProducts = async (
   res: Response
 ): Promise<void> => {
   try {
+    // Return all products since they should all be available
     const products = await Stockx.find();
     res.json(products);
   } catch (error) {
@@ -59,7 +60,8 @@ export const addProduct = async (
       brand,
       color,
       imageUrl,
-      availableSizes
+      availableSizes,
+      availability: 'available' // Always set to available
     });
 
     const savedProduct = await newProduct.save();
