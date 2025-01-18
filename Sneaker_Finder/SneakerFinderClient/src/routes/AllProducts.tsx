@@ -6,6 +6,11 @@ import ProductCard from "../components/ProductCard";
 import SearchProduct from "../components/SearchProduct";
 import Pagination from "../components/Pagination";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../context/AuthContext";
+
+const API_BASE_URL = import.meta.env.PROD 
+  ? 'https://sneaker-finder-server-g1jq.onrender.com/api'
+  : '/api';
 
 interface StockXProduct {
   _id: string;
@@ -13,6 +18,7 @@ interface StockXProduct {
   price: number;
   imageUrl: string;
   availableSizes: string[];
+  availability: string;
 }
 
 export default function AllProducts() {
@@ -32,14 +38,26 @@ export default function AllProducts() {
   const productsPerPage = 20;
 
   const { t } = useTranslation('allProducts');
+  const { userData } = useAuth();
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setIsLoading(true);
-        const apiUrl = `${import.meta.env.VITE_API_URL}/api/products`;
+        const apiUrl = `${API_BASE_URL}/products`;
 
-        const response = await fetch(apiUrl);
+        const token = localStorage.getItem('token');
+        const headers: HeadersInit = {
+          'Content-Type': 'application/json'
+        };
+
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        const response = await fetch(apiUrl, {
+          headers
+        });
 
         if (!response.ok) {
           const errorText = await response.text();

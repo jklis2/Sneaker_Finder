@@ -26,14 +26,28 @@ const corsOptions = {
         'http://localhost:5001',
         'http://127.0.0.1:5001',
         'http://localhost:5173',
-        'http://127.0.0.1:5173'
+        'http://127.0.0.1:5173',
+        'http://localhost:3000'
       ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
+  allowedHeaders: [
+    'Content-Type', 
+    'Authorization', 
+    'Accept', 
+    'Origin', 
+    'X-Requested-With',
+    'Access-Control-Allow-Origin',
+    'Access-Control-Allow-Methods',
+    'Access-Control-Allow-Headers'
+  ],
+  exposedHeaders: ['Authorization'],
 };
 
 app.use(cors(corsOptions));
+
+// Add pre-flight handling
+app.options('*', cors(corsOptions));
 
 connectDB();
 

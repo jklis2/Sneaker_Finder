@@ -12,6 +12,7 @@ declare global {
     interface Request {
       user?: {
         _id: mongoose.Types.ObjectId;
+        role?: 'admin' | 'user';
       };
     }
   }
@@ -48,7 +49,8 @@ export const protect = async (
       }
 
       req.user = {
-        _id: user._id
+        _id: user._id,
+        role: user.role
       };
 
       next();

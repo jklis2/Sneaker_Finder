@@ -6,18 +6,19 @@ import {
   addProduct,
   deleteProduct
 } from "../controllers/productsController";
+import { protect } from "../middleware/authMiddleware";
 
 const router: Router = Router();
 
 // GET /api/products
-router.get("/", getAllProducts);
+router.get("/", protect, getAllProducts);
 // GET /api/products/:id
-router.get("/:id", getProductById);
+router.get("/:id", protect, getProductById);
 // PUT /api/products/:id
-router.put("/:id", editProduct);
+router.put("/:id", protect, editProduct);
 // POST /api/products
-router.post("/", addProduct);
+router.post("/", protect, addProduct);
 // DELETE /api/products/:id
-router.delete("/:id", deleteProduct);
+router.delete("/:id", protect, deleteProduct);
 
 export default router;

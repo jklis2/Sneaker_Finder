@@ -3,12 +3,17 @@ import Stockx from "../models/StockX";
 import mongoose from "mongoose";
 
 export const getAllProducts = async (
-  _req: Request,
+  req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    // Return all products since they should all be available
-    const products = await Stockx.find();
+    // Check if user is admin based on role
+    const isAdmin = req.user?.role === 'admin';
+
+    // If not admin, only show available products
+    const query = isAdmin ? {} : { availability: 'available' };
+    const products = await Stockx.find(query);
+    
     res.json(products);
   } catch (error) {
     console.error("Error fetching products:", error);

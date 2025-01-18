@@ -5,6 +5,7 @@ import User from '../models/User';
 interface AuthRequest extends Request {
   user?: {
     _id: Types.ObjectId;
+    role?: 'admin' | 'user';
   };
 }
 
@@ -14,9 +15,7 @@ export const isAdmin = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const user = await User.findById(req.user?._id);
-    
-    if (!user || user.role !== 'admin') {
+    if (!req.user || req.user.role !== 'admin') {
       res.status(403).json({ message: 'Access denied. Admin privileges required.' });
       return;
     }
