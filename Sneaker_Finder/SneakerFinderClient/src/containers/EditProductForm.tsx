@@ -33,17 +33,25 @@ export default function EditProductForm() {
     const fetchProduct = async () => {
       try {
         console.log(`Fetching product with ID: ${id}`);
-        console.log(`API URL: ${import.meta.env.VITE_API_URL}`);
         
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/products/${id}`);
-        console.log(`Response status: ${response.status}`);
+        const token = localStorage.getItem('token');
+        const headers: HeadersInit = {
+          'Content-Type': 'application/json'
+        };
+
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+        
+        const response = await fetch(`/api/products/${id}`, {
+          headers
+        });
         
         if (!response.ok) {
           throw new Error('Failed to fetch product');
         }
         
         const data = await response.json();
-        console.log(`Product data: ${JSON.stringify(data)}`);
         setFormData(data);
       } catch (error: unknown) {
         console.error(`Error fetching product: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -86,10 +94,9 @@ export default function EditProductForm() {
     try {
       const token = localStorage.getItem('token');
       console.log(`Token: ${token}`);
-      console.log(`API URL: ${import.meta.env.VITE_API_URL}`);
       console.log(`Sending data: ${JSON.stringify(formData)}`);
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/products/${id}`, {
+      const response = await fetch(`/api/products/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

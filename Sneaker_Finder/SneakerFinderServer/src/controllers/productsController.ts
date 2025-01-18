@@ -2,18 +2,24 @@ import { Request, Response } from "express";
 import Stockx from "../models/StockX";
 import mongoose from "mongoose";
 
+interface AuthRequest extends Request {
+  user?: {
+    _id: mongoose.Types.ObjectId;
+    role?: 'admin' | 'user';
+  };
+}
+
 export const getAllProducts = async (
-  req: Request,
+  req: AuthRequest,
   res: Response
 ): Promise<void> => {
   try {
-    // Check if user is admin based on role
+    // If user is logged in and is admin, show all products
+    // Otherwise, only show available products
     const isAdmin = req.user?.role === 'admin';
-
-    // If not admin, only show available products
     const query = isAdmin ? {} : { availability: 'available' };
-    const products = await Stockx.find(query);
     
+    const products = await Stockx.find(query);
     res.json(products);
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -22,7 +28,7 @@ export const getAllProducts = async (
 };
 
 export const getProductById = async (
-  req: Request,
+  req: AuthRequest,
   res: Response
 ): Promise<void> => {
   try {
@@ -40,6 +46,12 @@ export const getProductById = async (
       return;
     }
 
+    // If user is not admin and product is not available, return 404
+    if (req.user?.role !== 'admin' && product.availability !== 'available') {
+      res.status(404).json({ message: "Product not found" });
+      return;
+    }
+
     res.json(product);
   } catch (error) {
     console.error("Error fetching product:", error);
@@ -48,10 +60,16 @@ export const getProductById = async (
 };
 
 export const addProduct = async (
-  req: Request,
+  req: AuthRequest,
   res: Response
 ): Promise<void> => {
   try {
+    // Only admin can add products
+    if (req.user?.role !== 'admin') {
+      res.status(403).json({ message: "Not authorized" });
+      return;
+    }
+
     const { name, price, brand, color, imageUrl, availableSizes } = req.body;
 
     if (!name || !price) {
@@ -66,7 +84,7 @@ export const addProduct = async (
       color,
       imageUrl,
       availableSizes,
-      availability: 'available' // Always set to available
+      availability: 'available'
     });
 
     const savedProduct = await newProduct.save();
@@ -78,10 +96,16 @@ export const addProduct = async (
 };
 
 export const editProduct = async (
-  req: Request,
+  req: AuthRequest,
   res: Response
 ): Promise<void> => {
   try {
+    // Only admin can edit products
+    if (req.user?.role !== 'admin') {
+      res.status(403).json({ message: "Not authorized" });
+      return;
+    }
+
     const { id } = req.params;
     const updates = req.body;
 
@@ -109,10 +133,16 @@ export const editProduct = async (
 };
 
 export const deleteProduct = async (
-  req: Request,
+  req: AuthRequest,
   res: Response
 ): Promise<void> => {
   try {
+    // Only admin can delete products
+    if (req.user?.role !== 'admin') {
+      res.status(403).json({ message: "Not authorized" });
+      return;
+    }
+
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
