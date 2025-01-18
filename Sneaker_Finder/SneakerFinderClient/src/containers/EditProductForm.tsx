@@ -9,6 +9,7 @@ interface Product {
   color: string;
   imageUrl: string;
   availableSizes: string[];
+  availability: string;
 }
 
 export default function EditProductForm() {
@@ -25,6 +26,7 @@ export default function EditProductForm() {
     color: '',
     imageUrl: '',
     availableSizes: [],
+    availability: 'available',
   });
 
   useEffect(() => {
@@ -56,7 +58,7 @@ export default function EditProductForm() {
     }
   }, [id]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     if (name === 'availableSizes') {
       setFormData(prev => ({
@@ -215,6 +217,22 @@ export default function EditProductForm() {
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-transparent"
             />
+          </div>
+
+          <div>
+            <label htmlFor="availability" className="block text-sm font-medium text-gray-700 mb-1">
+              {t('editProduct.availability', 'Availability')}
+            </label>
+            <select
+              id="availability"
+              name="availability"
+              value={formData.availability}
+              onChange={handleChange}
+              className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-transparent"
+            >
+              <option value="available">{t('editProduct.available', 'Available')}</option>
+              <option value="out_of_stock">{t('editProduct.outOfStock', 'Out of Stock')}</option>
+            </select>
           </div>
 
           <div>

@@ -8,6 +8,7 @@ interface ProductFormData {
   color: string;
   imageUrl: string;
   availableSizes: string[];
+  availability: string;
 }
 
 const initialFormData: ProductFormData = {
@@ -17,6 +18,7 @@ const initialFormData: ProductFormData = {
   color: '',
   imageUrl: '',
   availableSizes: [],
+  availability: 'available',
 };
 
 const AddProductForm: React.FC = () => {
@@ -24,7 +26,7 @@ const AddProductForm: React.FC = () => {
   const [error, setError] = useState<string>('');
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -160,6 +162,22 @@ const AddProductForm: React.FC = () => {
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+        </div>
+
+        <div>
+          <label htmlFor="availability" className="block text-sm font-medium mb-1">
+            Availability
+          </label>
+          <select
+            id="availability"
+            name="availability"
+            value={formData.availability}
+            onChange={handleInputChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="available">Available</option>
+            <option value="out_of_stock">Out of Stock</option>
+          </select>
         </div>
 
         <div>
