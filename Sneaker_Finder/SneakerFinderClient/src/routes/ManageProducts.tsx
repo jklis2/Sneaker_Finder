@@ -22,6 +22,12 @@ export default function ManageProducts() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        // Check if user is admin
+        if (!userData || userData.role !== 'admin') {
+          setError('Access denied. Admin privileges required.');
+          return;
+        }
+
         const token = localStorage.getItem('token');
         if (!token) {
           setError('Authentication required');
@@ -42,6 +48,7 @@ export default function ManageProducts() {
     };
 
     fetchProducts();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
