@@ -29,6 +29,7 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({ onUploadSuccess }) => {
     if (file && file.type.startsWith('image/')) {
       handleFileChange(file);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {

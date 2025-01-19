@@ -101,21 +101,28 @@ export default function AllProducts() {
   };
 
   const filteredProducts = useMemo(() => {
-    if (!searchTerm) {
-
+    if (!products) return [];
+    // If user is admin, show all products
+    if (userData?.role === 'admin') {
       return products;
     }
+    // For regular users, just return all products for now
+    // You can add user-specific filtering here in the future
+    return products;
+  }, [products, userData]);
 
-    const searchLower = searchTerm.toLowerCase();
-    return products.filter((product) =>
-      product.name.toLowerCase().includes(searchLower)
+  const filteredAndSearchedProducts = useMemo(() => {
+    return filteredProducts.filter(product =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [products, searchTerm]);
+  }, [filteredProducts, searchTerm]);
 
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-  const startIndex = (currentPage - 1) * productsPerPage;
-  const endIndex = startIndex + productsPerPage;
-  const currentProducts = filteredProducts.slice(startIndex, endIndex);
+  const currentProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * productsPerPage;
+    return filteredAndSearchedProducts.slice(startIndex, startIndex + productsPerPage);
+  }, [currentPage, filteredAndSearchedProducts]);
+
+  const totalPages = Math.ceil(filteredAndSearchedProducts.length / productsPerPage);
 
   if (isLoading) {
     return (
