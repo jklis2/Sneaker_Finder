@@ -168,6 +168,23 @@ export default function Navbar() {
                       {userData.role === 'admin' && (
                         <li>
                           <Link
+                            to="/admin/products"
+                            className="flex items-center px-4 py-2 hover:bg-gray-100"
+                            role="menuitem"
+                          >
+                            <img
+                              src={ordersIcon}
+                              alt=""
+                              className="w-5 h-5 mr-2"
+                              aria-hidden="true"
+                            />
+                            Manage Products
+                          </Link>
+                        </li>
+                      )}
+                      {userData.role === 'admin' && (
+                        <li>
+                          <Link
                             to="/admin/add-product"
                             className="flex items-center px-4 py-2 hover:bg-gray-100"
                             role="menuitem"

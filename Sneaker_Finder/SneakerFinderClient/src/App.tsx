@@ -19,6 +19,7 @@ import AdminOrders from "./routes/AdminOrders";
 import AdminRoute from "./components/AdminRoute";
 import AddProduct from "./routes/AddProduct";
 import EditProduct from "./routes/EditProduct";
+import ManageProducts from "./routes/ManageProducts";
 import { CartProvider } from "./context/CartContext";
 
 export default function App() {
@@ -45,6 +46,7 @@ export default function App() {
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminRoute />}>
           <Route path="orders" element={<AdminOrders />} />
+          <Route path="products" element={<ManageProducts />} />
           <Route path="add-product" element={<AddProduct />} />
           <Route path="edit-product/:id" element={<EditProduct />} />
         </Route>
